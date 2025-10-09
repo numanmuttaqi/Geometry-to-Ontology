@@ -1,4 +1,12 @@
 from .config import JSON_DIR
+from .constants import ROOM_KEYS, STRUCT_KEYS, ROOM_PREFIX
+from .geometry import compute_relations
+from .plan_utils import assign_ids
+from .relations import (
+    bounded_by_per_room,
+    build_connected_via_door_from_hosts,
+    normalize_relation_ids,
+)
 
 # --- Cell 4 ---
 def _update_rel_table(tbl, slots, remap):
@@ -86,7 +94,7 @@ def rebuild_connected_via_door_inplace(plan):
     # pastikan relasi lain sudah dinormalisasi agar downstream aman
     gr = plan.setdefault("graph", {})
     rel = gr.setdefault("relations", {})
-    rel.update(_norm_relations_ids(rel))
+    rel.update(normalize_relation_ids(rel))
     passages = build_connected_via_door_from_hosts(plan)
     rel["connected_via_door"] = passages
     plan.setdefault("relationships", {}).setdefault("summary", {})
@@ -107,10 +115,10 @@ def export_graph(plan, room_instances, struct_instances=None):
     mock_plan = convert_instances_for_relations(room_instances, struct_instances or {})
 
     relations = compute_relations(mock_plan)
-    relations = _norm_relations_ids(relations)
+    relations = normalize_relation_ids(relations)
     mock_plan.setdefault("graph", {}).setdefault("relations", relations)
 
-    relations["bounded_by_per_room"] = _bounded_by_per_room(relations)
+    relations["bounded_by_per_room"] = bounded_by_per_room(relations)
 
     # bangun koneksi pintu dari hosts_opening + bounded_by
     passages = build_connected_via_door_from_hosts(mock_plan)

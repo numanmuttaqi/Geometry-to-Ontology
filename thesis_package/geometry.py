@@ -1,149 +1,196 @@
-from .config import JSON_DIR
+"""Geometry-centric utilities for working with plan instances and relations."""
 
-# --- Cell 2 ---
-def geojsonify(geom):
-    if geom is None:
-        return {"type": "GeometryCollection", "geometries": []}
-    if isinstance(geom, (Polygon, MultiPolygon, LineString, MultiLineString, Point)):
-        return {"type": "GeometryCollection", "geometries": []} if geom.is_empty else shp_mapping(geom)
-    parts = [g for g in R.get_geometries(geom)]
-    if not parts:
-        return {"type": "GeometryCollection", "geometries": []}
-    if all(isinstance(g, Polygon) for g in parts):
-        return {"type": "MultiPolygon", "coordinates": [shp_mapping(g)["coordinates"] for g in parts]}
-    return {"type": "GeometryCollection", "geometries": [shp_mapping(g) for g in parts]}
+from __future__ import annotations
 
-def bbox_of_geom(geom):
-    if geom is None or getattr(geom, "is_empty", True): return [None, None, None, None]
-    x1, y1, x2, y2 = geom.bounds
-    return [float(x1), float(y1), float(x2), float(y2)]
+from collections import namedtuple
+from copy import deepcopy
+from typing import Any, Dict, List
 
-def assign_ids(n, prefix):
-    return [f"{prefix}-{i:04d}" for i in range(1, n+1)]
+from shapely.geometry import LineString, MultiLineString, MultiPolygon, Point, Polygon, shape
+from shapely.strtree import STRtree
 
-def _geom(obj):
-    if obj is None: return None
-    g = obj.get("geom") if isinstance(obj, dict) else None
-    if isinstance(g, dict) and "type" in g: return shape(g)
+from .constants import EPS_LEN, OPENING_BUFFER, WALL_BUFFER
+from .plan_utils import round_float
+
+
+GeoRec = namedtuple("GeoRec", "id cls subtype level geom raw")
+
+
+def _geom(obj: Any):
+    """Return shapely geometry for an instance record."""
+    if obj is None:
+        return None
+    geom = obj.get("geom") if isinstance(obj, dict) else None
+    if isinstance(geom, dict) and "type" in geom:
+        return shape(geom)
     return None
 
-def _id(obj, fallback_prefix):
-    if isinstance(obj, dict) and "id" in obj: return str(obj["id"])
-    return f"{fallback_prefix}-{abs(hash(str(obj)))%10**8:08d}"
 
-def _level(obj):
+def _id(obj: Any, fallback_prefix: str) -> str:
+    """Fetch existing identifier or build a deterministic fallback."""
+    if isinstance(obj, dict) and "id" in obj:
+        return str(obj["id"])
+    return f"{fallback_prefix}-{abs(hash(str(obj))) % 10**8:08d}"
+
+
+def _level(obj: Dict[str, Any]) -> Any:
+    """Best-effort level/storey lookup from instance records."""
+    if not isinstance(obj, dict):
+        return None
     return obj.get("level") or obj.get("storey") or obj.get("props", {}).get("level")
 
-def find_instances(plan):
+
+def find_instances(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
+    """Collect room, wall, and opening instances from a plan structure."""
     out = {"rooms": [], "walls": [], "openings": []}
-    if "instances" not in plan: return out
+    instances = plan.get("instances")
+    if not isinstance(instances, dict):
+        return out
 
-    # rooms
-    if "room" in plan["instances"]:
-        room_data = plan["instances"]["room"]
-        for room_type, room_list in room_data.items():
-            for room in room_list: out["rooms"].append(room)
+    room_data = instances.get("room")
+    if isinstance(room_data, dict):
+        for room_list in room_data.values():
+            out["rooms"].extend(room_list or [])
 
-    # structural
-    if "structural" in plan["instances"]:
-        st = plan["instances"]["structural"]
-        for wall_type in ["interior_wall","exterior_wall"]:
-            for wall in st.get(wall_type, []):
-                w = deepcopy(wall); w.setdefault("subtype", "exterior" if "exterior" in wall_type else "interior")
-                out["walls"].append(w)
-        for opening_type in ["door","window","front_door"]:
-            for opening in st.get(opening_type, []):
-                o = deepcopy(opening); o.setdefault("subtype", opening_type)
-                out["openings"].append(o)
+    structural = instances.get("structural")
+    if isinstance(structural, dict):
+        for wall_type in ("interior_wall", "exterior_wall"):
+            for wall in structural.get(wall_type, []) or []:
+                wall_copy = deepcopy(wall)
+                wall_copy.setdefault("subtype", "exterior" if "exterior" in wall_type else "interior")
+                out["walls"].append(wall_copy)
+        for opening_type in ("door", "window", "front_door"):
+            for opening in structural.get(opening_type, []) or []:
+                opening_copy = deepcopy(opening)
+                opening_copy.setdefault("subtype", opening_type)
+                out["openings"].append(opening_copy)
     return out
 
 
-# --- Cell 5 ---
 def boundary_overlap_length(room_poly: Polygon, wall_geom) -> float:
+    """Measure overlap length between a room boundary and wall geometry."""
     if isinstance(wall_geom, (LineString, MultiLineString)):
-        buf = wall_geom.buffer(WALL_BUFFER, cap_style=2, join_style=2)
-        inter = room_poly.boundary.intersection(buf)
-    else:
-        inter = room_poly.boundary.intersection(wall_geom)
-    if inter.is_empty: return 0.0
-    try: return _f(inter.length)
-    except Exception:
-        if hasattr(inter, "geoms"): return _f(sum(g.length for g in inter.geoms))
+        wall_geom = wall_geom.buffer(WALL_BUFFER, cap_style=2, join_style=2)
+    intersection = room_poly.boundary.intersection(wall_geom)
+    if intersection.is_empty:
         return 0.0
+    if hasattr(intersection, "geoms"):
+        return float(sum(round_float(g.length) for g in intersection.geoms))
+    return float(round_float(intersection.length))
+
 
 def opening_on_wall(opening_geom, wall_geom) -> bool:
-    a, b = opening_geom, wall_geom
-    if isinstance(b, (LineString, MultiLineString)):
-        b = b.buffer(WALL_BUFFER, cap_style=2, join_style=2)
-    return a.buffer(OPENING_BUFFER).intersects(b)
+    """Return True when an opening lies on / intersects the wall geometry."""
+    if isinstance(wall_geom, (LineString, MultiLineString)):
+        wall_geom = wall_geom.buffer(WALL_BUFFER, cap_style=2, join_style=2)
+    return opening_geom.buffer(OPENING_BUFFER).intersects(wall_geom)
 
-def index_instances(plan):
+
+def index_instances(plan: Dict[str, Any]):
+    """Build spatial indexes for rooms, walls, and openings."""
     inst = find_instances(plan)
-    rooms, walls, openings = [], [], []
-    for r in inst["rooms"]:
-        g = _geom(r)
-        if g is None or g.is_empty: continue
-        rooms.append(GeoRec(_id(r,"RM"), "Room", r.get("subtype") or r.get("type"), _level(r), g, r))
-    for w in inst["walls"]:
-        g = _geom(w)
-        if g is None or g.is_empty: continue
-        walls.append(GeoRec(_id(w,"WL"), "Wall", w.get("subtype") or w.get("type"), _level(w), g, w))
-    for o in inst["openings"]:
-        g = _geom(o)
-        if g is None or g.is_empty: continue
-        openings.append(GeoRec(_id(o,"OP"), "Opening", o.get("subtype") or o.get("type"), _level(o), g, o))
+    rooms: List[GeoRec] = []
+    walls: List[GeoRec] = []
+    openings: List[GeoRec] = []
+
+    for record in inst["rooms"]:
+        geom = _geom(record)
+        if geom is None or geom.is_empty:
+            continue
+        rooms.append(GeoRec(_id(record, "RM"), "Room", record.get("subtype") or record.get("type"), _level(record), geom, record))
+
+    for record in inst["walls"]:
+        geom = _geom(record)
+        if geom is None or geom.is_empty:
+            continue
+        walls.append(GeoRec(_id(record, "WL"), "Wall", record.get("subtype") or record.get("type"), _level(record), geom, record))
+
+    for record in inst["openings"]:
+        geom = _geom(record)
+        if geom is None or geom.is_empty:
+            continue
+        openings.append(
+            GeoRec(_id(record, "OP"), "Opening", record.get("subtype") or record.get("type"), _level(record), geom, record)
+        )
+
     return {
-        "rooms": rooms, "walls": walls, "openings": openings,
+        "rooms": rooms,
+        "walls": walls,
+        "openings": openings,
         "tree": {
-            "rooms": STRtree([x.geom for x in rooms]) if rooms else None,
-            "walls": STRtree([x.geom for x in walls]) if walls else None,
-            "openings": STRtree([x.geom for x in openings]) if openings else None,
-        }
+            "rooms": STRtree([rec.geom for rec in rooms]) if rooms else None,
+            "walls": STRtree([rec.geom for rec in walls]) if walls else None,
+            "openings": STRtree([rec.geom for rec in openings]) if openings else None,
+        },
     }
 
-def compute_relations(plan):
-    idx = index_instances(plan)
-    rooms, walls, openings = idx["rooms"], idx["walls"], idx["openings"]
 
-    bounded_by = []
-    for r in rooms:
-        cand = walls if idx["tree"]["walls"] is None else [w for w in walls if w.geom.bounds and True]
-        for w in cand:
-            olap = boundary_overlap_length(r.geom, w.geom)
-            if olap >= EPS_LEN:
-                bounded_by.append({
-                    "id": f"E-bnd-{len(bounded_by)+1:05d}",
-                    "room": r.id, "wall": w.id, "length": olap, "wall_type": w.subtype or "unknown"
-                })
+def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
+    """Compute basic spatial relations (bounded_by, adjacency, hosts_opening)."""
+    index = index_instances(plan)
+    rooms, walls, openings = index["rooms"], index["walls"], index["openings"]
 
-    adjacent_to, seen = [], set()
-    for i, ri in enumerate(rooms):
-        for rj in rooms[i+1:]:
-            inter = ri.geom.boundary.intersection(rj.geom.boundary)
-            shared_len = _f(inter.length) if not inter.is_empty else 0.0
-            if shared_len >= EPS_LEN:
-                key = tuple(sorted((ri.id, rj.id)))
-                if key not in seen:
-                    seen.add(key)
-                    adjacent_to.append({
-                        "id": f"E-adj-{len(adjacent_to)+1:05d}",
-                        "a": ri.id, "b": rj.id, "overlap_length": shared_len
-                    })
+    bounded_by: List[Dict[str, Any]] = []
+    for room in rooms:
+        for wall in walls:
+            overlap = boundary_overlap_length(room.geom, wall.geom)
+            if overlap >= EPS_LEN:
+                bounded_by.append(
+                    {
+                        "id": f"E-bnd-{len(bounded_by) + 1:05d}",
+                        "room": room.id,
+                        "wall": wall.id,
+                        "length": overlap,
+                        "wall_type": wall.subtype or "unknown",
+                    }
+                )
 
-    hosts_opening = []
-    for op in openings:
-        cand = walls if idx["tree"]["walls"] is None else walls
-        for w in cand:
-            if opening_on_wall(op.geom, w.geom):
-                hosts_opening.append({
-                    "id": f"E-host-{len(hosts_opening)+1:05d}",
-                    "wall": w.id, "opening": op.id, "opening_type": op.subtype or "opening"
-                })
+    adjacent_to: List[Dict[str, Any]] = []
+    seen_pairs = set()
+    for idx, room_a in enumerate(rooms):
+        for room_b in rooms[idx + 1 :]:
+            intersection = room_a.geom.boundary.intersection(room_b.geom.boundary)
+            shared_length = float(round_float(intersection.length)) if not intersection.is_empty else 0.0
+            if shared_length >= EPS_LEN:
+                key = tuple(sorted((room_a.id, room_b.id)))
+                if key in seen_pairs:
+                    continue
+                seen_pairs.add(key)
+                adjacent_to.append(
+                    {
+                        "id": f"E-adj-{len(adjacent_to) + 1:05d}",
+                        "a": room_a.id,
+                        "b": room_b.id,
+                        "overlap_length": shared_length,
+                    }
+                )
 
-    # leave connected_via_door to the simple routine in the next cell
+    hosts_opening: List[Dict[str, Any]] = []
+    for opening in openings:
+        for wall in walls:
+            if opening_on_wall(opening.geom, wall.geom):
+                hosts_opening.append(
+                    {
+                        "id": f"E-host-{len(hosts_opening) + 1:05d}",
+                        "wall": wall.id,
+                        "opening": opening.id,
+                        "opening_type": opening.subtype or "opening",
+                    }
+                )
+
     return {
         "bounded_by": bounded_by,
         "adjacent_to": adjacent_to,
         "hosts_opening": hosts_opening,
-        "connected_via_door": []  # will be replaced
+        "connected_via_door": [],  # populated later in graph.rebuild_connected_via_door_inplace
     }
+
+
+__all__ = [
+    "GeoRec",
+    "boundary_overlap_length",
+    "compute_relations",
+    "find_instances",
+    "index_instances",
+    "opening_on_wall",
+]

@@ -1,25 +1,6 @@
 from . import io, geometry, graph, visualize
 from .config import PKL_PATH, JSON_DIR, PLOT_DIR, PLOT_LABEL_DIR
-
-# --- Cell 1 ---
-# Remap ID helper
-ROOM_PREFIX = {
-    "bathroom": "BTH",
-    "balcony":"BAL",
-    "bedroom":"BED",
-    "living":"LIV",
-    "kitchen":"KIT",
-    "corridor":"COR",
-    "hall":"HAL",
-    "storage":"STRG",
-    "toilet":"WC",
-    "dining":"DIN",
-    "study":"STD",
-    "laundry":"LDY",
-    "stair":"STR",  
-    "veranda":"VER",
-    "parking":"PRK",
-}
+from .constants import ROOM_PREFIX
 
 def _as_id(x):
     if isinstance(x, str): return x
@@ -81,32 +62,6 @@ def _update_rel_table(tbl, slots, remap):
                     e[slot] = remap[v]
                     changed += 1
     return changed
-
-
-# --- Cell 8 ---
-def _nearest_two_rooms_on_host_walls(door_id, door_geom_map, host_walls, wall_to_rooms, room_geom):
-    cand = []
-    for w in host_walls:
-        cand.extend(list(wall_to_rooms.get(w, [])))
-    cand = list(dict.fromkeys(cand))
-    if not cand: return []
-
-    dg = door_geom_map.get(door_id)
-    if dg is None or dg.is_empty: return cand[:2]
-
-    c = dg.centroid
-    scored = []
-    for rid in cand:
-        rg = room_geom.get(rid)
-        if rg is None or rg.is_empty: continue
-        scored.append((rg.distance(c), rid))
-    scored.sort(key=lambda x: x[0])
-
-    out = []
-    for _, rid in scored:
-        if rid not in out: out.append(rid)
-        if len(out) == 2: break
-    return out
 
 
 def run_pipeline(cfg):

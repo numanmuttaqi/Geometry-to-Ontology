@@ -1,18 +1,38 @@
-from .config import DATA, OUTPUT, JSON_DIR, PLOT_DIR, PLOT_LABEL_DIR, PKL_PATH
+"""Input/output helpers for Geometry-to-Ontology pipelines."""
 
-# --- Cell 15 ---
-# 1) make sure an output dir exists
-OUT_PLOTLABEL_DIR = "resplan_plotlabel"
-os.makedirs(OUT_PLOTLABEL_DIR, exist_ok=True)
+from __future__ import annotations
 
-# 2) draw from JSON (IDs already relabeled)
-ax_or_none = plot_plan_json(json_path, show_ids=True)
-fig = ax_or_none.get_figure() if hasattr(ax_or_none, "get_figure") else plt.gcf()
+import json
+import pickle
+from pathlib import Path
+from typing import Any, Iterable
 
-# 4) save and close
-out_png = os.path.join(OUT_PLOTLABEL_DIR, f"plan_{idx:05d}_ids.png")
-fig.savefig(out_png, dpi=200, bbox_inches="tight")
-plt.close(fig)
+from .config import JSON_DIR, PKL_PATH, PLOT_DIR, PLOT_LABEL_DIR
 
 
-print("Saved:", out_png)
+def load_data(path: str | Path = PKL_PATH) -> Any:
+    """Load the raw ResPlan pickle dataset."""
+    path = Path(path)
+    with path.open("rb") as fh:
+        return pickle.load(fh)
+
+
+def save_json(data: Any, path: str | Path) -> Path:
+    """Write JSON data with UTF-8 encoding and pretty formatting."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as fh:
+        json.dump(data, fh, ensure_ascii=False, indent=2)
+    return path
+
+
+def ensure_output_dirs(extra: Iterable[Path] | None = None) -> None:
+    """Make sure standard output directories exist before writing artefacts."""
+    directories = [JSON_DIR, PLOT_DIR, PLOT_LABEL_DIR]
+    if extra:
+        directories.extend(Path(d) for d in extra)
+    for directory in directories:
+        directory.mkdir(parents=True, exist_ok=True)
+
+
+__all__ = ["load_data", "save_json", "ensure_output_dirs"]

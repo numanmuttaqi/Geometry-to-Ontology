@@ -1,158 +1,121 @@
-from pathlib import Path
+"""Project-level configuration and high-level export helpers."""
 
-ROOT = Path(__file__).parent.parent[1]
+from __future__ import annotations
+
+import json
+import pickle
+from pathlib import Path
+from typing import Any, Dict
+
+import matplotlib.pyplot as plt
+import resplan_utils as R
+
+from .constants import ROOM_KEYS, STRUCT_KEYS
+
+# --- directories and canonical paths ---
+ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 OUTPUT = ROOT / "output"
 PLOT_DIR = OUTPUT / "resplan_plot"
 PLOT_LABEL_DIR = OUTPUT / "resplan_plotlabel"
 JSON_DIR = OUTPUT / "resplan_json"
 PKL_PATH = DATA / "ResPlan.pkl"
-for d in [OUTPUT, PLOT_DIR, PLOT_LABEL_DIR, JSON_DIR]:
-    d.mkdir(parents=True, exist_ok=True)
 
-# --- Cell 12 ---
-def assemble_json(plan, idx, json_relpath, plot_relpath):
-    p      = R.normalize_keys(plan.copy())
-    rooms  = extract_room_instances(p)   # rooms sudah pakai ROOM_PREFIX (langkah #1)
-    struct = split_walls(p)
-    layers = extract_layers(p)
-    meta   = extract_metadata(p, plan_idx=idx, json_relpath=json_relpath, plot_relpath=plot_relpath)
+for directory in (OUTPUT, PLOT_DIR, PLOT_LABEL_DIR, JSON_DIR):
+    directory.mkdir(parents=True, exist_ok=True)
 
-    # >>> relabel & propagate SEBELUM export_graph <<<
-    tmp_plan_for_remap = {"instances": {"room": rooms}, "graph": {"relations": {}}}
-    _ = relabel_rooms_with_subtype_prefixes_inplace(tmp_plan_for_remap)
-    rooms = tmp_plan_for_remap["instances"]["room"]  # rooms sudah ter-relabel konsisten
 
-    graph  = export_graph(p, rooms, struct)  # compute_relations → bounded_by memakai ID baru
+def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Path) -> Dict[str, Any]:
+    """Assemble the enriched JSON artefact for a single plan."""
+    from .plan_utils import extract_layers, extract_metadata, extract_room_instances, split_walls
+    from .graph import export_graph, relabel_rooms_with_subtype_prefixes_inplace
 
-    room_counts   = {k: len(rooms[k]) for k in ROOM_KEYS}
-    rooms_total   = sum(room_counts.values())
-    struct_counts = {k: len(struct[k]) for k in STRUCT_KEYS}
+    normalized = R.normalize_keys(plan.copy())
+    rooms = extract_room_instances(normalized)
+    structural = split_walls(normalized)
+    layers = extract_layers(normalized)
+    metadata = extract_metadata(
+        normalized,
+        plan_idx=idx,
+        json_relpath=str(json_path),
+        plot_relpath=str(plot_path),
+    )
+
+    temp_plan = {"instances": {"room": rooms}, "graph": {"relations": {}}}
+    relabel_rooms_with_subtype_prefixes_inplace(temp_plan)
+    rooms = temp_plan["instances"]["room"]
+
+    graph = export_graph(normalized, rooms, structural)
+
+    room_counts = {key: len(rooms[key]) for key in ROOM_KEYS}
+    struct_counts = {key: len(structural[key]) for key in STRUCT_KEYS}
 
     return {
-        "metadata": meta,
-        "instances": {"room": rooms, "structural": struct},
+        "metadata": metadata,
+        "instances": {"room": rooms, "structural": structural},
         "geom": layers,
         "graph": graph,
         "counts": {
-            "rooms_total": rooms_total, "room": room_counts, "structural": struct_counts
+            "rooms_total": sum(room_counts.values()),
+            "room": room_counts,
+            "structural": struct_counts,
         },
         "relationships": {
             "summary": {
                 "total_relationships": len(graph["edges"]),
-                "adjacency_count": sum(1 for e in graph["edges"] if e["type"] == "adjacent"),
-                "door_connections": sum(1 for e in graph["edges"] if e["type"] == "connected_via_door"),
-                "bounded_by_count": sum(1 for e in graph["edges"] if e["type"] == "bounded_by"),
-                "hosts_opening_count": sum(1 for e in graph["edges"] if e["type"] == "hosts_opening")
+                "adjacency_count": sum(1 for edge in graph["edges"] if edge["type"] == "adjacent"),
+                "door_connections": sum(1 for edge in graph["edges"] if edge["type"] == "connected_via_door"),
+                "bounded_by_count": sum(1 for edge in graph["edges"] if edge["type"] == "bounded_by"),
+                "hosts_opening_count": sum(1 for edge in graph["edges"] if edge["type"] == "hosts_opening"),
             }
-        }
+        },
     }
 
-def export_one(idx, plan):
-    json_path = os.path.join(OUT_JSON_DIR, f"plan_{idx:05d}.json")
-    plot_path = os.path.join(OUT_PLOT_DIR,  f"plan_{idx:05d}.png")
 
-    j = assemble_json(plan, idx, json_path, plot_path)
+def export_one(idx: int, plan: Dict[str, Any]) -> Path:
+    """Export a plan to JSON and companion plot, returning the JSON path."""
+    json_path = JSON_DIR / f"plan_{idx:05d}.json"
+    plot_path = PLOT_DIR / f"plan_{idx:05d}.png"
 
-    # relabel room IDs (BTH/BAL/etc.) BEFORE saving, so edges and relations are aligned
-    _ = relabel_rooms_with_subtype_prefixes_inplace(j)
+    artefact = assemble_json(plan, idx, json_path, plot_path)
+    from .graph import relabel_rooms_with_subtype_prefixes_inplace
 
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(j, f, ensure_ascii=False, indent=2)
+    relabel_rooms_with_subtype_prefixes_inplace(artefact)
 
-    ax = R.plot_plan(plan, title=f"Plan #{idx}")
-    ax.get_figure().savefig(plot_path, bbox_inches="tight", dpi=150)
-    plt.close(ax.get_figure())
+    with json_path.open("w", encoding="utf-8") as fh:
+        json.dump(artefact, fh, ensure_ascii=False, indent=2)
+
+    axis = R.plot_plan(plan, title=f"Plan #{idx}")
+    figure = axis.get_figure()
+    figure.savefig(plot_path, bbox_inches="tight", dpi=150)
+    plt.close(figure)
     return json_path
 
 
-# --- Cell 14 ---
-with open(DATA_PKL, "rb") as f:
-    plans = pickle.load(f)
+if __name__ == "__main__":
+    from .visualize import plot_plan_json
 
-idx = 0
-plan = R.normalize_keys(plans[idx].copy())
-print("Total plans:", len(plans), " sampled idx:", idx)
+    with PKL_PATH.open("rb") as fh:
+        plans = pickle.load(fh)
 
-json_path = export_one(idx, plan)
-print("exported:", json_path)
+    print(f"Total plans: {len(plans)}")
+    failed_indices = []
 
-with open(json_path, "r", encoding="utf-8") as f:
-    enhanced_json = json.load(f)
+    for idx, plan_raw in enumerate(plans):
+        try:
+            plan = R.normalize_keys(plan_raw.copy())
+            json_path = export_one(idx, plan)
 
-print("\nGraph statistics:")
-print(f"- Nodes: {enhanced_json['graph']['statistics']['total_nodes']}")
-print(f"- Edges: {enhanced_json['graph']['statistics']['total_edges']}")
-print(f"- Relationship types: {enhanced_json['graph']['statistics']['relationship_types']}")
-print("\nRoom counts:", enhanced_json["counts"]["room"])
-print("Structural counts:", enhanced_json["counts"]["structural"])
+            labeled_plot_dir = PLOT_LABEL_DIR
+            labeled_plot_path = labeled_plot_dir / f"plan_{idx:05d}_ids.png"
 
-print("\nRelations summary:")
-for k,v in enhanced_json["graph"]["relations"].items():
-    print(f"- {k}: {len(v)}")
+            axis = plot_plan_json(json_path, show_ids=True)
+            figure = axis.get_figure() if hasattr(axis, "get_figure") else plt.gcf()
+            figure.savefig(labeled_plot_path, dpi=200, bbox_inches="tight")
+            plt.close(figure)
+        except Exception as exc:  # pragma: no cover - diagnostic path
+            failed_indices.append(idx)
+            print(f"\nFailed at index {idx}: {exc}")
 
-
-# --- Cell 16 ---
-# import pickle
-# import json
-# import os
-# from tqdm import tqdm
-# import matplotlib.pyplot as plt
-
-# # Load all plans
-# with open(DATA_PKL, "rb") as f:
-#     plans = pickle.load(f)
-
-# # Create output directories
-# OUT_JSON_DIR = "resplan_json"
-# OUT_PNG_DIR = "resplan_png"
-# OUT_PLOTLABEL_DIR = "resplan_plotlabel"
-
-# os.makedirs(OUT_JSON_DIR, exist_ok=True)
-# os.makedirs(OUT_PNG_DIR, exist_ok=True)
-# os.makedirs(OUT_PLOTLABEL_DIR, exist_ok=True)
-
-# print(f"Total plans to process: {len(plans)}")
-
-# # Process all plans
-# failed_indices = []
-
-# for idx in tqdm(range(len(plans)), desc="Processing plans"):
-#     try:
-#         # Normalize and export to JSON
-#         plan = R.normalize_keys(plans[idx].copy())
-#         json_path = export_one(idx, plan)
-        
-#         # Move JSON to dedicated directory if needed
-#         target_json = os.path.join(OUT_JSON_DIR, f"plan_{idx:05d}.json")
-#         if json_path != target_json:
-#             os.rename(json_path, target_json)
-#             json_path = target_json
-        
-#         # Generate unlabeled PNG
-#         ax = plot_plan_json(json_path, show_ids=False)
-#         fig = ax.get_figure() if hasattr(ax, "get_figure") else plt.gcf()
-#         out_png = os.path.join(OUT_PNG_DIR, f"plan_{idx:05d}.png")
-#         fig.savefig(out_png, dpi=200, bbox_inches="tight")
-#         plt.close(fig)
-        
-#         # Generate labeled PNG with IDs
-#         ax = plot_plan_json(json_path, show_ids=True)
-#         fig = ax.get_figure() if hasattr(ax, "get_figure") else plt.gcf()
-#         out_labeled = os.path.join(OUT_PLOTLABEL_DIR, f"plan_{idx:05d}_ids.png")
-#         fig.savefig(out_labeled, dpi=200, bbox_inches="tight")
-#         plt.close(fig)
-        
-#     except Exception as e:
-#         failed_indices.append(idx)
-#         print(f"\nFailed at index {idx}: {e}")
-#         continue
-
-# print(f"\nProcessing complete.")
-# print(f"Successful: {len(plans) - len(failed_indices)}")
-# print(f"Failed: {len(failed_indices)}")
-
-# if failed_indices:
-#     print(f"Failed indices: {failed_indices[:20]}...")  # Show first 20
-#     with open("failed_indices.txt", "w") as f:
-#         f.write("\n".join(map(str, failed_indices)))
+    if failed_indices:
+        print(f"\nFailed indices: {failed_indices}")
