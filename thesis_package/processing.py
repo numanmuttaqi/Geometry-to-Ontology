@@ -107,3 +107,25 @@ def _nearest_two_rooms_on_host_walls(door_id, door_geom_map, host_walls, wall_to
         if rid not in out: out.append(rid)
         if len(out) == 2: break
     return out
+
+
+def run_pipeline(cfg):
+    """
+    Run the full processing pipeline.
+    Return dict artefact: data antar tahap, path output, dan figures.
+    """
+    data = io.load_data(cfg.PKL_PATH)
+    rooms, walls = process_to_instances(data)
+    G = graph.build_graph(rooms, walls)
+    fig1 = visualize.plot_plan(rooms, walls)       # return matplotlib.figure.Figure
+    fig2 = visualize.plot_graph(G)                 # return Figure
+    out = {
+        "rooms": rooms,
+        "walls": walls,
+        "graph": G,
+        "fig_plan": fig1,
+        "fig_graph": fig2,
+        "json_dir": cfg.JSON_DIR,
+        "plots_dir": cfg.PLOT_DIR,
+    }
+    return out

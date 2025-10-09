@@ -1,4 +1,3 @@
-# --- Cell 0 ---
 from . import geometry, graph, io, visualize
 from .config import PKL_PATH, JSON_DIR, PLOT_DIR
 
@@ -65,7 +64,7 @@ def _f(x, nd=6):
 GeoRec = namedtuple("GeoRec", "id cls subtype level geom raw")
 
 
-# --- Cell 3 ---
+# --- define instances ---
 def _walls_as_polygons(plan, fallback_frac=0.01):
     W = R.get_plan_width(plan) or 1.0
     bufw = fallback_frac * W
