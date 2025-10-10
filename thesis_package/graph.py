@@ -9,15 +9,33 @@ from .relations import (
 )
 
 # --- Cell 4 ---
+def _extract_relation_rows(tbl):
+    if isinstance(tbl, dict) and "edges" in tbl:
+        return tbl.get("edges", [])
+    return tbl
+
+
 def _update_rel_table(tbl, slots, remap):
-    if not isinstance(tbl, list): return
-    for e in tbl:
+    rows = _extract_relation_rows(tbl)
+    if not isinstance(rows, list) or not remap:
+        return 0
+    changed = 0
+    for e in rows:
+        if not isinstance(e, dict):
+            continue
         for slot in slots:
             if slot == "rooms" and isinstance(e.get(slot), list):
-                e[slot] = [remap.get(x, x) for x in e[slot]]
+                before = e[slot]
+                after = [remap.get(x, x) for x in before]
+                if after != before:
+                    changed += sum(1 for old, new in zip(before, after) if old != new)
+                e[slot] = after
             else:
                 v = e.get(slot)
-                if v in remap: e[slot] = remap[v]
+                if isinstance(v, str) and v in remap:
+                    e[slot] = remap[v]
+                    changed += 1
+    return changed
 
 def apply_room_id_map_to_relations_inplace(plan: dict, id_map: dict) -> int:
     if not id_map:
@@ -97,8 +115,10 @@ def rebuild_connected_via_door_inplace(plan):
     rel.update(normalize_relation_ids(rel))
     passages = build_connected_via_door_from_hosts(plan)
     rel["connected_via_door"] = passages
-    plan.setdefault("relationships", {}).setdefault("summary", {})
-    plan["relationships"]["summary"]["door_connections"] = len(passages)
+    metadata = plan.setdefault("metadata", {})
+    summary = metadata.setdefault("summary", {})
+    rel_summary = summary.setdefault("relationship_summary", {})
+    rel_summary["door_connections"] = len(passages)
     return passages
 
 
@@ -118,7 +138,11 @@ def export_graph(plan, room_instances, struct_instances=None):
     relations = normalize_relation_ids(relations)
     mock_plan.setdefault("graph", {}).setdefault("relations", relations)
 
-    relations["bounded_by_per_room"] = bounded_by_per_room(relations)
+    bounded_edges = relations.get("bounded_by", [])
+    relations["bounded_by"] = {
+        "edges": bounded_edges,
+        "per_room": bounded_by_per_room({"bounded_by": bounded_edges}),
+    }
 
     # bangun koneksi pintu dari hosts_opening + bounded_by
     passages = build_connected_via_door_from_hosts(mock_plan)
@@ -147,7 +171,7 @@ def export_graph(plan, room_instances, struct_instances=None):
         if len(rel["rooms"]) == 2:
             edges.append({"source": rel["rooms"][0], "target": rel["rooms"][1],
                           "type": "connected_via_door", "properties": {"door": rel["door"]}})
-    for rel in relations["bounded_by"]:
+    for rel in relations["bounded_by"]["edges"]:
         edges.append({"source": rel["room"], "target": rel["wall"], "type": "bounded_by",
                       "properties": {"length": rel["length"], "wall_type": rel["wall_type"]}})
     for rel in relations["hosts_opening"]:
@@ -157,7 +181,8 @@ def export_graph(plan, room_instances, struct_instances=None):
     return {
         "nodes": nodes, "edges": edges, "relations": relations,
         "statistics": {
-            "total_nodes": len(nodes), "total_edges": len(edges),
-            "relationship_types": list(relations.keys())
+            "total_nodes": len(nodes),
+            "total_edges": len(edges),
+            "relationship_types": list(relations.keys()),
         }
     }

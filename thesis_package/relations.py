@@ -32,27 +32,35 @@ def geometry_from_record(record: Any):
         return None
 
 
+def _normalize_entries(entries: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    clean_entries: List[Dict[str, Any]] = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        normalized_entry: Dict[str, Any] = {}
+        for slot, value in entry.items():
+            if slot in {"room", "wall", "opening", "from", "to", "door", "through_wall"}:
+                identifier = as_id(value)
+                if identifier is not None:
+                    normalized_entry[slot] = identifier
+            else:
+                normalized_entry[slot] = value
+        clean_entries.append(normalized_entry)
+    return clean_entries
+
+
 def normalize_relation_ids(relations: Dict[str, Any]) -> Dict[str, Any]:
     """Replace nested dict entries with their identifier values."""
     normalized: Dict[str, Any] = {}
     for key, entries in (relations or {}).items():
+        if isinstance(entries, dict) and "edges" in entries:
+            normalized[key] = dict(entries)
+            normalized[key]["edges"] = _normalize_entries(entries.get("edges", []))
+            continue
         if not isinstance(entries, list):
             normalized[key] = entries
             continue
-        clean_entries: List[Dict[str, Any]] = []
-        for entry in entries:
-            if not isinstance(entry, dict):
-                continue
-            normalized_entry: Dict[str, Any] = {}
-            for slot, value in entry.items():
-                if slot in {"room", "wall", "opening", "from", "to", "door", "through_wall"}:
-                    identifier = as_id(value)
-                    if identifier is not None:
-                        normalized_entry[slot] = identifier
-                else:
-                    normalized_entry[slot] = value
-            clean_entries.append(normalized_entry)
-        normalized[key] = clean_entries
+        normalized[key] = _normalize_entries(entries)
     return normalized
 
 
@@ -117,8 +125,14 @@ def _build_lookups(plan: Dict[str, Any]):
     relations = plan.get("graph", {}).get("relations", {}) or {}
     relations = normalize_relation_ids(relations)
 
+    bounded_rel = relations.get("bounded_by", [])
+    if isinstance(bounded_rel, dict):
+        bounded_iterable = bounded_rel.get("edges", [])
+    else:
+        bounded_iterable = bounded_rel
+
     wall_to_rooms: Dict[str, set] = {}
-    for entry in relations.get("bounded_by", []):
+    for entry in bounded_iterable or []:
         wall_id = entry.get("wall")
         room_id = entry.get("room")
         if wall_id and room_id:

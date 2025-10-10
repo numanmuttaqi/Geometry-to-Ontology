@@ -49,26 +49,29 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
 
     room_counts = {key: len(rooms[key]) for key in ROOM_KEYS}
     struct_counts = {key: len(structural[key]) for key in STRUCT_KEYS}
+    relationship_summary = {
+        "total_relationships": len(graph["edges"]),
+        "adjacency_count": sum(1 for edge in graph["edges"] if edge["type"] == "adjacent"),
+        "door_connections": sum(1 for edge in graph["edges"] if edge["type"] == "connected_via_door"),
+        "bounded_by_count": sum(1 for edge in graph["edges"] if edge["type"] == "bounded_by"),
+        "hosts_opening_count": sum(1 for edge in graph["edges"] if edge["type"] == "hosts_opening"),
+    }
+
+    summary = metadata.setdefault("summary", {})
+    summary.update(
+        {
+            "rooms_total": sum(room_counts.values()),
+            "room_counts": room_counts,
+            "structural_counts": struct_counts,
+            "relationship_summary": relationship_summary,
+        }
+    )
 
     return {
         "metadata": metadata,
         "instances": {"room": rooms, "structural": structural},
         "geom": layers,
         "graph": graph,
-        "counts": {
-            "rooms_total": sum(room_counts.values()),
-            "room": room_counts,
-            "structural": struct_counts,
-        },
-        "relationships": {
-            "summary": {
-                "total_relationships": len(graph["edges"]),
-                "adjacency_count": sum(1 for edge in graph["edges"] if edge["type"] == "adjacent"),
-                "door_connections": sum(1 for edge in graph["edges"] if edge["type"] == "connected_via_door"),
-                "bounded_by_count": sum(1 for edge in graph["edges"] if edge["type"] == "bounded_by"),
-                "hosts_opening_count": sum(1 for edge in graph["edges"] if edge["type"] == "hosts_opening"),
-            }
-        },
     }
 
 
