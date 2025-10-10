@@ -10,7 +10,7 @@ from shapely.geometry import LineString, MultiLineString, MultiPolygon, Point, P
 from shapely.strtree import STRtree
 
 from .constants import EPS_LEN, OPENING_BUFFER, WALL_BUFFER
-from .plan_utils import round_float
+from .plan_utils import format_metric, round_float
 
 
 GeoRec = namedtuple("GeoRec", "id cls subtype level geom raw")
@@ -75,8 +75,10 @@ def boundary_overlap_length(room_poly: Polygon, wall_geom) -> float:
     if intersection.is_empty:
         return 0.0
     if hasattr(intersection, "geoms"):
-        return float(sum(round_float(g.length) for g in intersection.geoms))
-    return float(round_float(intersection.length))
+        total = sum(g.length for g in intersection.geoms)
+    else:
+        total = intersection.length
+    return float(format_metric(total))
 
 
 def opening_on_wall(opening_geom, wall_geom) -> bool:
@@ -150,7 +152,7 @@ def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
     for idx, room_a in enumerate(rooms):
         for room_b in rooms[idx + 1 :]:
             intersection = room_a.geom.boundary.intersection(room_b.geom.boundary)
-            shared_length = float(round_float(intersection.length)) if not intersection.is_empty else 0.0
+            shared_length = format_metric(intersection.length) if not intersection.is_empty else 0.0
             if shared_length >= EPS_LEN:
                 key = tuple(sorted((room_a.id, room_b.id)))
                 if key in seen_pairs:

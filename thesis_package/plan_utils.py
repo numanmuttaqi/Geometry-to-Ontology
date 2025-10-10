@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Iterable, List
+from copy import deepcopy
+import math
+from typing import Any, Dict, Iterable, List, Tuple
 
+from shapely import affinity
 from shapely.geometry import (
     GeometryCollection,
     LineString,
@@ -13,6 +16,7 @@ from shapely.geometry import (
     Polygon,
     shape,
 )
+from shapely.geometry.base import BaseGeometry
 from shapely.geometry import mapping as shp_mapping
 from shapely.ops import unary_union
 
@@ -28,6 +32,11 @@ def round_float(value: Any, ndigits: int = 6) -> Any:
         return round(float(value), ndigits)
     except Exception:
         return value
+
+
+def format_metric(value: Any, ndigits: int = 2) -> Any:
+    """Round metric quantities to the desired decimal precision."""
+    return round_float(value, ndigits)
 
 
 def geojsonify(geom) -> Dict[str, Any]:
@@ -49,12 +58,77 @@ def bbox_of_geom(geom) -> List[float | None]:
     if geom is None or getattr(geom, "is_empty", True):
         return [None, None, None, None]
     minx, miny, maxx, maxy = geom.bounds
-    return [float(minx), float(miny), float(maxx), float(maxy)]
+    return [
+        format_metric(minx),
+        format_metric(miny),
+        format_metric(maxx),
+        format_metric(maxy),
+    ]
 
 
 def assign_ids(count: int, prefix: str) -> List[str]:
     """Generate deterministic identifiers with a `PREFIX-####` pattern."""
     return [f"{prefix}-{i:04d}" for i in range(1, count + 1)]
+
+
+def scale_plan_to_meters(plan: Dict[str, Any], area_tolerance: float = 0.05) -> Tuple[Dict[str, Any], Dict[str, float]]:
+    """Return a copy of `plan` whose geometries/lengths are scaled to meters."""
+    def fmt(value: Any, ndigits: int = 2) -> Any:
+        return round_float(value, ndigits)
+
+    def _scale_geom_value(value, factor: float):
+        if value is None:
+            return None
+        if isinstance(value, BaseGeometry):
+            return affinity.scale(value, xfact=factor, yfact=factor, origin=(0.0, 0.0))
+        if isinstance(value, list):
+            return [_scale_geom_value(v, factor) for v in value]
+        if isinstance(value, tuple):
+            return tuple(_scale_geom_value(list(value), factor))
+        if isinstance(value, dict):
+            return {k: _scale_geom_value(v, factor) for k, v in value.items()}
+        return value
+
+    target_area = (
+        plan.get("net_area")
+        or plan.get("metadata", {}).get("net_area")
+        or plan.get("metadata", {}).get("area")
+    )
+    inner_geom = plan.get("inner")
+    if not target_area or inner_geom is None or getattr(inner_geom, "is_empty", True):
+        return deepcopy(plan), {"factor": 1.0, "computed_net_area": None, "mismatch_pct": None, "area_match": None}
+
+    raw_area = float(inner_geom.area or 0.0)
+    if raw_area <= 0:
+        return deepcopy(plan), {"factor": 1.0, "computed_net_area": None, "mismatch_pct": None, "area_match": None}
+
+    factor = math.sqrt(float(target_area) / raw_area)
+    scaled = deepcopy(plan)
+
+    for key, value in list(scaled.items()):
+        if key in ("metadata", "instances", "graph", "relationships"):
+            continue
+        scaled[key] = _scale_geom_value(value, factor)
+
+    # Scale numeric widths if present
+    for width_key in ("wall_width", "wall_depth", "door_width", "window_width"):
+        if isinstance(scaled.get(width_key), (int, float)):
+            scaled[width_key] = float(scaled[width_key]) * factor
+
+    computed_inner = scaled.get("inner")
+    computed_area = float(computed_inner.area) if computed_inner is not None else None
+    mismatch_pct = None
+    area_match = None
+    if computed_area is not None and float(target_area) > 0:
+        mismatch_pct = abs(computed_area - float(target_area)) / float(target_area)
+        area_match = mismatch_pct <= area_tolerance
+
+    return scaled, {
+        "factor": fmt(factor, ndigits=4),
+        "computed_net_area": fmt(computed_area) if computed_area is not None else None,
+        "mismatch_pct": fmt(mismatch_pct, ndigits=4) if mismatch_pct is not None else None,
+        "area_match": area_match,
+    }
 
 
 def walls_as_polygons(plan: Dict[str, Any], fallback_frac: float = 0.01):
@@ -131,8 +205,8 @@ def instances_from_geom(category: str, geom, min_area: float = 2.0) -> List[Dict
                 "type": category,
                 "geom": geojsonify(poly),
                 "props": {
-                    "area": float(poly.area),
-                    "centroid": (float(centroid.x), float(centroid.y)),
+                    "area": format_metric(poly.area),
+                    "centroid": (format_metric(centroid.x), format_metric(centroid.y)),
                     "bbox": bbox_of_geom(poly),
                 },
             }
@@ -143,7 +217,7 @@ def instances_from_geom(category: str, geom, min_area: float = 2.0) -> List[Dict
 def split_walls(
     plan: Dict[str, Any],
     band_factor: float = 1.0,
-    band_min_frac: float = 0.02,
+    band_min_frac: float = 0.005,
     fallback_frac: float = 0.01,
 ) -> Dict[str, List[Dict[str, Any]]]:
     """Split walls into interior/exterior bands and extract structural instances."""
@@ -152,7 +226,11 @@ def split_walls(
     if inner.geom_type == "MultiPolygon":
         inner = max(inner.geoms, key=lambda geom: geom.area)
     width = R.get_plan_width(normalized) or 1.0
-    wall_thickness = float(normalized.get("wall_width", 4) or 4)
+    wall_thickness = float(
+        normalized.get("wall_width")
+        or normalized.get("wall_depth")
+        or 0.2
+    )
     band_half_width = max(band_factor * wall_thickness, band_min_frac * width)
 
     walls_poly = walls_as_polygons(normalized, fallback_frac=fallback_frac)
@@ -162,11 +240,11 @@ def split_walls(
     interior_wall = walls_poly.difference(boundary_band).buffer(0)
 
     return {
-        "interior_wall": instances_from_geom("interior_wall", interior_wall),
-        "exterior_wall": instances_from_geom("exterior_wall", exterior_wall),
-        "door": instances_from_geom("door", normalized.get("door")),
-        "window": instances_from_geom("window", normalized.get("window")),
-        "front_door": instances_from_geom("front_door", normalized.get("front_door")),
+        "interior_wall": instances_from_geom("interior_wall", interior_wall, min_area=0.001),
+        "exterior_wall": instances_from_geom("exterior_wall", exterior_wall, min_area=0.001),
+        "door": instances_from_geom("door", normalized.get("door"), min_area=0.0025),
+        "window": instances_from_geom("window", normalized.get("window"), min_area=0.0025),
+        "front_door": instances_from_geom("front_door", normalized.get("front_door"), min_area=0.0025),
     }
 
 
@@ -210,19 +288,17 @@ def extract_room_instances(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any
 
         ids = assign_ids(len(geometries), prefix)
         for instance_id, geom_obj in zip(ids, geometries, strict=False):
-            centroid = geom_obj.centroid
-            centroid_xy = (
-                (float(centroid.x), float(centroid.y))
-                if centroid is not None and not geom_obj.is_empty
-                else (None, None)
-            )
+            centroid = geom_obj.centroid if geom_obj is not None else None
+            centroid_xy = (None, None)
+            if centroid is not None and not geom_obj.is_empty:
+                centroid_xy = (format_metric(centroid.x), format_metric(centroid.y))
             result[subtype].append(
                 {
                     "id": instance_id,
                     "type": subtype,
                     "geom": geojsonify(geom_obj),
                     "props": {
-                        "area": float(getattr(geom_obj, "area", 0.0)),
+                        "area": format_metric(getattr(geom_obj, "area", 0.0)),
                         "centroid": centroid_xy,
                         "bbox": bbox_of_geom(geom_obj),
                     },
@@ -278,7 +354,9 @@ __all__ = [
     "extract_room_instances",
     "instances_from_geom",
     "geojsonify",
+    "scale_plan_to_meters",
     "round_float",
+    "format_metric",
     "split_walls",
     "walls_as_polygons",
 ]

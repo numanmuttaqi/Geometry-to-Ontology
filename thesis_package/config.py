@@ -27,13 +27,21 @@ for directory in (OUTPUT, PLOT_DIR, PLOT_LABEL_DIR, JSON_DIR):
 
 def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Path) -> Dict[str, Any]:
     """Assemble the enriched JSON artefact for a single plan."""
-    from .plan_utils import extract_layers, extract_metadata, extract_room_instances, split_walls
+    from .plan_utils import (
+        extract_layers,
+        extract_metadata,
+        extract_room_instances,
+        format_metric,
+        scale_plan_to_meters,
+        split_walls,
+    )
     from .graph import export_graph, relabel_rooms_with_subtype_prefixes_inplace
 
     normalized = R.normalize_keys(plan.copy())
-    rooms = extract_room_instances(normalized)
-    structural = split_walls(normalized)
-    layers = extract_layers(normalized)
+    scaled_plan, scale_info = scale_plan_to_meters(normalized)
+    rooms = extract_room_instances(scaled_plan)
+    structural = split_walls(scaled_plan)
+    layers = extract_layers(scaled_plan)
     metadata = extract_metadata(
         normalized,
         plan_idx=idx,
@@ -45,7 +53,7 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
     relabel_rooms_with_subtype_prefixes_inplace(temp_plan)
     rooms = temp_plan["instances"]["room"]
 
-    graph = export_graph(normalized, rooms, structural)
+    graph = export_graph(scaled_plan, rooms, structural)
 
     room_counts = {key: len(rooms[key]) for key in ROOM_KEYS}
     struct_counts = {key: len(structural[key]) for key in STRUCT_KEYS}
@@ -66,6 +74,15 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
             "relationship_summary": relationship_summary,
         }
     )
+    if scale_info:
+        summary.update(
+            {
+                "scale_factor": scale_info.get("factor"),
+                "computed_net_area": scale_info.get("computed_net_area"),
+                "area_mismatch_pct": scale_info.get("mismatch_pct"),
+                "area_match": scale_info.get("area_match"),
+            }
+        )
 
     return {
         "metadata": metadata,
