@@ -7,9 +7,6 @@ from thesis_package import io as io_mod
 from thesis_package import geometry
 from thesis_package import graph
 from thesis_package import visualize
-from thesis_package import processing
-from thesis_package import ml
-from thesis_package import misc
 from . import processing, config
 
 def main():

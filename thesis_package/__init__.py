@@ -6,7 +6,6 @@ __all__ = [
     "geometry",
     "graph",
     "plan_utils",
-    "processing",
     "relations",
     "visualize",
     "io",
