@@ -1,4 +1,4 @@
-from . import config, constants, geometry, graph, io, plan_utils, processing, relations, visualize
+from . import config, constants, geometry, graph, io, plan_utils, relations, synthetic, visualize
 
 __all__ = [
     "config",
@@ -7,6 +7,7 @@ __all__ = [
     "graph",
     "plan_utils",
     "relations",
+    "synthetic",
     "visualize",
     "io",
 ]
