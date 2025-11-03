@@ -10,6 +10,7 @@ from typing import Any, Dict
 import matplotlib.pyplot as plt
 import resplan_utils as R
 
+from .circulation import build_circulation
 from .constants import ROOM_KEYS, STRUCT_KEYS
 
 # --- directories and canonical paths ---
@@ -55,6 +56,12 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
 
     graph = export_graph(scaled_plan, rooms, structural)
 
+    circulation_plan = {
+        "instances": {"room": rooms, "structural": structural},
+        "graph": graph,
+    }
+    circulation = build_circulation(circulation_plan)
+
     room_counts = {key: len(rooms[key]) for key in ROOM_KEYS}
     struct_counts = {key: len(structural[key]) for key in STRUCT_KEYS}
     relationship_summary = {
@@ -88,6 +95,7 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
         "metadata": metadata,
         "instances": {"room": rooms, "structural": structural},
         "geom": layers,
+        "circulation": circulation,
         "graph": graph,
     }
 

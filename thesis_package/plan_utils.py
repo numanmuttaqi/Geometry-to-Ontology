@@ -71,6 +71,31 @@ def assign_ids(count: int, prefix: str) -> List[str]:
     return [f"{prefix}-{i:04d}" for i in range(1, count + 1)]
 
 
+def extract_bbox(record: Dict[str, Any]) -> List[float] | None:
+    """
+    Return the bounding box stored on a record, or compute it from geometry if needed.
+    """
+    if not isinstance(record, dict):
+        return None
+    props = record.get("props")
+    if isinstance(props, dict):
+        bbox = props.get("bbox")
+        if isinstance(bbox, (list, tuple)) and len(bbox) == 4:
+            try:
+                return [float(bbox[0]), float(bbox[1]), float(bbox[2]), float(bbox[3])]
+            except (TypeError, ValueError):
+                pass
+    geom = record.get("geom")
+    if isinstance(geom, dict):
+        try:
+            shapely_geom = shape(geom)
+        except Exception:
+            shapely_geom = None
+        if shapely_geom is not None:
+            return bbox_of_geom(shapely_geom)
+    return None
+
+
 def scale_plan_to_meters(plan: Dict[str, Any], area_tolerance: float = 0.05) -> Tuple[Dict[str, Any], Dict[str, float]]:
     """Return a copy of `plan` whose geometries/lengths are scaled to meters."""
     def fmt(value: Any, ndigits: int = 2) -> Any:

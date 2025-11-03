@@ -8,7 +8,9 @@ import random
 from pathlib import Path
 from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
-STRUCT_CATEGORIES = ("interior_wall", "door", "window")
+from .circulation import build_circulation
+
+STRUCT_CATEGORIES = ("interior_wall","exterior_wall", "door", "window", "front_door")
 
 
 def load_plan(path: Path) -> Dict:
@@ -79,6 +81,7 @@ def remove_structural_elements(
         return mutated
 
     _purge_graph(mutated, removed_ids)
+    _rebuild_circulation(mutated)
     _update_summary_counts(mutated)
     return mutated
 
@@ -224,3 +227,13 @@ def _update_summary_counts(plan: Mapping) -> None:
         return
     counts = {cat: len(structural.get(cat, []) or []) for cat in STRUCT_CATEGORIES}
     summary["structural_counts"] = counts
+
+
+def _rebuild_circulation(plan: Mapping) -> None:
+    if not isinstance(plan, dict):
+        return
+    circulation = build_circulation(plan)
+    if isinstance(circulation, dict) and circulation:
+        plan["circulation"] = circulation
+    else:
+        plan.pop("circulation", None)

@@ -58,6 +58,28 @@ def apply_room_id_map_to_relations_inplace(plan: dict, id_map: dict) -> int:
         total += _update_rel_table(grel.get("window_connects"),    ["from","to"],id_map)
         total += _update_rel_table(grel.get("contains"),           ["container"],id_map)
 
+    circ = plan.get("circulation")
+    if isinstance(circ, dict):
+        rooms = circ.get("room_nodes")
+        if isinstance(rooms, list):
+            circ["room_nodes"] = [id_map.get(node, node) for node in rooms]
+        door_edges = circ.get("door_edges")
+        if isinstance(door_edges, list):
+            remapped_edges = []
+            for edge in door_edges:
+                if isinstance(edge, list) and len(edge) == 3:
+                    a, b, door = edge
+                    remapped_edges.append([id_map.get(a, a), id_map.get(b, b), door])
+            circ["door_edges"] = remapped_edges
+        paths = circ.get("reachability_paths")
+        if isinstance(paths, dict):
+            remapped_paths = {}
+            for key, path in paths.items():
+                new_key = id_map.get(key, key)
+                if isinstance(path, list):
+                    remapped_paths[new_key] = [id_map.get(node, node) for node in path]
+            circ["reachability_paths"] = remapped_paths
+
     return total
 
 def relabel_rooms_with_subtype_prefixes_inplace(plan):
