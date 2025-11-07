@@ -12,15 +12,8 @@ import resplan_utils as R
 
 from .circulation import build_circulation
 from .constants import ROOM_KEYS, STRUCT_KEYS
-
-# --- directories and canonical paths ---
-ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "data"
-OUTPUT = ROOT / "output"
-PLOT_DIR = OUTPUT / "resplan_plot"
-PLOT_LABEL_DIR = OUTPUT / "resplan_plotlabel"
-JSON_DIR = OUTPUT / "resplan_json"
-PKL_PATH = DATA / "ResPlan.pkl"
+# --- directories and canonical paths import from config_path ---
+from .config_path import ROOT, DATA, OUTPUT, PLOT_DIR, PLOT_LABEL_DIR, JSON_DIR, PKL_PATH
 
 for directory in (OUTPUT, PLOT_DIR, PLOT_LABEL_DIR, JSON_DIR):
     directory.mkdir(parents=True, exist_ok=True)
