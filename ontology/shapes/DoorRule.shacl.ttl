@@ -1,0 +1,73 @@
+@prefix sh:         <http://www.w3.org/ns/shacl#> .
+@prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+@prefix bot:        <https://w3id.org/bot#> .
+@prefix ifc:        <https://w3id.org/ifc/IFC4_ADD2#> .
+@prefix igml-core:  <http://www.opengis.net/indoorgml/1.0/core#> .
+@prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
+@prefix resplan:    <http://resplan.org/resplan#> .
+
+### DW1: Every Door must belong to exactly one wall
+resplan:DW1_DoorHasExactlyOneWall a sh:NodeShape ;
+    sh:targetClass resplan:Door ;
+    sh:property [
+        sh:path [ sh:inversePath resplan:hostsOpening] ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Door is not hosted by a wall" ; # specify error message
+    ] .
+
+### DW2: Door width compliance (internal doors >= 0.8m, external doors >= 0.9m)
+resplan:DW2_DoorWidth_Min a sh:NodeShape ;
+  sh:targetClass resplan:Door ;
+  sh:property [
+    sh:path resplan:width ;
+    sh:minInclusive 0.80 ;
+    sh:datatype xsd:double ;
+    sh:message "Door width < 0.80 m (internal door minimum)." ;
+  ] .
+
+### DW3: Door Missing = If there is a space adjacent with another space via a door 'connectedViaDoor', the door connects spaces
+resplan:DW3_ConnectedViaDoorImpliesDoor a sh:NodeShape ;
+    sh:targetClass bot:Space ;
+    sh:sparql [
+        sh:message "connectedViaDoor declared between rooms, but no door instance connects them." ;
+        sh:select """
+        PREFIX resplan: <http://resplan.org/resplan#>
+        PREFIX bot: <https://w3id.org/bot#>
+        SELECT ?this WHERE {
+            ?this resplan:connectedViaDoor ?other .
+            FILTER (?this != ?other)
+            FILTER NOT EXISTS {
+                ?this resplan:boundedBy ?wall .
+                ?other resplan:boundedBy ?wall .
+                ?wall resplan:hostsOpening ?door .
+                ?door a resplan:Door .
+            }
+        }
+        """ ;
+    ] .
+
+### DW4: Wall Missing = Doors must connect exactly two spaces with shared boundary wall
+resplan:DW4_DoorsImpliesSharedBoundary a sh:NodeShape ;
+    sh:targetClass resplan:Door ;
+    sh:sparql [
+        sh:message "Door does not connect exactly two spaces with shared boundary wall." ;
+        sh:select """
+        PREFIX resplan: <http://resplan.org/resplan#>
+        SELECT DISTINCT ?this WHERE {
+            ?this a resplan:Door .
+            FILTER NOT EXISTS {
+                ?wall resplan:hostsOpening ?this .
+                ?a resplan:boundedBy ?wall .
+                ?b resplan:boundedBy ?wall .
+                FILTER (?a != ?b)
+                FILTER NOT EXISTS {
+                    ?c resplan:boundedBy ?wall .
+                    FILTER (?c != ?a && ?c != ?b)
+                }
+            }
+        }
+        """ ;
+    ] .

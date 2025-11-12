@@ -5,7 +5,7 @@
 @prefix ifc:        <https://w3id.org/ifc/IFC4_ADD2#> .
 @prefix igml-core:  <http://www.opengis.net/indoorgml/1.0/core#> .
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
-@prefix resplan:    <http://example.org/resplan#> .
+@prefix resplan:    <http://resplan.org/resplan#> .
 
 
 resplan: ResPlan a rdfs:Class ;
@@ -94,7 +94,7 @@ resplan:datasetName a owl:DatatypeProperty ; #id
 resplan:unitType a owl:DatatypeProperty ; 
     rdfs:domain resplan:ResPlan ;
     rdfs:range xsd:string ;
-    rdfs:comment "Type of residential unit, e.g., Apartment or House." .
+    rdfs:comment "Type of floorplan: residential unit." .
 resplan:planArea a owl:DatatypeProperty ;
     rdfs:domain resplan:ResPlan ;
     rdfs:range xsd:decimal ;
