@@ -1,0 +1,147 @@
+@prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+@prefix bot:        <https://w3id.org/bot#> .
+@prefix ifc:        <https://w3id.org/ifc/IFC4_ADD2#> .
+@prefix igml-core:  <http://www.opengis.net/indoorgml/1.0/core#> .
+@prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
+@prefix resplan:    <http://example.org/resplan#> .
+
+
+resplan: ResPlan a rdfs:Class ;
+    rdfs:label "ResPlan" ;
+    rdfs:comment "The ResPlan ontology for representing building evacuation plans." ;
+    rdfs:subClassOf bot:BuildingInformationModel .
+
+# ------ CLASSES: CORE ELEMENT ------ #
+resplan: InteriorWall a rdfs:Class ;
+    rdfs:label "Interior Wall" ;
+    rdfs:comment "An interior wall within a building." ;
+    rdfs:subClassOf ifc:Wall .
+
+resplan: ExteriorWall a rdfs:Class ;
+    rdfs:label "Exterior Wall" ;
+    rdfs:comment "An exterior wall of a building." ;
+    rdfs:subClassOf ifc:Wall .
+
+resplan: FrontDoor a rdfs:Class ;
+    rdfs:label "Front Door" ;
+    rdfs:comment "The main entrance door of a building." ;
+    rdfs:subClassOf ifc:Door .
+
+resplan: Door a owl:Class ;
+    rdfs:label "Door" ;
+    rdfs:subClassOf ifc:Door .
+
+resplan: Window a owl:Class ;
+    rdfs:label "Window" ;
+    rdfs:subClassOf ifc:Window .
+
+resplan: Room a rdfs:Class ;
+    rdfs:label "Room" ;
+    rdfs:comment "A room within a building." ;
+    rdfs:subClassOf bot:Space . #need to check
+
+resplan: RoomType a rdfs:Class ;
+    rdfs:label "Room Type" ;
+    rdfs:comment "A specific type of room within a building." ;
+    rdfs:subClassOf resplan:Room .
+
+resplan: EntryNode a rdfs:Class ;
+    rdfs:label "Entry Node" ;
+    rdfs:comment "A node representing an entry or exit point in the building." ;
+    rdfs:subClassOf resplan:FrontDoor.
+
+# ------ CLASSES: ROOM ------ #
+resplan:LivingRoom a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .
+resplan:Bedroom a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .
+resplan:Kitchen a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .
+resplan:Bathroom a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .
+resplan:Storage a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .
+resplan:Balcony a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .
+resplan:Stair a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .
+resplan:Veranda a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .
+resplan:Parking a rdfs:Class ;
+    rdfs:subClassOf resplan:RoomType .  
+
+# ------ PROPERTIES ------ #
+# OBJECT PROPERTIES 
+resplan:hasRoomType     a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range resplan:RoomType .
+resplan:boundedBy       a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range ifc:Wall .
+resplan:hostsOpening    a owl:ObjectProperty ;
+    rdfs:domain ifc:Wall ;
+    rdfs:range resplan:Door , resplan:Window ;
+    rdfs:comment "Associates a wall with the door or window hosted on it." .
+resplan:adjacentTo      a owl:ObjectProperty ; rdfs:domain bot:Space; rdfs:range bot:Space .  
+resplan:connectedViaDoor a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range bot:Space . # a door to each space
+resplan:hasWindow       a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range resplan:Window .
+resplan:isReachableFrom  a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range resplan:EntryNode .
+
+# DATA PROPERTIES
+# ------ To store Metadata about the plan ------ #
+resplan:datasetName a owl:DatatypeProperty ; #id
+    rdfs:domain resplan:ResPlan ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Name of the dataset this plan belongs to." .
+resplan:unitType a owl:DatatypeProperty ; 
+    rdfs:domain resplan:ResPlan ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Type of residential unit, e.g., Apartment or House." .
+resplan:planArea a owl:DatatypeProperty ;
+    rdfs:domain resplan:ResPlan ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Gross floor area of the plan in square meters." .
+resplan:netArea a owl:DatatypeProperty ;
+    rdfs:domain resplan:ResPlan ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Net usable area of the plan in square meters." .
+resplan:sourceFile a owl:DatatypeProperty ;
+    rdfs:domain resplan:ResPlan ;
+    rdfs:range xsd:anyURI ;
+    rdfs:comment "Local file path of the original source (e.g. .pkl file)." .
+resplan:jsonPath a owl:DatatypeProperty ;
+    rdfs:domain resplan:ResPlan ;
+    rdfs:range xsd:anyURI ;
+    rdfs:comment "Path to the exported JSON file." .
+resplan:plotPath a owl:DatatypeProperty ;
+    rdfs:domain resplan:ResPlan ;
+    rdfs:range xsd:anyURI ;
+    rdfs:comment "Path to the visualization plot image file." .
+
+# ------ Room-level measurements (align with json props) ------ #
+resplan:roomArea a owl:DatatypeProperty ;
+    rdfs:domain resplan:Room ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Net area of an individual room instance." .
+resplan:centroidX a owl:DatatypeProperty ;
+    rdfs:domain resplan:Room ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Room centroid X coordinate in plan units." .
+resplan:centroidY a owl:DatatypeProperty ;
+    rdfs:domain resplan:Room ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Room centroid Y coordinate in plan units." .
+resplan:bboxMinX a owl:DatatypeProperty ;
+    rdfs:domain resplan:Room ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Minimum X coordinate of the room bounding box." .
+resplan:bboxMinY a owl:DatatypeProperty ;
+    rdfs:domain resplan:Room ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Minimum Y coordinate of the room bounding box." .
+resplan:bboxMaxX a owl:DatatypeProperty ;
+    rdfs:domain resplan:Room ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Maximum X coordinate of the room bounding box." .
+resplan:bboxMaxY a owl:DatatypeProperty ;
+    rdfs:domain resplan:Room ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Maximum Y coordinate of the room bounding box." .
