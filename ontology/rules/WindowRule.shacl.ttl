@@ -1,0 +1,19 @@
+@prefix sh:         <http://www.w3.org/ns/shacl#> .
+@prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
+@prefix bot:        <https://w3id.org/bot#> .
+@prefix ifc:        <https://w3id.org/ifc/IFC4_ADD2#> .
+@prefix igml-core:  <http://www.opengis.net/indoorgml/1.0/core#> .
+@prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
+@prefix resplan:    <http://resplan.org/resplan#> .
+
+### W1: Every habitable room must have at least one window
+
+### W2: A good room ventilation requires total 2 cross windows on different (opposite) walls
+
+### W3: Window is not mandatory if mechanical ventilation is present (HVAC system)
+
+### W4: Interior rooms with no windows is not habitable
+
+### W5: Windows only on exterior walls
