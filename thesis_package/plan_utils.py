@@ -68,8 +68,8 @@ def bbox_of_geom(geom) -> List[float | None]:
 
 
 def assign_ids(count: int, prefix: str) -> List[str]:
-    """Generate deterministic identifiers with a `PREFIX-####` pattern."""
-    return [f"{prefix}-{i:04d}" for i in range(1, count + 1)]
+    """Generate deterministic identifiers with a `PREFIX-##` pattern."""
+    return [f"{prefix}-{i:02d}" for i in range(1, count + 1)]
 
 
 def extract_bbox(record: Dict[str, Any]) -> List[float] | None:
