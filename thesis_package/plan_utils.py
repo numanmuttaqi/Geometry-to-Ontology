@@ -10,6 +10,7 @@ from shapely import affinity
 from shapely.geometry import (
     GeometryCollection,
     LineString,
+    LinearRing,
     MultiLineString,
     MultiPolygon,
     Point,
@@ -18,7 +19,7 @@ from shapely.geometry import (
 )
 from shapely.geometry.base import BaseGeometry
 from shapely.geometry import mapping as shp_mapping
-from shapely.ops import unary_union
+from shapely.ops import split as shp_split, unary_union
 
 import resplan_utils as R
 
@@ -184,12 +185,89 @@ def _iter_polygons(geom) -> Iterable[Polygon]:
             yield from _iter_polygons(part)
 
 
-def instances_from_geom(category: str, geom, min_area: float = 2.0) -> List[Dict[str, Any]]:
+def _is_axis_aligned_rectangle(poly: Polygon, tol: float = 1e-6) -> bool:
+    coords = list(poly.exterior.coords)
+    if len(coords) != 5:
+        return False
+    minx, miny, maxx, maxy = poly.bounds
+    return abs(poly.area - (maxx - minx) * (maxy - miny)) <= tol
+
+
+def _find_reflex_vertices(poly: Polygon, tol: float = 1e-9) -> List[Tuple[float, float]]:
+    coords = list(poly.exterior.coords)
+    if len(coords) < 4:
+        return []
+    ring = LinearRing(coords)
+    is_ccw = ring.is_ccw
+    coords = coords[:-1]
+    n = len(coords)
+    reflex: List[Tuple[float, float]] = []
+    for i in range(n):
+        ax, ay = coords[i - 1]
+        bx, by = coords[i]
+        cx, cy = coords[(i + 1) % n]
+        v1x, v1y = bx - ax, by - ay
+        v2x, v2y = cx - bx, cy - by
+        cross = v1x * v2y - v1y * v2x
+        if (is_ccw and cross < -tol) or ((not is_ccw) and cross > tol):
+            reflex.append((bx, by))
+    return reflex
+
+
+def _build_splitter(poly: Polygon, vertex: Tuple[float, float], axis: str) -> LineString:
+    minx, miny, maxx, maxy = poly.bounds
+    if axis == "vertical":
+        return LineString([(vertex[0], miny - 1.0), (vertex[0], maxy + 1.0)])
+    return LineString([(minx - 1.0, vertex[1]), (maxx + 1.0, vertex[1])])
+
+
+def _rectilinear_split(poly: Polygon, tol: float = 1e-9) -> List[Polygon]:
+    if _is_axis_aligned_rectangle(poly):
+        return [poly]
+    reflex_vertices = _find_reflex_vertices(poly, tol=tol)
+    if not reflex_vertices:
+        return [poly]
+
+    minx, miny, maxx, maxy = poly.bounds
+    width = maxx - minx
+    height = maxy - miny
+    axis_order = ["vertical", "horizontal"] if width >= height else ["horizontal", "vertical"]
+
+    for vertex in reflex_vertices:
+        for axis in axis_order:
+            splitter = _build_splitter(poly, vertex, axis)
+            split_result = shp_split(poly, splitter)
+            parts = [geom for geom in split_result.geoms if geom.area > tol]
+            if len(parts) > 1:
+                rectangles: List[Polygon] = []
+                for part in parts:
+                    rectangles.extend(_rectilinear_split(part, tol))
+                return rectangles
+    return [poly]
+
+
+def _rectilinearize(polygons: Iterable[Polygon]) -> List[Polygon]:
+    rectified: List[Polygon] = []
+    for poly in polygons:
+        if not isinstance(poly, Polygon):
+            continue
+        rectified.extend(_rectilinear_split(poly))
+    return rectified
+
+
+def instances_from_geom(
+    category: str,
+    geom,
+    min_area: float = 2.0,
+    rectilinearize: bool = False,
+) -> List[Dict[str, Any]]:
     """Convert a geometry into instance dictionaries when shapes are significant."""
     if geom is None or getattr(geom, "is_empty", True):
         return []
 
     polygons = list(_iter_polygons(geom))
+    if rectilinearize:
+        polygons = _rectilinearize(polygons)
     if not polygons:
         print(f"WARNING: Unexpected geometry type for {category}: {getattr(geom, 'geom_type', type(geom))}")
         return []
@@ -265,8 +343,18 @@ def split_walls(
     interior_wall = walls_poly.difference(boundary_band).buffer(0)
 
     return {
-        "interior_wall": instances_from_geom("interior_wall", interior_wall, min_area=0.001),
-        "exterior_wall": instances_from_geom("exterior_wall", exterior_wall, min_area=0.001),
+        "interior_wall": instances_from_geom(
+            "interior_wall",
+            interior_wall,
+            min_area=0.001,
+            rectilinearize=True,
+        ),
+        "exterior_wall": instances_from_geom(
+            "exterior_wall",
+            exterior_wall,
+            min_area=0.001,
+            rectilinearize=True,
+        ),
         "door": instances_from_geom("door", normalized.get("door"), min_area=0.0025),
         "window": instances_from_geom("window", normalized.get("window"), min_area=0.0025),
         "front_door": instances_from_geom("front_door", normalized.get("front_door"), min_area=0.0025),

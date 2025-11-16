@@ -8,12 +8,78 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
-### W1: Every habitable room must have at least one window
+### W1: Every habitable room (Living/Bedroom/Kitchen) must have at least one window
+resplan:W1_MinOneWindow_Habitable
+  a sh:NodeShape ;
+  sh:targetClass bot:Space ;
+  sh:sparql [
+    sh:message "Habitable space (Living/Bedroom/Kitchen) has no window hosted on its walls." ;
+    sh:select """
+      PREFIX resplan: <http://resplan.org/resplan#>
+      SELECT ?this WHERE {
+        ?this resplan:hasRoomType ?type .
+        FILTER (?type IN (resplan:LivingRoom, resplan:Bedroom, resplan:Kitchen))
+        FILTER NOT EXISTS {
+          ?this resplan:boundedBy ?wall .
+          ?wall resplan:hostsOpening ?window .
+          ?window a resplan:Window .
+        }
+      }
+    """ ;
+  ] .
 
-### W2: A good room ventilation requires total 2 cross windows on different (opposite) walls
 
-### W3: Window is not mandatory if mechanical ventilation is present (HVAC system)
+### W2: Bathrooms must have a window (since mechanical ventilation is not modelled)
+resplan:W2_BathroomNeedsWindow
+  a sh:NodeShape ;
+  sh:targetClass bot:Space ;
+  sh:sparql [
+    sh:message "Bathroom has no window hosted on its walls." ;
+    sh:select """
+      PREFIX resplan: <http://resplan.org/resplan#>
+      SELECT ?this WHERE {
+        ?this resplan:hasRoomType resplan:Bathroom .
+        FILTER NOT EXISTS {
+          ?this resplan:boundedBy ?wall .
+          ?wall resplan:hostsOpening ?window .
+          ?window a resplan:Window .
+        }
+      }
+    """ ;
+  ] .
 
-### W4: Interior rooms with no windows is not habitable
+### W3: Habitable rooms must share at least one exterior wall
+resplan:W3_HabitableHasExteriorWall
+  a sh:NodeShape ;
+  sh:targetClass bot:Space ;
+  sh:sparql [
+    sh:message "Habitable space (Living/Bedroom/Kitchen) has no bounding exterior wall." ;
+    sh:select """
+      PREFIX resplan: <http://resplan.org/resplan#>
+      SELECT ?this WHERE {
+        ?this resplan:hasRoomType ?type .
+        FILTER (?type IN (resplan:LivingRoom, resplan:Bedroom, resplan:Kitchen))
+        FILTER NOT EXISTS {
+          ?this resplan:boundedBy ?wall .
+          ?wall a resplan:ExteriorWall .
+        }
+      }
+    """ ;
+  ] .
 
-### W5: Windows only on exterior walls
+### W4: Windows must be hosted only on exterior walls
+resplan:W4_WindowOnExteriorWallOnly
+  a sh:NodeShape ;
+  sh:targetClass resplan:Window ;
+  sh:sparql [
+    sh:message "Window must be mounted on an exterior wall." ;
+    sh:select """
+      PREFIX resplan: <http://resplan.org/resplan#>
+      SELECT ?this WHERE {
+        ?wall resplan:hostsOpening ?this .
+        FILTER NOT EXISTS {
+          ?wall a resplan:ExteriorWall .
+        }
+      }
+    """ ;
+  ] .

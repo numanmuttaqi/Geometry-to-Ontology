@@ -3520,5 +3520,258 @@
         "connected_via_door"
       ]
     }
+  },
+  "circulation": {
+    "entry_node": "front_door_FR-0001",
+    "room_nodes": [
+      "LIV-0001",
+      "BAL-0002",
+      "BED-0001",
+      "BED-0002",
+      "BTH-0001",
+      "BAL-0001",
+      "BTH-0002"
+    ],
+    "door_edges": [
+      [
+        "BED-0001",
+        "BTH-0002",
+        "DO-0001"
+      ],
+      [
+        "LIV-0001",
+        "BED-0001",
+        "DO-0002"
+      ],
+      [
+        "BTH-0001",
+        "LIV-0001",
+        "DO-0003"
+      ],
+      [
+        "BED-0002",
+        "LIV-0001",
+        "DO-0004"
+      ],
+      [
+        "BED-0001",
+        "BAL-0001",
+        "DO-0005"
+      ],
+      [
+        "LIV-0001",
+        "BAL-0002",
+        "DO-0006"
+      ]
+    ],
+    "reachability_paths": {
+      "LIV-0001": [
+        "front_door_FR-0001",
+        "LIV-0001"
+      ],
+      "BAL-0002": [
+        "front_door_FR-0001",
+        "LIV-0001",
+        "BAL-0002"
+      ],
+      "BED-0001": [
+        "front_door_FR-0001",
+        "LIV-0001",
+        "BED-0001"
+      ],
+      "BED-0002": [
+        "front_door_FR-0001",
+        "LIV-0001",
+        "BED-0002"
+      ],
+      "BTH-0001": [
+        "front_door_FR-0001",
+        "LIV-0001",
+        "BTH-0001"
+      ],
+      "BAL-0001": [
+        "front_door_FR-0001",
+        "LIV-0001",
+        "BED-0001",
+        "BAL-0001"
+      ],
+      "BTH-0002": [
+        "front_door_FR-0001",
+        "LIV-0001",
+        "BED-0001",
+        "BTH-0002"
+      ]
+    },
+    "window_analysis": {
+      "windows": [
+        {
+          "id": "WI-0001",
+          "wall": "EX-0002",
+          "area": 0.12
+        },
+        {
+          "id": "WI-0002",
+          "wall": "EX-0004",
+          "area": 0.13
+        },
+        {
+          "id": "WI-0003",
+          "wall": "EX-0005",
+          "area": 0.31
+        },
+        {
+          "id": "WI-0004",
+          "wall": "EX-0003",
+          "area": 0.39
+        }
+      ],
+      "rooms": [
+        {
+          "room": "BAL-0001",
+          "exterior_walls": [
+            "EX-0001",
+            "EX-0002"
+          ],
+          "windows_on_exterior": []
+        },
+        {
+          "room": "BAL-0002",
+          "exterior_walls": [
+            "EX-0006",
+            "EX-0007"
+          ],
+          "windows_on_exterior": []
+        },
+        {
+          "room": "BED-0001",
+          "exterior_walls": [
+            "EX-0001",
+            "EX-0002"
+          ],
+          "windows_on_exterior": []
+        },
+        {
+          "room": "BED-0002",
+          "exterior_walls": [
+            "EX-0005",
+            "EX-0006"
+          ],
+          "windows_on_exterior": [
+            "WI-0003"
+          ]
+        },
+        {
+          "room": "BTH-0001",
+          "exterior_walls": [
+            "EX-0004",
+            "EX-0005"
+          ],
+          "windows_on_exterior": [
+            "WI-0002"
+          ]
+        },
+        {
+          "room": "BTH-0002",
+          "exterior_walls": [
+            "EX-0002",
+            "EX-0004"
+          ],
+          "windows_on_exterior": [
+            "WI-0001"
+          ]
+        },
+        {
+          "room": "KIT-0001",
+          "exterior_walls": [
+            "EX-0003",
+            "EX-0007"
+          ],
+          "windows_on_exterior": [
+            "WI-0004"
+          ]
+        },
+        {
+          "room": "LIV-0001",
+          "exterior_walls": [
+            "EX-0001",
+            "EX-0003",
+            "EX-0006",
+            "EX-0007"
+          ],
+          "windows_on_exterior": []
+        }
+      ]
+    },
+    "door_wall_consistency": {
+      "doors": [
+        {
+          "id": "DO-0001",
+          "width": 0.21,
+          "height": 0.79,
+          "through_wall": "IN-0002",
+          "rooms": [
+            "BED-0001",
+            "BTH-0002"
+          ],
+          "wall_exists": true
+        },
+        {
+          "id": "DO-0002",
+          "width": 0.21,
+          "height": 0.8,
+          "through_wall": "IN-0003",
+          "rooms": [
+            "BED-0001",
+            "LIV-0001"
+          ],
+          "wall_exists": false
+        },
+        {
+          "id": "DO-0003",
+          "width": 0.21,
+          "height": 0.77,
+          "through_wall": "IN-0003",
+          "rooms": [
+            "BTH-0001",
+            "LIV-0001"
+          ],
+          "wall_exists": false
+        },
+        {
+          "id": "DO-0004",
+          "width": 0.21,
+          "height": 0.8,
+          "through_wall": "IN-0005",
+          "rooms": [
+            "BED-0002",
+            "LIV-0001"
+          ],
+          "wall_exists": true
+        },
+        {
+          "id": "DO-0005",
+          "width": 0.21,
+          "height": 0.8,
+          "through_wall": "EX-0001",
+          "rooms": [
+            "BAL-0001",
+            "BED-0001"
+          ],
+          "wall_exists": true
+        },
+        {
+          "id": "DO-0006",
+          "width": 0.21,
+          "height": 0.79,
+          "through_wall": "EX-0006",
+          "rooms": [
+            "BAL-0002",
+            "LIV-0001"
+          ],
+          "wall_exists": true
+        }
+      ],
+      "wall_thickness_mean": 0.407
+    }
   }
 }

@@ -46,7 +46,13 @@ def generate_variants(plan: Mapping, *, rng: Optional[random.Random] = None) -> 
             plan, {"window": (1, 3)}, rng=rng
         ),
         "drop_all_structural": remove_structural_elements(
-            plan, {cat: (1, 2) for cat in STRUCT_CATEGORIES}, rng=rng
+            plan,
+            {
+                cat: (1, 2)
+                for cat in STRUCT_CATEGORIES
+                if cat != "exterior_wall"
+            },
+            rng=rng,
         ),
     }
 

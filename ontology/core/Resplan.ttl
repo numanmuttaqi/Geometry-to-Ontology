@@ -8,46 +8,46 @@
 @prefix resplan:    <http://resplan.org/resplan#> .
 
 
-resplan: ResPlan a rdfs:Class ;
+resplan:ResPlan a rdfs:Class ;
     rdfs:label "ResPlan" ;
     rdfs:comment "The ResPlan ontology for representing building evacuation plans." ;
     rdfs:subClassOf bot:BuildingInformationModel .
 
 # ------ CLASSES: CORE ELEMENT ------ #
-resplan: InteriorWall a rdfs:Class ;
+resplan:InteriorWall a rdfs:Class ;
     rdfs:label "Interior Wall" ;
     rdfs:comment "An interior wall within a building." ;
     rdfs:subClassOf ifc:Wall .
 
-resplan: ExteriorWall a rdfs:Class ;
+resplan:ExteriorWall a rdfs:Class ;
     rdfs:label "Exterior Wall" ;
     rdfs:comment "An exterior wall of a building." ;
     rdfs:subClassOf ifc:Wall .
 
-resplan: FrontDoor a rdfs:Class ;
+resplan:FrontDoor a rdfs:Class ;
     rdfs:label "Front Door" ;
     rdfs:comment "The main entrance door of a building." ;
     rdfs:subClassOf ifc:Door .
 
-resplan: Door a owl:Class ;
+resplan:Door a owl:Class ;
     rdfs:label "Door" ;
     rdfs:subClassOf ifc:Door .
 
-resplan: Window a owl:Class ;
+resplan:Window a owl:Class ;
     rdfs:label "Window" ;
     rdfs:subClassOf ifc:Window .
 
-resplan: Room a rdfs:Class ;
+resplan:Room a rdfs:Class ;
     rdfs:label "Room" ;
     rdfs:comment "A room within a building." ;
     rdfs:subClassOf bot:Space . #need to check
 
-resplan: RoomType a rdfs:Class ;
+resplan:RoomType a rdfs:Class ;
     rdfs:label "Room Type" ;
     rdfs:comment "A specific type of room within a building." ;
     rdfs:subClassOf resplan:Room .
 
-resplan: EntryNode a rdfs:Class ;
+resplan:EntryNode a rdfs:Class ;
     rdfs:label "Entry Node" ;
     rdfs:comment "A node representing an entry or exit point in the building." ;
     rdfs:subClassOf resplan:FrontDoor.
