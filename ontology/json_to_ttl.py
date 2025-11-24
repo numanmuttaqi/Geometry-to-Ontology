@@ -9,7 +9,6 @@ import logging
 from itertools import combinations
 from pathlib import Path
 from typing import Dict, Iterable, Tuple
-
 from rdflib import Graph, Literal, Namespace, RDF, URIRef
 from rdflib.namespace import RDFS, XSD
 
@@ -17,6 +16,7 @@ from rdflib.namespace import RDFS, XSD
 RESPLAN = Namespace("http://resplan.org/resplan#")
 BOT = Namespace("https://w3id.org/bot#")
 IFC = Namespace("https://w3id.org/ifc/IFC4_ADD2#")
+# adding more namespaces here if needed
 OUTSIDE_ID = "OUT-0000"
 
 ROOM_CLASS_MAP = {
@@ -106,6 +106,8 @@ def convert(json_path: Path, output_path: Path | None = None, base_uri: str | No
     rooms = _add_rooms(graph, base_ns, data.get("instances", {}).get("room", {}))
     structural = _add_structurals(graph, base_ns, data.get("instances", {}).get("structural", {}))
     _add_relationships(graph, base_ns, rooms, structural, data.get("graph", {}).get("relations", {}))
+    window_analysis = data.get("circulation", {}).get("window_analysis", {})
+    _add_window_memberships(graph, base_ns, rooms, structural, window_analysis)
 
     output_path = output_path or json_path.with_suffix(".ttl")
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -190,6 +192,7 @@ def _ensure_outside_room(graph: Graph, ns: Namespace, rooms: Dict[str, URIRef]) 
     rooms[OUTSIDE_ID] = outside_uri
     graph.add((outside_uri, RDF.type, BOT.Space))
     graph.add((outside_uri, RDF.type, RESPLAN.Room))
+    graph.add((outside_uri, RDF.type, RESPLAN.EntryNode))
     graph.add((outside_uri, RDFS.label, Literal("Outside")))
     return outside_uri
 
@@ -266,8 +269,7 @@ def _add_relationships(
 
     connections = relations.get("connected_via_door", [])
     for entry in connections:
-        room_ids = entry.get("rooms") or []
-        door_uri = structural.get(entry.get("door"))
+        room_ids = [rid for rid in (entry.get("rooms") or []) if rid]
         if len(room_ids) < 2:
             continue
         for room_a, room_b in combinations(room_ids, 2):
@@ -278,8 +280,46 @@ def _add_relationships(
                 graph.add((b, RESPLAN.connectedViaDoor, a))
             else:
                 LOGGER.warning("Skipping connected_via_door pair (%s, %s).", room_a, room_b)
-        if door_uri and door_uri not in structural.values():
-            LOGGER.warning("Door %s not found when processing connected_via_door.", entry.get("door"))
+
+        wall_id = entry.get("through_wall")
+        wall_uri = structural.get(wall_id) if wall_id else None
+        if wall_id and not wall_uri:
+            LOGGER.warning("Wall %s not found for connected_via_door entry %s.", wall_id, entry.get("id"))
+        if wall_uri and OUTSIDE_ID in room_ids:
+            outside_uri = _resolve_room(OUTSIDE_ID, graph, ns, rooms)
+            graph.add((outside_uri, RESPLAN.boundedBy, wall_uri))
+
+        door_id = entry.get("door")
+        door_uri = structural.get(door_id) if door_id else None
+        if door_id and not door_uri:
+            LOGGER.warning("Door %s not found for connected_via_door entry %s.", door_id, entry.get("id"))
+        if door_uri:
+            seen_rooms = set()
+            for room_id in room_ids:
+                room_uri = _resolve_room(room_id, graph, ns, rooms)
+                if room_uri and room_uri not in seen_rooms:
+                    graph.add((door_uri, RESPLAN.connectsSpace, room_uri))
+                    seen_rooms.add(room_uri)
+
+def _add_window_memberships(
+    graph: Graph,
+    ns: Namespace,
+    rooms: Dict[str, URIRef],
+    structural: Dict[str, URIRef],
+    window_analysis: Dict,
+) -> None:
+    if not isinstance(window_analysis, dict):
+        return
+    for entry in window_analysis.get("rooms", []):
+        room_uri = _resolve_room(entry.get("room"), graph, ns, rooms)
+        if not room_uri:
+            continue
+        for window_id in entry.get("windows_on_exterior") or []:
+            window_uri = structural.get(window_id)
+            if window_uri:
+                graph.add((room_uri, RESPLAN.hasWindow, window_uri))
+            else:
+                LOGGER.warning("Window %s referenced in window_analysis but not found.", window_id)
 
 
 def parse_args() -> argparse.Namespace:

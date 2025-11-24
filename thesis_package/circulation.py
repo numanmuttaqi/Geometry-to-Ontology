@@ -129,13 +129,16 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
     room_bboxes: Dict[str, Tuple[float, float, float, float]] = {}
     room_centroids: Dict[str, Tuple[float, float]] = {}
-    for records in room_instances.values():
+    room_types: Dict[str, str] = {}
+    for subtype, records in room_instances.items():
         for record in records or []:
             if not isinstance(record, dict):
                 continue
             room_id = record.get("id")
             if not isinstance(room_id, str):
                 continue
+            if isinstance(subtype, str):
+                room_types[room_id] = subtype.lower()
             bbox = _extract_bbox(record)
             if bbox:
                 room_bboxes[room_id] = bbox
@@ -203,6 +206,24 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     ROOM_MARGIN = 0.05
     WALL_MARGIN = 0.02
 
+    # Limited fallback: only fix missing exterior associations for balconies/verandas.
+    SPECIAL_ROOM_TYPES = {"balcony", "veranda"}
+    for room_id, subtype in room_types.items():
+        if subtype not in SPECIAL_ROOM_TYPES:
+            continue
+        room_bbox = room_bboxes.get(room_id)
+        if not room_bbox:
+            continue
+        expanded_room = _expand_bbox(room_bbox, ROOM_MARGIN)
+        for wall_id in exterior_ids:
+            wall_bbox = wall_bboxes.get(wall_id)
+            if not wall_bbox:
+                continue
+            expanded_wall = _expand_bbox(wall_bbox, WALL_MARGIN)
+            if _bbox_overlap(expanded_room, expanded_wall):
+                room_to_walls[room_id].add(wall_id)
+                wall_to_rooms[wall_id].add(room_id)
+
     window_entries: List[Dict[str, Any]] = []
     for window_id in sorted(window_ids):
         record = windows_by_id[window_id]
@@ -233,7 +254,14 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                     break
         if selected_wall is None and candidate_walls:
             selected_wall = sorted(candidate_walls)[0]
-        window_entries.append({"id": window_id, "wall": selected_wall, "area": area_val})
+        window_entries.append(
+            {
+                "id": window_id,
+                "wall": selected_wall,
+                "host_walls": sorted(candidate_walls),
+                "area": area_val,
+            }
+        )
 
     room_windows: Dict[str, Set[str]] = defaultdict(set)
     for window_id in sorted(window_ids):
@@ -380,35 +408,35 @@ def derive_door_consistency(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             width = round(short, 3)
             height = round(long, 3)
 
-        candidate_walls = set()
-        candidate_walls.update(door_to_through_wall.get(door_id, set()))
-        candidate_walls.update(door_to_walls.get(door_id, set()))
+        host_walls = sorted(door_to_walls.get(door_id, set()))
+        through_walls = sorted(door_to_through_wall.get(door_id, set()))
+        candidate_walls = sorted(set(host_walls) | set(through_walls))
         selected_wall = None
-        for group in (door_to_through_wall.get(door_id, set()), door_to_walls.get(door_id, set())):
-            for wall in sorted(group):
-                if wall:
-                    selected_wall = wall
-                    break
-            if selected_wall:
-                break
-        if selected_wall is None and candidate_walls:
-            selected_wall = sorted(candidate_walls)[0]
+        if host_walls:
+            selected_wall = host_walls[0]
+        elif through_walls:
+            selected_wall = through_walls[0]
+        elif candidate_walls:
+            selected_wall = candidate_walls[0]
 
         wall_exists = False
-        if selected_wall:
+        if host_walls:
+            wall_exists = any(wall in all_wall_ids for wall in host_walls)
+        elif through_walls:
+            wall_exists = any(wall in all_wall_ids for wall in through_walls)
+        elif selected_wall:
             wall_exists = selected_wall in all_wall_ids
-        elif candidate_walls:
-            wall_exists = any(wall in all_wall_ids for wall in candidate_walls)
 
         rooms = sorted(door_to_rooms.get(door_id, set()))
 
         door_entries.append(
             {
                 "id": door_id,
+                "wall": through_walls,
+                "host_walls": host_walls,
+                "rooms": rooms,
                 "width": width,
                 "height": height,
-                "through_wall": selected_wall,
-                "rooms": rooms,
                 "wall_exists": wall_exists,
             }
         )

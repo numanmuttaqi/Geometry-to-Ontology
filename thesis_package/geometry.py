@@ -81,11 +81,36 @@ def boundary_overlap_length(room_poly: Polygon, wall_geom) -> float:
     return float(format_metric(total))
 
 
-def opening_on_wall(opening_geom, wall_geom) -> bool:
-    """Return True when an opening lies on / intersects the wall geometry."""
+def _opening_wall_overlap_score(opening_geom, wall_geom) -> float:
+    """Return overlap metric between a buffered opening and wall geometry."""
     if isinstance(wall_geom, (LineString, MultiLineString)):
         wall_geom = wall_geom.buffer(WALL_BUFFER, cap_style=2, join_style=2)
-    return opening_geom.buffer(OPENING_BUFFER).intersects(wall_geom)
+    buffered_opening = opening_geom.buffer(OPENING_BUFFER)
+    overlap = buffered_opening.intersection(wall_geom)
+    if overlap.is_empty:
+        return 0.0
+    area = getattr(overlap, "area", 0.0)
+    return float(area if area > 0 else overlap.length)
+
+
+def opening_on_wall(opening_geom, wall_geom) -> bool:
+    """Return True when an opening lies on / intersects the wall geometry."""
+    return _opening_wall_overlap_score(opening_geom, wall_geom) >= EPS_LEN
+
+
+def _expand_bounds(bounds, margin: float) -> tuple[float, float, float, float]:
+    minx, miny, maxx, maxy = bounds
+    return (minx - margin, miny - margin, maxx + margin, maxy + margin)
+
+
+def _bounds_overlap(a, b) -> bool:
+    return not (a[2] < b[0] or a[0] > b[2] or a[3] < b[1] or a[1] > b[3])
+
+
+def _shared_span(a, b) -> float:
+    overlap_x = min(a[2], b[2]) - max(a[0], b[0])
+    overlap_y = min(a[3], b[3]) - max(a[1], b[1])
+    return max(0.0, overlap_x, overlap_y)
 
 
 def index_instances(plan: Dict[str, Any]):
@@ -147,6 +172,47 @@ def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
                     }
                 )
 
+    # Targeted fallback: balconies/verandas sometimes miss exterior edges if bounded_by geometry breaks.
+    existing_pairs = {(edge["room"], edge["wall"]) for edge in bounded_by}
+    exterior_wall_ids = {
+        wall.id
+        for wall in walls
+        if isinstance(wall.subtype, str) and wall.subtype.lower().startswith("exterior")
+    }
+    ROOM_MARGIN = 0.05
+    WALL_MARGIN = 0.02
+    SPECIAL_ROOM_TYPES = {"balcony", "veranda"}
+    for room in rooms:
+        subtype = (room.subtype or "").lower()
+        if subtype not in SPECIAL_ROOM_TYPES:
+            continue
+        room_bounds = room.geom.bounds
+        expanded_room = _expand_bounds(room_bounds, ROOM_MARGIN)
+        for wall in walls:
+            if wall.id not in exterior_wall_ids:
+                continue
+            pair = (room.id, wall.id)
+            if pair in existing_pairs:
+                continue
+            expanded_wall = _expand_bounds(wall.geom.bounds, WALL_MARGIN)
+            if not _bounds_overlap(expanded_room, expanded_wall):
+                continue
+            overlap = boundary_overlap_length(room.geom, wall.geom)
+            if overlap < EPS_LEN:
+                overlap = round_float(_shared_span(room_bounds, wall.geom.bounds))
+                if overlap <= 0:
+                    continue
+            bounded_by.append(
+                {
+                    "id": f"E-bnd-{len(bounded_by) + 1:05d}",
+                    "room": room.id,
+                    "wall": wall.id,
+                    "length": overlap,
+                    "wall_type": wall.subtype or "unknown",
+                }
+            )
+            existing_pairs.add(pair)
+
     adjacent_to: List[Dict[str, Any]] = []
     seen_pairs = set()
     for idx, room_a in enumerate(rooms):
@@ -169,16 +235,34 @@ def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
 
     hosts_opening: List[Dict[str, Any]] = []
     for opening in openings:
+        candidates: List[tuple[float, GeoRec]] = []
         for wall in walls:
-            if opening_on_wall(opening.geom, wall.geom):
-                hosts_opening.append(
-                    {
-                        "id": f"E-host-{len(hosts_opening) + 1:05d}",
-                        "wall": wall.id,
-                        "opening": opening.id,
-                        "opening_type": opening.subtype or "opening",
-                    }
-                )
+            score = _opening_wall_overlap_score(opening.geom, wall.geom)
+            if score >= EPS_LEN:
+                candidates.append((score, wall))
+        if not candidates:
+            continue
+        candidates.sort(key=lambda item: item[0], reverse=True)
+        top_score = candidates[0][0]
+        threshold = max(EPS_LEN, top_score * 1)
+        selected: List[GeoRec] = []
+        for score, wall in candidates:
+            if score < threshold and selected:
+                break
+            selected.append(wall)
+            if len(selected) == 2:
+                break
+        if not selected:
+            selected.append(candidates[0][1])
+        for wall in selected:
+            hosts_opening.append(
+                {
+                    "id": f"E-host-{len(hosts_opening) + 1:05d}",
+                    "wall": wall.id,
+                    "opening": opening.id,
+                    "opening_type": opening.subtype or "opening",
+                }
+            )
 
     return {
         "bounded_by": bounded_by,
