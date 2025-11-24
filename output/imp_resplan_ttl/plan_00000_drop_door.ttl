@@ -366,32 +366,6 @@
 <http://resplan.org/resplan/plan_00000#WI-04> a resplan:Window ;
     rdfs:label "WI-04" .
 
-<http://resplan.org/resplan/plan_00000#BED-01> a resplan:Room,
-        bot:Space ;
-    rdfs:label "bedroom" ;
-    resplan:bboxMaxX 12.49 ;
-    resplan:bboxMaxY 6.27 ;
-    resplan:bboxMinX 7.93 ;
-    resplan:bboxMinY 2.73 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-02>,
-        <http://resplan.org/resplan/plan_00000#EX-03>,
-        <http://resplan.org/resplan/plan_00000#EX-05>,
-        <http://resplan.org/resplan/plan_00000#EX-15>,
-        <http://resplan.org/resplan/plan_00000#EX-16>,
-        <http://resplan.org/resplan/plan_00000#EX-17>,
-        <http://resplan.org/resplan/plan_00000#EX-18>,
-        <http://resplan.org/resplan/plan_00000#IN-01>,
-        <http://resplan.org/resplan/plan_00000#IN-02>,
-        <http://resplan.org/resplan/plan_00000#IN-03>,
-        <http://resplan.org/resplan/plan_00000#IN-04>,
-        <http://resplan.org/resplan/plan_00000#IN-05> ;
-    resplan:centroidX 10.02 ;
-    resplan:centroidY 4.44 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BAL-01>,
-        <http://resplan.org/resplan/plan_00000#BTH-02> ;
-    resplan:hasRoomType resplan:Bedroom ;
-    resplan:roomArea 14.7 .
-
 <http://resplan.org/resplan/plan_00000#BED-02> a resplan:Room,
         bot:Space ;
     rdfs:label "bedroom" ;
@@ -418,6 +392,33 @@
     resplan:hasRoomType resplan:Bedroom ;
     resplan:roomArea 13.39 .
 
+<http://resplan.org/resplan/plan_00000#BED-01> a resplan:Room,
+        bot:Space ;
+    rdfs:label "bedroom" ;
+    resplan:bboxMaxX 12.49 ;
+    resplan:bboxMaxY 6.27 ;
+    resplan:bboxMinX 7.93 ;
+    resplan:bboxMinY 2.73 ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-02>,
+        <http://resplan.org/resplan/plan_00000#EX-03>,
+        <http://resplan.org/resplan/plan_00000#EX-05>,
+        <http://resplan.org/resplan/plan_00000#EX-15>,
+        <http://resplan.org/resplan/plan_00000#EX-16>,
+        <http://resplan.org/resplan/plan_00000#EX-17>,
+        <http://resplan.org/resplan/plan_00000#EX-18>,
+        <http://resplan.org/resplan/plan_00000#IN-01>,
+        <http://resplan.org/resplan/plan_00000#IN-02>,
+        <http://resplan.org/resplan/plan_00000#IN-03>,
+        <http://resplan.org/resplan/plan_00000#IN-04>,
+        <http://resplan.org/resplan/plan_00000#IN-05> ;
+    resplan:centroidX 10.02 ;
+    resplan:centroidY 4.44 ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BAL-01>,
+        <http://resplan.org/resplan/plan_00000#BTH-02>,
+        <http://resplan.org/resplan/plan_00000#LIV-01> ;
+    resplan:hasRoomType resplan:Bedroom ;
+    resplan:roomArea 14.7 .
+
 <http://resplan.org/resplan/plan_00000#LIV-01> a resplan:Room,
         bot:Space ;
     rdfs:label "living" ;
@@ -443,7 +444,8 @@
         <http://resplan.org/resplan/plan_00000#IN-10> ;
     resplan:centroidX 3.15 ;
     resplan:centroidY 4.66 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-02>,
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-01>,
+        <http://resplan.org/resplan/plan_00000#BED-02>,
         <http://resplan.org/resplan/plan_00000#BTH-01>,
         <http://resplan.org/resplan/plan_00000#OUT-0000>,
         <http://resplan.org/resplan/plan_00000#STRG-01> ;

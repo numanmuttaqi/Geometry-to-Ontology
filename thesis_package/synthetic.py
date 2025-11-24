@@ -173,10 +173,18 @@ def _purge_graph(plan: Mapping, removed: Mapping[str, Iterable[str]]) -> None:
     ]
 
     # connected_via_door
+    # Keep connections even if the door instance was removed so downstream validation
+    # can detect missing doors from the remaining relationship data.
+    # Only drop entries when the through-door reference itself is invalid (e.g., wall removed).
     connections = relations.get("connected_via_door") or []
-    relations["connected_via_door"] = [
-        e for e in connections if e.get("door") not in removed_doors
-    ]
+    filtered_connections = []
+    for entry in connections:
+        door_id = entry.get("door")
+        wall_id = entry.get("through_wall")
+        if wall_id in removed_walls:
+            continue
+        filtered_connections.append(entry)
+    relations["connected_via_door"] = filtered_connections
 
     # Update relation summary in metadata if present
     summary = plan.get("metadata", {}).get("summary", {})

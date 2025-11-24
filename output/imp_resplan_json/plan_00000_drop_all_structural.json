@@ -40,7 +40,7 @@
       "relationship_summary": {
         "total_relationships": 95,
         "adjacency_count": 1,
-        "door_connections": 6,
+        "door_connections": 8,
         "bounded_by_count": 70,
         "hosts_opening_count": 18
       },
@@ -3033,9 +3033,16 @@
       "BED-02",
       "BTH-01",
       "STRG-01",
+      "BAL-01",
+      "BTH-02",
       "BAL-02"
     ],
     "door_edges": [
+      [
+        "BTH-02",
+        "BED-01",
+        "DO-01"
+      ],
       [
         "LIV-01",
         "BED-01",
@@ -3060,6 +3067,11 @@
         "BED-02",
         "BAL-02",
         "DO-06"
+      ],
+      [
+        "BED-01",
+        "BAL-01",
+        "DO-07"
       ]
     ],
     "reachability_paths": {
@@ -3086,6 +3098,18 @@
         "front_door_FR-01",
         "LIV-01",
         "STRG-01"
+      ],
+      "BAL-01": [
+        "front_door_FR-01",
+        "LIV-01",
+        "BED-01",
+        "BAL-01"
+      ],
+      "BTH-02": [
+        "front_door_FR-01",
+        "LIV-01",
+        "BED-01",
+        "BTH-02"
       ],
       "BAL-02": [
         "front_door_FR-01",
@@ -5847,6 +5871,20 @@
       ],
       "connected_via_door": [
         {
+          "id": "E-pass-00001",
+          "door": "DO-01",
+          "door_type": "door",
+          "rooms": [
+            "BTH-02",
+            "BED-01"
+          ],
+          "through_wall": "IN-02",
+          "room_types": [
+            "bathroom",
+            "bedroom"
+          ]
+        },
+        {
           "id": "E-pass-00002",
           "door": "DO-02",
           "door_type": "door",
@@ -5911,6 +5949,20 @@
             "BAL-02"
           ],
           "through_wall": "EX-08",
+          "room_types": [
+            "bedroom",
+            "balcony"
+          ]
+        },
+        {
+          "id": "E-pass-00007",
+          "door": "DO-07",
+          "door_type": "door",
+          "rooms": [
+            "BED-01",
+            "BAL-01"
+          ],
+          "through_wall": "EX-02",
           "room_types": [
             "bedroom",
             "balcony"

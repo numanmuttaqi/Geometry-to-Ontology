@@ -30,14 +30,14 @@ resplan:DW1_DoorHasExactlyOneWall a sh:NodeShape ;
 #   ] .
 
 ### DW3: Door Missing = If there is a space adjacent with another space via a door 'connectedViaDoor', the door connects spaces
-resplan:DW3_ConnectedViaDoorImpliesDoor a sh:NodeShape ;
+resplan:DW3_MissingDoor a sh:NodeShape ;
     sh:targetClass bot:Space ;
     sh:sparql [
         sh:message "connectedViaDoor declared between rooms, but no door instance connects them." ;
         sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
         PREFIX bot: <https://w3id.org/bot#>
-        SELECT ?this WHERE {
+        SELECT DISTINCT ?this WHERE {
             ?this resplan:connectedViaDoor ?other .
             FILTER (?this != ?other)
             FILTER NOT EXISTS {
@@ -47,7 +47,7 @@ resplan:DW3_ConnectedViaDoorImpliesDoor a sh:NodeShape ;
                 ?door a resplan:Door .
             }
         }
-        """ ;
+        """
     ] .
 
 ### DW4: Wall Missing = Doors must connect exactly two spaces with shared boundary wall

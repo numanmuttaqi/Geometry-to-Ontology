@@ -40,7 +40,7 @@
       "relationship_summary": {
         "total_relationships": 100,
         "adjacency_count": 1,
-        "door_connections": 8,
+        "door_connections": 7,
         "bounded_by_count": 67,
         "hosts_opening_count": 23
       },
@@ -3082,15 +3082,9 @@
       "BTH-01",
       "STRG-01",
       "BAL-01",
-      "BTH-02",
       "BAL-02"
     ],
     "door_edges": [
-      [
-        "BTH-02",
-        "BED-01",
-        "DO-01"
-      ],
       [
         "LIV-01",
         "BED-01",
@@ -3152,12 +3146,6 @@
         "LIV-01",
         "BED-01",
         "BAL-01"
-      ],
-      "BTH-02": [
-        "front_door_FR-01",
-        "LIV-01",
-        "BED-01",
-        "BTH-02"
       ],
       "BAL-02": [
         "front_door_FR-01",
@@ -3323,16 +3311,11 @@
       "doors": [
         {
           "id": "DO-01",
-          "wall": [
-            "IN-02"
-          ],
+          "wall": [],
           "host_walls": [
             "EX-02"
           ],
-          "rooms": [
-            "BED-01",
-            "BTH-02"
-          ],
+          "rooms": [],
           "width": 0.19,
           "height": 0.79,
           "wall_exists": true
@@ -6005,20 +5988,6 @@
         }
       ],
       "connected_via_door": [
-        {
-          "id": "E-pass-00001",
-          "door": "DO-01",
-          "door_type": "door",
-          "rooms": [
-            "BTH-02",
-            "BED-01"
-          ],
-          "through_wall": "IN-02",
-          "room_types": [
-            "bathroom",
-            "bedroom"
-          ]
-        },
         {
           "id": "E-pass-00002",
           "door": "DO-02",
