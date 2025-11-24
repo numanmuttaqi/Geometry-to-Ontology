@@ -33,22 +33,34 @@ resplan:DW1_DoorHasExactlyOneWall a sh:NodeShape ;
 resplan:DW3_MissingDoor a sh:NodeShape ;
     sh:targetClass bot:Space ;
     sh:sparql [
-        sh:message "connectedViaDoor declared between rooms, but no door instance connects them." ;
         sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
         PREFIX bot: <https://w3id.org/bot#>
-        SELECT DISTINCT ?this WHERE {
+        SELECT DISTINCT ?this ?other ?msg WHERE {
             ?this resplan:connectedViaDoor ?other .
             FILTER (?this != ?other)
+            FILTER (STR(?this) < STR(?other))
             FILTER NOT EXISTS {
-                ?this resplan:boundedBy ?wall .
-                ?other resplan:boundedBy ?wall .
                 ?wall resplan:hostsOpening ?door .
                 ?door a resplan:Door .
+                ?door resplan:connectsSpace ?this .
+                ?door resplan:connectsSpace ?other .
             }
+            BIND(CONCAT(
+                "connectedViaDoor declared between ",
+                STRAFTER(STR(?this), "#"),
+                " and ",
+                STRAFTER(STR(?other), "#"),
+                ", but no door instance connects them."
+            ) AS ?msg)
         }
-        """
+        """ ;
+        sh:resultAnnotation [
+            sh:annotationProperty sh:resultMessage ;
+            sh:annotationVarName "msg"
+        ]
     ] .
+
 
 ### DW4: Wall Missing = Doors must connect exactly two spaces with shared boundary wall
 resplan:DW4_DoorsImpliesSharedBoundary a sh:NodeShape ;
