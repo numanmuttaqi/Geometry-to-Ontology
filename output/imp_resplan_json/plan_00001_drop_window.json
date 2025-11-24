@@ -34,15 +34,15 @@
         "interior_wall": 19,
         "exterior_wall": 33,
         "door": 8,
-        "window": 6,
+        "window": 5,
         "front_door": 1
       },
       "relationship_summary": {
-        "total_relationships": 136,
+        "total_relationships": 134,
         "adjacency_count": 1,
         "door_connections": 9,
         "bounded_by_count": 95,
-        "hosts_opening_count": 31
+        "hosts_opening_count": 29
       },
       "scale_factor": 0.0481,
       "computed_net_area": 128.67,
@@ -3610,50 +3610,6 @@
               12.0
             ]
           }
-        },
-        {
-          "id": "WI-06",
-          "type": "window",
-          "geom": {
-            "type": "Polygon",
-            "coordinates": [
-              [
-                [
-                  0.6694212476929323,
-                  1.5712804286125772
-                ],
-                [
-                  0.6694212476929323,
-                  1.7944208445102217
-                ],
-                [
-                  1.9710736737625232,
-                  1.7944208445102217
-                ],
-                [
-                  1.9710736737625232,
-                  1.5712804286125772
-                ],
-                [
-                  0.6694212476929323,
-                  1.5712804286125772
-                ]
-              ]
-            ]
-          },
-          "props": {
-            "area": 0.29,
-            "centroid": [
-              1.32,
-              1.68
-            ],
-            "bbox": [
-              0.67,
-              1.57,
-              1.97,
-              1.79
-            ]
-          }
         }
       ],
       "front_door": [
@@ -4169,15 +4125,6 @@
             "EX-33"
           ],
           "area": 0.43
-        },
-        {
-          "id": "WI-06",
-          "wall": "EX-18",
-          "host_walls": [
-            "EX-18",
-            "EX-31"
-          ],
-          "area": 0.29
         }
       ],
       "rooms": [
@@ -4283,9 +4230,7 @@
             "EX-30",
             "EX-31"
           ],
-          "windows_on_exterior": [
-            "WI-06"
-          ]
+          "windows_on_exterior": []
         },
         {
           "room": "LIV-01",
@@ -6832,22 +6777,6 @@
         }
       },
       {
-        "source": "EX-18",
-        "target": "WI-06",
-        "type": "hosts_opening",
-        "properties": {
-          "opening_type": "window"
-        }
-      },
-      {
-        "source": "EX-31",
-        "target": "WI-06",
-        "type": "hosts_opening",
-        "properties": {
-          "opening_type": "window"
-        }
-      },
-      {
         "source": "EX-02",
         "target": "FR-01",
         "type": "hosts_opening",
@@ -7535,16 +7464,6 @@
         ],
         "per_room": [
           {
-            "room": "BAL-01",
-            "walls": [
-              "EX-01",
-              "EX-03",
-              "EX-12",
-              "EX-13"
-            ],
-            "length_total": 4.17
-          },
-          {
             "room": "BED-01",
             "walls": [
               "EX-04",
@@ -7688,6 +7607,16 @@
               "IN-17"
             ],
             "length_total": 25.0
+          },
+          {
+            "room": "BAL-01",
+            "walls": [
+              "EX-01",
+              "EX-03",
+              "EX-12",
+              "EX-13"
+            ],
+            "length_total": 4.17
           }
         ]
       },
@@ -7860,18 +7789,6 @@
           "id": "E-host-00027",
           "wall": "EX-33",
           "opening": "WI-05",
-          "opening_type": "window"
-        },
-        {
-          "id": "E-host-00028",
-          "wall": "EX-18",
-          "opening": "WI-06",
-          "opening_type": "window"
-        },
-        {
-          "id": "E-host-00029",
-          "wall": "EX-31",
-          "opening": "WI-06",
           "opening_type": "window"
         },
         {

@@ -38,11 +38,11 @@
         "front_door": 1
       },
       "relationship_summary": {
-        "total_relationships": 107,
+        "total_relationships": 106,
         "adjacency_count": 1,
         "door_connections": 8,
         "bounded_by_count": 73,
-        "hosts_opening_count": 25
+        "hosts_opening_count": 24
       },
       "scale_factor": 0.0532,
       "computed_net_area": 73.13,
@@ -3549,8 +3549,7 @@
           ],
           "host_walls": [
             "EX-08",
-            "EX-09",
-            "EX-10"
+            "EX-09"
           ],
           "rooms": [
             "BAL-02",
@@ -5355,14 +5354,6 @@
         }
       },
       {
-        "source": "EX-10",
-        "target": "DO-06",
-        "type": "hosts_opening",
-        "properties": {
-          "opening_type": "door"
-        }
-      },
-      {
         "source": "EX-02",
         "target": "DO-07",
         "type": "hosts_opening",
@@ -6187,78 +6178,72 @@
         },
         {
           "id": "E-host-00013",
-          "wall": "EX-10",
-          "opening": "DO-06",
-          "opening_type": "door"
-        },
-        {
-          "id": "E-host-00014",
           "wall": "EX-02",
           "opening": "DO-07",
           "opening_type": "door"
         },
         {
-          "id": "E-host-00015",
+          "id": "E-host-00014",
           "wall": "EX-03",
           "opening": "DO-07",
           "opening_type": "door"
         },
         {
-          "id": "E-host-00016",
+          "id": "E-host-00015",
           "wall": "EX-14",
           "opening": "WI-01",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00017",
+          "id": "E-host-00016",
           "wall": "EX-16",
           "opening": "WI-01",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00018",
+          "id": "E-host-00017",
           "wall": "EX-12",
+          "opening": "WI-02",
+          "opening_type": "window"
+        },
+        {
+          "id": "E-host-00018",
+          "wall": "EX-23",
           "opening": "WI-02",
           "opening_type": "window"
         },
         {
           "id": "E-host-00019",
           "wall": "EX-23",
-          "opening": "WI-02",
-          "opening_type": "window"
-        },
-        {
-          "id": "E-host-00020",
-          "wall": "EX-23",
           "opening": "WI-03",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00021",
+          "id": "E-host-00020",
           "wall": "EX-28",
           "opening": "WI-03",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00022",
+          "id": "E-host-00021",
           "wall": "EX-19",
           "opening": "WI-04",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00023",
+          "id": "E-host-00022",
           "wall": "EX-20",
           "opening": "WI-04",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00024",
+          "id": "E-host-00023",
           "wall": "EX-22",
           "opening": "FR-01",
           "opening_type": "front_door"
         },
         {
-          "id": "E-host-00025",
+          "id": "E-host-00024",
           "wall": "EX-25",
           "opening": "FR-01",
           "opening_type": "front_door"
@@ -6381,7 +6366,7 @@
     },
     "statistics": {
       "total_nodes": 59,
-      "total_edges": 107,
+      "total_edges": 106,
       "relationship_types": [
         "bounded_by",
         "adjacent_to",

@@ -14,252 +14,430 @@
     resplan:sourceFile "file:///Users/muhammadnumanmuttaqi/Documents/MScITBE/Thesis/Thesis/Geometry-to-Ontology/data/ResPlan.pkl"^^xsd:anyURI ;
     resplan:unitType "Apartment" .
 
-<http://resplan.org/resplan/plan_00000#BAL-0001> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#DO-01> a resplan:Door ;
+    rdfs:label "DO-01" ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00000#BED-01>,
+        <http://resplan.org/resplan/plan_00000#BTH-02> ;
+    resplan:width 0.79 .
+
+<http://resplan.org/resplan/plan_00000#EX-01> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-01" .
+
+<http://resplan.org/resplan/plan_00000#EX-06> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-06" .
+
+<http://resplan.org/resplan/plan_00000#EX-09> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-09" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-06> .
+
+<http://resplan.org/resplan/plan_00000#EX-11> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-11" .
+
+<http://resplan.org/resplan/plan_00000#EX-14> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-14" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-01> .
+
+<http://resplan.org/resplan/plan_00000#EX-17> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-17" .
+
+<http://resplan.org/resplan/plan_00000#EX-19> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-19" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-04> .
+
+<http://resplan.org/resplan/plan_00000#EX-20> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-20" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-04> .
+
+<http://resplan.org/resplan/plan_00000#EX-24> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-24" .
+
+<http://resplan.org/resplan/plan_00000#EX-25> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-25" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#FR-01> .
+
+<http://resplan.org/resplan/plan_00000#KIT-01> a resplan:Room,
+        bot:Space ;
+    rdfs:label "kitchen" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00000#LIV-01> ;
+    resplan:bboxMaxX 3.9 ;
+    resplan:bboxMaxY 9.36 ;
+    resplan:bboxMinX 2.07 ;
+    resplan:bboxMinY 6.24 ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-23>,
+        <http://resplan.org/resplan/plan_00000#EX-26>,
+        <http://resplan.org/resplan/plan_00000#EX-27>,
+        <http://resplan.org/resplan/plan_00000#EX-28>,
+        <http://resplan.org/resplan/plan_00000#IN-09>,
+        <http://resplan.org/resplan/plan_00000#IN-10> ;
+    resplan:centroidX 2.99 ;
+    resplan:centroidY 7.8 ;
+    resplan:hasRoomType resplan:Kitchen ;
+    resplan:hasWindow <http://resplan.org/resplan/plan_00000#WI-03> ;
+    resplan:roomArea 5.73 .
+
+<http://resplan.org/resplan/plan_00000#BAL-01> a resplan:Room,
         bot:Space ;
     rdfs:label "balcony" ;
     resplan:bboxMaxX 13.59 ;
     resplan:bboxMaxY 7.88 ;
     resplan:bboxMinX 10.15 ;
     resplan:bboxMinY 6.43 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0001> ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-02>,
+        <http://resplan.org/resplan/plan_00000#EX-03>,
+        <http://resplan.org/resplan/plan_00000#EX-04> ;
     resplan:centroidX 11.88 ;
     resplan:centroidY 7.15 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-0001> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-01> ;
     resplan:hasRoomType resplan:Balcony ;
     resplan:roomArea 4.99 .
 
-<http://resplan.org/resplan/plan_00000#BAL-0002> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#BAL-02> a resplan:Room,
         bot:Space ;
     rdfs:label "balcony" ;
     resplan:bboxMaxX 8.55 ;
     resplan:bboxMaxY 11.85 ;
     resplan:bboxMinX 6.78 ;
     resplan:bboxMinY 10.44 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0001> ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-07>,
+        <http://resplan.org/resplan/plan_00000#EX-08>,
+        <http://resplan.org/resplan/plan_00000#EX-09>,
+        <http://resplan.org/resplan/plan_00000#EX-10> ;
     resplan:centroidX 7.67 ;
     resplan:centroidY 11.14 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-0002> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-02> ;
     resplan:hasRoomType resplan:Balcony ;
     resplan:roomArea 2.49 .
 
-<http://resplan.org/resplan/plan_00000#BTH-0001> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#BTH-01> a resplan:Room,
         bot:Space ;
     rdfs:label "bathroom" ;
     resplan:bboxMaxX 7.81 ;
     resplan:bboxMaxY 5.16 ;
     resplan:bboxMinX 5.63 ;
     resplan:bboxMinY 3.55 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0002>,
-        <http://resplan.org/resplan/plan_00000#EX-0003>,
-        <http://resplan.org/resplan/plan_00000#IN-0005> ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-18>,
+        <http://resplan.org/resplan/plan_00000#EX-19>,
+        <http://resplan.org/resplan/plan_00000#EX-20>,
+        <http://resplan.org/resplan/plan_00000#EX-21>,
+        <http://resplan.org/resplan/plan_00000#IN-04>,
+        <http://resplan.org/resplan/plan_00000#IN-07>,
+        <http://resplan.org/resplan/plan_00000#IN-08> ;
     resplan:centroidX 6.72 ;
     resplan:centroidY 4.35 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#LIV-0001> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#LIV-01> ;
     resplan:hasRoomType resplan:Bathroom ;
+    resplan:hasWindow <http://resplan.org/resplan/plan_00000#WI-04> ;
     resplan:roomArea 3.52 .
 
-<http://resplan.org/resplan/plan_00000#BTH-0002> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#BTH-02> a resplan:Room,
         bot:Space ;
     rdfs:label "bathroom" ;
     resplan:bboxMaxX 13.62 ;
     resplan:bboxMaxY 6.27 ;
     resplan:bboxMinX 12.01 ;
     resplan:bboxMinY 4.04 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0001>,
-        <http://resplan.org/resplan/plan_00000#EX-0002> ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-01>,
+        <http://resplan.org/resplan/plan_00000#EX-02>,
+        <http://resplan.org/resplan/plan_00000#EX-14>,
+        <http://resplan.org/resplan/plan_00000#EX-15>,
+        <http://resplan.org/resplan/plan_00000#EX-16> ;
     resplan:centroidX 12.82 ;
     resplan:centroidY 5.15 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-0001> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-01> ;
     resplan:hasRoomType resplan:Bathroom ;
+    resplan:hasWindow <http://resplan.org/resplan/plan_00000#WI-01> ;
     resplan:roomArea 3.59 .
 
-<http://resplan.org/resplan/plan_00000#DO-0001> a resplan:Door ;
-    rdfs:label "DO-0001" ;
-    resplan:width 0.79 .
-
-<http://resplan.org/resplan/plan_00000#DO-0002> a resplan:Door ;
-    rdfs:label "DO-0002" ;
+<http://resplan.org/resplan/plan_00000#DO-02> a resplan:Door ;
+    rdfs:label "DO-02" ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00000#BED-01>,
+        <http://resplan.org/resplan/plan_00000#LIV-01> ;
     resplan:width 0.92 .
 
-<http://resplan.org/resplan/plan_00000#DO-0004> a resplan:Door ;
-    rdfs:label "DO-0004" ;
+<http://resplan.org/resplan/plan_00000#DO-03> a resplan:Door ;
+    rdfs:label "DO-03" ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00000#BED-02>,
+        <http://resplan.org/resplan/plan_00000#LIV-01> ;
+    resplan:width 0.92 .
+
+<http://resplan.org/resplan/plan_00000#DO-04> a resplan:Door ;
+    rdfs:label "DO-04" ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00000#BTH-01>,
+        <http://resplan.org/resplan/plan_00000#LIV-01> ;
     resplan:width 0.83 .
 
-<http://resplan.org/resplan/plan_00000#DO-0005> a resplan:Door ;
-    rdfs:label "DO-0005" ;
+<http://resplan.org/resplan/plan_00000#DO-05> a resplan:Door ;
+    rdfs:label "DO-05" ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00000#LIV-01>,
+        <http://resplan.org/resplan/plan_00000#STRG-01> ;
     resplan:width 0.93 .
 
-<http://resplan.org/resplan/plan_00000#DO-0006> a resplan:Door ;
-    rdfs:label "DO-0006" ;
+<http://resplan.org/resplan/plan_00000#DO-06> a resplan:Door ;
+    rdfs:label "DO-06" ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00000#BAL-02>,
+        <http://resplan.org/resplan/plan_00000#BED-02> ;
     resplan:width 0.91 .
 
-<http://resplan.org/resplan/plan_00000#DO-0007> a resplan:Door ;
-    rdfs:label "DO-0007" ;
+<http://resplan.org/resplan/plan_00000#DO-07> a resplan:Door ;
+    rdfs:label "DO-07" ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00000#BAL-01>,
+        <http://resplan.org/resplan/plan_00000#BED-01> ;
     resplan:width 0.91 .
 
-<http://resplan.org/resplan/plan_00000#KIT-0001> a resplan:Room,
-        bot:Space ;
-    rdfs:label "kitchen" ;
-    resplan:adjacentTo <http://resplan.org/resplan/plan_00000#LIV-0001> ;
-    resplan:bboxMaxX 3.9 ;
-    resplan:bboxMaxY 9.36 ;
-    resplan:bboxMinX 2.07 ;
-    resplan:bboxMinY 6.24 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0004>,
-        <http://resplan.org/resplan/plan_00000#EX-0005> ;
-    resplan:centroidX 2.99 ;
-    resplan:centroidY 7.8 ;
-    resplan:hasRoomType resplan:Kitchen ;
-    resplan:roomArea 5.73 .
+<http://resplan.org/resplan/plan_00000#EX-04> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-04" .
 
-<http://resplan.org/resplan/plan_00000#OUT-0000> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#EX-05> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-05" .
+
+<http://resplan.org/resplan/plan_00000#EX-07> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-07" .
+
+<http://resplan.org/resplan/plan_00000#EX-08> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-08" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-06> .
+
+<http://resplan.org/resplan/plan_00000#EX-10> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-10" .
+
+<http://resplan.org/resplan/plan_00000#EX-12> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-12" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-02> .
+
+<http://resplan.org/resplan/plan_00000#EX-13> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-13" .
+
+<http://resplan.org/resplan/plan_00000#EX-15> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-15" .
+
+<http://resplan.org/resplan/plan_00000#EX-16> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-16" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-01> .
+
+<http://resplan.org/resplan/plan_00000#EX-18> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-18" .
+
+<http://resplan.org/resplan/plan_00000#EX-21> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-21" .
+
+<http://resplan.org/resplan/plan_00000#EX-22> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-22" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#FR-01> .
+
+<http://resplan.org/resplan/plan_00000#EX-26> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-26" .
+
+<http://resplan.org/resplan/plan_00000#EX-27> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-27" .
+
+<http://resplan.org/resplan/plan_00000#EX-28> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-28" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-03> .
+
+<http://resplan.org/resplan/plan_00000#FR-01> a resplan:Door,
+        resplan:FrontDoor ;
+    rdfs:label "FR-01" ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00000#LIV-01>,
+        <http://resplan.org/resplan/plan_00000#OUT-0000> ;
+    resplan:width 1.12 .
+
+<http://resplan.org/resplan/plan_00000#IN-07> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-07" .
+
+<http://resplan.org/resplan/plan_00000#IN-08> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-08" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-04> .
+
+<http://resplan.org/resplan/plan_00000#OUT-0000> a resplan:EntryNode,
+        resplan:Room,
         bot:Space ;
     rdfs:label "Outside" ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#LIV-0001> .
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-22> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#LIV-01> .
 
-<http://resplan.org/resplan/plan_00000#STRG-0001> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#STRG-01> a resplan:Room,
         bot:Space ;
     rdfs:label "storage" ;
     resplan:bboxMaxX 6.62 ;
     resplan:bboxMaxY 9.36 ;
     resplan:bboxMinX 4.06 ;
     resplan:bboxMinY 6.39 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0001>,
-        <http://resplan.org/resplan/plan_00000#EX-0004>,
-        <http://resplan.org/resplan/plan_00000#IN-0004> ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-12>,
+        <http://resplan.org/resplan/plan_00000#EX-13>,
+        <http://resplan.org/resplan/plan_00000#EX-23>,
+        <http://resplan.org/resplan/plan_00000#IN-06>,
+        <http://resplan.org/resplan/plan_00000#IN-09>,
+        <http://resplan.org/resplan/plan_00000#IN-10> ;
     resplan:centroidX 5.34 ;
     resplan:centroidY 7.88 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#LIV-0001> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#LIV-01> ;
     resplan:hasRoomType resplan:Storage ;
+    resplan:hasWindow <http://resplan.org/resplan/plan_00000#WI-02> ;
     resplan:roomArea 7.61 .
 
-<http://resplan.org/resplan/plan_00000#BED-0002> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#EX-02> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-02" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-01>,
+        <http://resplan.org/resplan/plan_00000#DO-07> .
+
+<http://resplan.org/resplan/plan_00000#EX-03> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-03" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-07> .
+
+<http://resplan.org/resplan/plan_00000#EX-23> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-23" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-02>,
+        <http://resplan.org/resplan/plan_00000#WI-03> .
+
+<http://resplan.org/resplan/plan_00000#IN-03> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-03" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-02>,
+        <http://resplan.org/resplan/plan_00000#DO-03> .
+
+<http://resplan.org/resplan/plan_00000#IN-04> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-04" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-02>,
+        <http://resplan.org/resplan/plan_00000#DO-04> .
+
+<http://resplan.org/resplan/plan_00000#IN-06> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-06" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-03>,
+        <http://resplan.org/resplan/plan_00000#DO-05> .
+
+<http://resplan.org/resplan/plan_00000#IN-09> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-09" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-05> .
+
+<http://resplan.org/resplan/plan_00000#IN-10> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-10" .
+
+<http://resplan.org/resplan/plan_00000#WI-01> a resplan:Window ;
+    rdfs:label "WI-01" .
+
+<http://resplan.org/resplan/plan_00000#WI-02> a resplan:Window ;
+    rdfs:label "WI-02" .
+
+<http://resplan.org/resplan/plan_00000#WI-03> a resplan:Window ;
+    rdfs:label "WI-03" .
+
+<http://resplan.org/resplan/plan_00000#WI-04> a resplan:Window ;
+    rdfs:label "WI-04" .
+
+<http://resplan.org/resplan/plan_00000#BED-02> a resplan:Room,
         bot:Space ;
     rdfs:label "bedroom" ;
     resplan:bboxMaxX 9.99 ;
     resplan:bboxMaxY 10.9 ;
     resplan:bboxMinX 6.75 ;
     resplan:bboxMinY 6.39 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0001>,
-        <http://resplan.org/resplan/plan_00000#IN-0002>,
-        <http://resplan.org/resplan/plan_00000#IN-0004> ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-03>,
+        <http://resplan.org/resplan/plan_00000#EX-04>,
+        <http://resplan.org/resplan/plan_00000#EX-05>,
+        <http://resplan.org/resplan/plan_00000#EX-06>,
+        <http://resplan.org/resplan/plan_00000#EX-07>,
+        <http://resplan.org/resplan/plan_00000#EX-08>,
+        <http://resplan.org/resplan/plan_00000#EX-10>,
+        <http://resplan.org/resplan/plan_00000#EX-11>,
+        <http://resplan.org/resplan/plan_00000#EX-12>,
+        <http://resplan.org/resplan/plan_00000#EX-13>,
+        <http://resplan.org/resplan/plan_00000#IN-03>,
+        <http://resplan.org/resplan/plan_00000#IN-06> ;
     resplan:centroidX 8.43 ;
     resplan:centroidY 8.47 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BAL-0002>,
-        <http://resplan.org/resplan/plan_00000#LIV-0001> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BAL-02>,
+        <http://resplan.org/resplan/plan_00000#LIV-01> ;
     resplan:hasRoomType resplan:Bedroom ;
     resplan:roomArea 13.39 .
 
-<http://resplan.org/resplan/plan_00000#DO-0003> a resplan:Door ;
-    rdfs:label "DO-0003" ;
-    resplan:width 0.92 .
-
-<http://resplan.org/resplan/plan_00000#EX-0003> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-0003" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#FR-0001>,
-        <http://resplan.org/resplan/plan_00000#WI-0004> .
-
-<http://resplan.org/resplan/plan_00000#EX-0005> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-0005" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#FR-0001>,
-        <http://resplan.org/resplan/plan_00000#WI-0003> .
-
-<http://resplan.org/resplan/plan_00000#FR-0001> a resplan:Door,
-        resplan:FrontDoor ;
-    rdfs:label "FR-0001" ;
-    resplan:width 1.12 .
-
-<http://resplan.org/resplan/plan_00000#IN-0005> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-0005" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-0004> .
-
-<http://resplan.org/resplan/plan_00000#WI-0001> a resplan:Window ;
-    rdfs:label "WI-0001" .
-
-<http://resplan.org/resplan/plan_00000#WI-0002> a resplan:Window ;
-    rdfs:label "WI-0002" .
-
-<http://resplan.org/resplan/plan_00000#WI-0003> a resplan:Window ;
-    rdfs:label "WI-0003" .
-
-<http://resplan.org/resplan/plan_00000#WI-0004> a resplan:Window ;
-    rdfs:label "WI-0004" .
-
-<http://resplan.org/resplan/plan_00000#BED-0001> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#BED-01> a resplan:Room,
         bot:Space ;
     rdfs:label "bedroom" ;
     resplan:bboxMaxX 12.49 ;
     resplan:bboxMaxY 6.27 ;
     resplan:bboxMinX 7.93 ;
     resplan:bboxMinY 2.73 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0001>,
-        <http://resplan.org/resplan/plan_00000#EX-0002>,
-        <http://resplan.org/resplan/plan_00000#IN-0002> ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-02>,
+        <http://resplan.org/resplan/plan_00000#EX-03>,
+        <http://resplan.org/resplan/plan_00000#EX-05>,
+        <http://resplan.org/resplan/plan_00000#EX-15>,
+        <http://resplan.org/resplan/plan_00000#EX-16>,
+        <http://resplan.org/resplan/plan_00000#EX-17>,
+        <http://resplan.org/resplan/plan_00000#EX-18>,
+        <http://resplan.org/resplan/plan_00000#IN-03>,
+        <http://resplan.org/resplan/plan_00000#IN-04> ;
     resplan:centroidX 10.02 ;
     resplan:centroidY 4.44 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BAL-0001>,
-        <http://resplan.org/resplan/plan_00000#BTH-0002>,
-        <http://resplan.org/resplan/plan_00000#LIV-0001> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BAL-01>,
+        <http://resplan.org/resplan/plan_00000#BTH-02>,
+        <http://resplan.org/resplan/plan_00000#LIV-01> ;
     resplan:hasRoomType resplan:Bedroom ;
     resplan:roomArea 14.7 .
 
-<http://resplan.org/resplan/plan_00000#EX-0002> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-0002" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-0001>,
-        <http://resplan.org/resplan/plan_00000#WI-0004> .
-
-<http://resplan.org/resplan/plan_00000#EX-0004> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-0004" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#WI-0002>,
-        <http://resplan.org/resplan/plan_00000#WI-0003> .
-
-<http://resplan.org/resplan/plan_00000#IN-0002> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-0002" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-0002>,
-        <http://resplan.org/resplan/plan_00000#DO-0003> .
-
-<http://resplan.org/resplan/plan_00000#IN-0004> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-0004" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-0003>,
-        <http://resplan.org/resplan/plan_00000#DO-0005> .
-
-<http://resplan.org/resplan/plan_00000#EX-0001> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-0001" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00000#DO-0001>,
-        <http://resplan.org/resplan/plan_00000#DO-0006>,
-        <http://resplan.org/resplan/plan_00000#DO-0007>,
-        <http://resplan.org/resplan/plan_00000#WI-0001>,
-        <http://resplan.org/resplan/plan_00000#WI-0002> .
-
-<http://resplan.org/resplan/plan_00000#LIV-0001> a resplan:Room,
+<http://resplan.org/resplan/plan_00000#LIV-01> a resplan:Room,
         bot:Space ;
     rdfs:label "living" ;
-    resplan:adjacentTo <http://resplan.org/resplan/plan_00000#KIT-0001> ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00000#KIT-01> ;
     resplan:bboxMaxX 7.81 ;
     resplan:bboxMaxY 9.36 ;
     resplan:bboxMinX 0.0 ;
     resplan:bboxMinY 2.73 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-0003>,
-        <http://resplan.org/resplan/plan_00000#EX-0004>,
-        <http://resplan.org/resplan/plan_00000#EX-0005>,
-        <http://resplan.org/resplan/plan_00000#IN-0002>,
-        <http://resplan.org/resplan/plan_00000#IN-0004>,
-        <http://resplan.org/resplan/plan_00000#IN-0005> ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00000#EX-21>,
+        <http://resplan.org/resplan/plan_00000#EX-22>,
+        <http://resplan.org/resplan/plan_00000#EX-23>,
+        <http://resplan.org/resplan/plan_00000#EX-24>,
+        <http://resplan.org/resplan/plan_00000#EX-25>,
+        <http://resplan.org/resplan/plan_00000#EX-26>,
+        <http://resplan.org/resplan/plan_00000#EX-27>,
+        <http://resplan.org/resplan/plan_00000#EX-28>,
+        <http://resplan.org/resplan/plan_00000#IN-03>,
+        <http://resplan.org/resplan/plan_00000#IN-04>,
+        <http://resplan.org/resplan/plan_00000#IN-06>,
+        <http://resplan.org/resplan/plan_00000#IN-07>,
+        <http://resplan.org/resplan/plan_00000#IN-08>,
+        <http://resplan.org/resplan/plan_00000#IN-09>,
+        <http://resplan.org/resplan/plan_00000#IN-10> ;
     resplan:centroidX 3.15 ;
     resplan:centroidY 4.66 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-0001>,
-        <http://resplan.org/resplan/plan_00000#BED-0002>,
-        <http://resplan.org/resplan/plan_00000#BTH-0001>,
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-01>,
+        <http://resplan.org/resplan/plan_00000#BED-02>,
+        <http://resplan.org/resplan/plan_00000#BTH-01>,
         <http://resplan.org/resplan/plan_00000#OUT-0000>,
-        <http://resplan.org/resplan/plan_00000#STRG-0001> ;
+        <http://resplan.org/resplan/plan_00000#STRG-01> ;
     resplan:hasRoomType resplan:LivingRoom ;
     resplan:roomArea 21.88 .
 

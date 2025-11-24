@@ -24,18 +24,18 @@ resplan:ExteriorWall a rdfs:Class ;
     rdfs:comment "An exterior wall of a building." ;
     rdfs:subClassOf ifc:Wall .
 
-resplan:FrontDoor a rdfs:Class ;
-    rdfs:label "Front Door" ;
-    rdfs:comment "The main entrance door of a building." ;
-    rdfs:subClassOf ifc:Door .
-
 resplan:Door a owl:Class ;
     rdfs:label "Door" ;
-    rdfs:subClassOf ifc:Door .
+    rdfs:subClassOf ifc:Door , resplan:Opening.
+
+resplan:FrontDoor a owl:Class ;
+    rdfs:label "Front Door" ;
+    rdfs:comment "The main entrance door of a building." ;
+    rdfs:subClassOf resplan:Door .
 
 resplan:Window a owl:Class ;
     rdfs:label "Window" ;
-    rdfs:subClassOf ifc:Window .
+    rdfs:subClassOf ifc:Window , resplan:Opening .
 
 resplan:Room a rdfs:Class ;
     rdfs:label "Room" ;
@@ -47,10 +47,14 @@ resplan:RoomType a rdfs:Class ;
     rdfs:comment "A specific type of room within a building." ;
     rdfs:subClassOf resplan:Room .
 
+resplan:Opening a rdfs:Class ;
+    rdfs:label "Opening" ;
+    rdfs:comment "An opening in a wall, such as a door or window." .
+
 resplan:EntryNode a rdfs:Class ;
     rdfs:label "Entry Node" ;
-    rdfs:comment "A node representing an entry or exit point in the building." ;
-    rdfs:subClassOf resplan:FrontDoor.
+    rdfs:comment "A node representing an entry or exit space in the building." ;
+    rdfs:subClassOf resplan:Room .
 
 # ------ CLASSES: ROOM ------ #
 resplan:LivingRoom a rdfs:Class ;
@@ -78,12 +82,16 @@ resplan:hasRoomType     a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:rang
 resplan:boundedBy       a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range ifc:Wall .
 resplan:hostsOpening    a owl:ObjectProperty ;
     rdfs:domain ifc:Wall ;
-    rdfs:range resplan:Door , resplan:Window ;
-    rdfs:comment "Associates a wall with the door or window hosted on it." .
+    rdfs:range resplan:Opening ;
+    rdfs:comment "Associates a wall with the opening (door or window) hosted on it." .
 resplan:adjacentTo      a owl:ObjectProperty ; rdfs:domain bot:Space; rdfs:range bot:Space .  
 resplan:connectedViaDoor a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range bot:Space . # a door to each space
 resplan:hasWindow       a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range resplan:Window .
 resplan:isReachableFrom  a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range resplan:EntryNode .
+resplan:connectsSpace   a owl:ObjectProperty ; # new property 
+    rdfs:domain resplan:Door ;
+    rdfs:range bot:Space ;
+    rdfs:comment "Associates a door with the spaces connected via that opening." .
 
 # DATA PROPERTIES
 # ------ To store Metadata about the plan ------ #

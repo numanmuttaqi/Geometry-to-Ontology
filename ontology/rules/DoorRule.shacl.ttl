@@ -14,19 +14,20 @@ resplan:DW1_DoorHasExactlyOneWall a sh:NodeShape ;
     sh:property [
         sh:path [ sh:inversePath resplan:hostsOpening] ;
         sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:message "Door is not hosted by a wall" ; # specify error message
+        sh:maxCount 2 ; #some doors might belong to 2 walls in the json structure
+        sh:message "Door is not hosted by any wall" ; # specify error message
     ] .
 
 ### DW2: Door width compliance (internal doors >= 0.8m, external doors >= 0.9m)
-resplan:DW2_DoorWidth_Min a sh:NodeShape ;
-  sh:targetClass resplan:Door ;
-  sh:property [
-    sh:path resplan:width ;
-    sh:minInclusive 0.80 ;
-    sh:datatype xsd:double ;
-    sh:message "Door width < 0.80 m (internal door minimum)." ;
-  ] .
+### skip dimension checks for now
+# resplan:DW2_DoorWidth_Min a sh:NodeShape ;
+#   sh:targetClass resplan:Door ;
+#   sh:property [
+#     sh:path resplan:width ;
+#     sh:minInclusive 0.80 ;
+#     sh:datatype xsd:double ;
+#     sh:message "Door width < 0.80 m (internal door minimum)." ;
+#   ] .
 
 ### DW3: Door Missing = If there is a space adjacent with another space via a door 'connectedViaDoor', the door connects spaces
 resplan:DW3_ConnectedViaDoorImpliesDoor a sh:NodeShape ;
@@ -52,21 +53,25 @@ resplan:DW3_ConnectedViaDoorImpliesDoor a sh:NodeShape ;
 ### DW4: Wall Missing = Doors must connect exactly two spaces with shared boundary wall
 resplan:DW4_DoorsImpliesSharedBoundary a sh:NodeShape ;
     sh:targetClass resplan:Door ;
+    sh:property [
+        sh:path resplan:connectsSpace ;
+        sh:minCount 2 ;
+        sh:maxCount 2 ;
+        sh:message "Door must connect exactly two spaces via connected_via_door relationships." ;
+    ] ;
     sh:sparql [
-        sh:message "Door does not connect exactly two spaces with shared boundary wall." ;
+        sh:message "Door does not connect two spaces that share the hosting wall." ;
         sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
         SELECT DISTINCT ?this WHERE {
             ?this a resplan:Door .
+            ?this resplan:connectsSpace ?a .
+            ?this resplan:connectsSpace ?b .
+            FILTER (?a != ?b)
             FILTER NOT EXISTS {
                 ?wall resplan:hostsOpening ?this .
                 ?a resplan:boundedBy ?wall .
                 ?b resplan:boundedBy ?wall .
-                FILTER (?a != ?b)
-                FILTER NOT EXISTS {
-                    ?c resplan:boundedBy ?wall .
-                    FILTER (?c != ?a && ?c != ?b)
-                }
             }
         }
         """ ;

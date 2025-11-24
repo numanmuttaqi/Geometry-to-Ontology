@@ -235,25 +235,35 @@ def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
 
     hosts_opening: List[Dict[str, Any]] = []
     for opening in openings:
-        candidates: List[tuple[float, GeoRec]] = []
+        contact_candidates: List[tuple[float, GeoRec]] = []
         for wall in walls:
             score = _opening_wall_overlap_score(opening.geom, wall.geom)
             if score >= EPS_LEN:
-                candidates.append((score, wall))
-        if not candidates:
-            continue
-        candidates.sort(key=lambda item: item[0], reverse=True)
-        top_score = candidates[0][0]
-        threshold = max(EPS_LEN, top_score * 1)
+                contact_candidates.append((score, wall))
+
         selected: List[GeoRec] = []
-        for score, wall in candidates:
-            if score < threshold and selected:
-                break
-            selected.append(wall)
-            if len(selected) == 2:
-                break
-        if not selected:
-            selected.append(candidates[0][1])
+        if contact_candidates:
+            contact_candidates.sort(key=lambda item: item[0], reverse=True)
+            top_score, top_wall = contact_candidates[0]
+            selected.append(top_wall)
+            if len(contact_candidates) > 1:
+                second_score, second_wall = contact_candidates[1]
+                if second_score >= max(EPS_LEN, top_score * 0.3):
+                    selected.append(second_wall)
+        else:
+            distance_candidates = sorted(
+                ((opening.geom.distance(wall.geom), wall) for wall in walls),
+                key=lambda item: item[0],
+            )
+            if not distance_candidates:
+                continue
+            selected.append(distance_candidates[0][1])
+            if (
+                len(distance_candidates) > 1
+                and distance_candidates[1][0] <= distance_candidates[0][0] + EPS_LEN
+            ):
+                selected.append(distance_candidates[1][1])
+
         for wall in selected:
             hosts_opening.append(
                 {

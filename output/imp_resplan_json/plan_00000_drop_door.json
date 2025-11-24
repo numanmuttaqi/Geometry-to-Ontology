@@ -38,11 +38,11 @@
         "front_door": 1
       },
       "relationship_summary": {
-        "total_relationships": 101,
+        "total_relationships": 103,
         "adjacency_count": 1,
         "door_connections": 7,
-        "bounded_by_count": 70,
-        "hosts_opening_count": 23
+        "bounded_by_count": 73,
+        "hosts_opening_count": 22
       },
       "scale_factor": 0.0532,
       "computed_net_area": 73.13,
@@ -3202,7 +3202,7 @@
       ],
       [
         "BED-01",
-        "BTH-02",
+        "BAL-01",
         "DO-07"
       ]
     ],
@@ -3238,7 +3238,7 @@
         {
           "id": "WI-01",
           "wall": "EX-14",
-          "walls": [
+          "host_walls": [
             "EX-14",
             "EX-16"
           ],
@@ -3247,7 +3247,7 @@
         {
           "id": "WI-02",
           "wall": "EX-12",
-          "walls": [
+          "host_walls": [
             "EX-12",
             "EX-23"
           ],
@@ -3256,7 +3256,7 @@
         {
           "id": "WI-03",
           "wall": "EX-23",
-          "walls": [
+          "host_walls": [
             "EX-23",
             "EX-28"
           ],
@@ -3265,7 +3265,7 @@
         {
           "id": "WI-04",
           "wall": "EX-19",
-          "walls": [
+          "host_walls": [
             "EX-19",
             "EX-20"
           ],
@@ -3276,6 +3276,9 @@
         {
           "room": "BAL-01",
           "exterior_walls": [
+            "EX-01",
+            "EX-02",
+            "EX-03",
             "EX-04"
           ],
           "windows_on_exterior": []
@@ -3285,7 +3288,8 @@
           "exterior_walls": [
             "EX-07",
             "EX-08",
-            "EX-09"
+            "EX-09",
+            "EX-10"
           ],
           "windows_on_exterior": []
         },
@@ -3386,17 +3390,10 @@
       "doors": [
         {
           "id": "DO-01",
-          "width": 0.19,
-          "height": 0.79,
-          "through_wall": "EX-02",
+          "wall": [
+            "IN-02"
+          ],
           "host_walls": [
-            "EX-02",
-            "IN-02"
-          ],
-          "through_walls": [
-            "IN-02"
-          ],
-          "walls": [
             "EX-02",
             "IN-02"
           ],
@@ -3404,21 +3401,16 @@
             "BED-01",
             "BTH-02"
           ],
+          "width": 0.19,
+          "height": 0.79,
           "wall_exists": true
         },
         {
           "id": "DO-03",
-          "width": 0.19,
-          "height": 0.92,
-          "through_wall": "IN-03",
-          "host_walls": [
-            "IN-03",
-            "IN-06"
-          ],
-          "through_walls": [
+          "wall": [
             "IN-03"
           ],
-          "walls": [
+          "host_walls": [
             "IN-03",
             "IN-06"
           ],
@@ -3426,21 +3418,16 @@
             "BED-02",
             "LIV-01"
           ],
+          "width": 0.19,
+          "height": 0.92,
           "wall_exists": true
         },
         {
           "id": "DO-04",
-          "width": 0.19,
-          "height": 0.83,
-          "through_wall": "IN-04",
-          "host_walls": [
-            "IN-04",
-            "IN-08"
-          ],
-          "through_walls": [
+          "wall": [
             "IN-04"
           ],
-          "walls": [
+          "host_walls": [
             "IN-04",
             "IN-08"
           ],
@@ -3448,21 +3435,16 @@
             "BTH-01",
             "LIV-01"
           ],
+          "width": 0.19,
+          "height": 0.83,
           "wall_exists": true
         },
         {
           "id": "DO-05",
-          "width": 0.19,
-          "height": 0.93,
-          "through_wall": "IN-06",
-          "host_walls": [
-            "IN-06",
-            "IN-09"
-          ],
-          "through_walls": [
+          "wall": [
             "IN-06"
           ],
-          "walls": [
+          "host_walls": [
             "IN-06",
             "IN-09"
           ],
@@ -3470,52 +3452,42 @@
             "LIV-01",
             "STRG-01"
           ],
+          "width": 0.19,
+          "height": 0.93,
           "wall_exists": true
         },
         {
           "id": "DO-06",
-          "width": 0.19,
-          "height": 0.91,
-          "through_wall": "EX-08",
-          "host_walls": [
-            "EX-08",
-            "EX-09",
-            "EX-10"
-          ],
-          "through_walls": [
+          "wall": [
             "EX-08"
           ],
-          "walls": [
+          "host_walls": [
             "EX-08",
-            "EX-09",
-            "EX-10"
+            "EX-09"
           ],
           "rooms": [
             "BAL-02",
             "BED-02"
           ],
+          "width": 0.19,
+          "height": 0.91,
           "wall_exists": true
         },
         {
           "id": "DO-07",
-          "width": 0.19,
-          "height": 0.91,
-          "through_wall": "EX-02",
+          "wall": [
+            "EX-02"
+          ],
           "host_walls": [
             "EX-02",
             "EX-03"
           ],
-          "through_walls": [
-            "EX-02"
-          ],
-          "walls": [
-            "EX-02",
-            "EX-03"
-          ],
           "rooms": [
-            "BED-01",
-            "BTH-02"
+            "BAL-01",
+            "BED-01"
           ],
+          "width": 0.19,
+          "height": 0.91,
           "wall_exists": true
         }
       ],
@@ -4520,7 +4492,7 @@
       },
       {
         "source": "BED-01",
-        "target": "BTH-02",
+        "target": "BAL-01",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-07"
@@ -5165,6 +5137,33 @@
         }
       },
       {
+        "source": "BAL-01",
+        "target": "EX-02",
+        "type": "bounded_by",
+        "properties": {
+          "length": 2.947765,
+          "wall_type": "exterior"
+        }
+      },
+      {
+        "source": "BAL-01",
+        "target": "EX-03",
+        "type": "bounded_by",
+        "properties": {
+          "length": 0.49788,
+          "wall_type": "exterior"
+        }
+      },
+      {
+        "source": "BAL-02",
+        "target": "EX-10",
+        "type": "bounded_by",
+        "properties": {
+          "length": 0.426754,
+          "wall_type": "exterior"
+        }
+      },
+      {
         "source": "IN-02",
         "target": "DO-01",
         "type": "hosts_opening",
@@ -5238,14 +5237,6 @@
       },
       {
         "source": "EX-09",
-        "target": "DO-06",
-        "type": "hosts_opening",
-        "properties": {
-          "opening_type": "door"
-        }
-      },
-      {
-        "source": "EX-10",
         "target": "DO-06",
         "type": "hosts_opening",
         "properties": {
@@ -5841,6 +5832,27 @@
             "wall": "EX-23",
             "length": 0.22,
             "wall_type": "exterior"
+          },
+          {
+            "id": "E-bnd-00071",
+            "room": "BAL-01",
+            "wall": "EX-02",
+            "length": 2.947765,
+            "wall_type": "exterior"
+          },
+          {
+            "id": "E-bnd-00072",
+            "room": "BAL-01",
+            "wall": "EX-03",
+            "length": 0.49788,
+            "wall_type": "exterior"
+          },
+          {
+            "id": "E-bnd-00073",
+            "room": "BAL-02",
+            "wall": "EX-10",
+            "length": 0.426754,
+            "wall_type": "exterior"
           }
         ],
         "per_room": [
@@ -5943,18 +5955,21 @@
           {
             "room": "BAL-01",
             "walls": [
+              "EX-02",
+              "EX-03",
               "EX-04"
             ],
-            "length_total": 1.3
+            "length_total": 4.75
           },
           {
             "room": "BAL-02",
             "walls": [
               "EX-07",
               "EX-08",
-              "EX-09"
+              "EX-09",
+              "EX-10"
             ],
-            "length_total": 2.39
+            "length_total": 2.82
           },
           {
             "room": "STRG-01",
@@ -6041,78 +6056,72 @@
         },
         {
           "id": "E-host-00013",
-          "wall": "EX-10",
-          "opening": "DO-06",
-          "opening_type": "door"
-        },
-        {
-          "id": "E-host-00014",
           "wall": "EX-02",
           "opening": "DO-07",
           "opening_type": "door"
         },
         {
-          "id": "E-host-00015",
+          "id": "E-host-00014",
           "wall": "EX-03",
           "opening": "DO-07",
           "opening_type": "door"
         },
         {
-          "id": "E-host-00016",
+          "id": "E-host-00015",
           "wall": "EX-14",
           "opening": "WI-01",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00017",
+          "id": "E-host-00016",
           "wall": "EX-16",
           "opening": "WI-01",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00018",
+          "id": "E-host-00017",
           "wall": "EX-12",
+          "opening": "WI-02",
+          "opening_type": "window"
+        },
+        {
+          "id": "E-host-00018",
+          "wall": "EX-23",
           "opening": "WI-02",
           "opening_type": "window"
         },
         {
           "id": "E-host-00019",
           "wall": "EX-23",
-          "opening": "WI-02",
-          "opening_type": "window"
-        },
-        {
-          "id": "E-host-00020",
-          "wall": "EX-23",
           "opening": "WI-03",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00021",
+          "id": "E-host-00020",
           "wall": "EX-28",
           "opening": "WI-03",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00022",
+          "id": "E-host-00021",
           "wall": "EX-19",
           "opening": "WI-04",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00023",
+          "id": "E-host-00022",
           "wall": "EX-20",
           "opening": "WI-04",
           "opening_type": "window"
         },
         {
-          "id": "E-host-00024",
+          "id": "E-host-00023",
           "wall": "EX-22",
           "opening": "FR-01",
           "opening_type": "front_door"
         },
         {
-          "id": "E-host-00025",
+          "id": "E-host-00024",
           "wall": "EX-25",
           "opening": "FR-01",
           "opening_type": "front_door"
@@ -6195,12 +6204,12 @@
           "door_type": "door",
           "rooms": [
             "BED-01",
-            "BTH-02"
+            "BAL-01"
           ],
           "through_wall": "EX-02",
           "room_types": [
             "bedroom",
-            "bathroom"
+            "balcony"
           ]
         },
         {
@@ -6221,7 +6230,7 @@
     },
     "statistics": {
       "total_nodes": 59,
-      "total_edges": 104,
+      "total_edges": 106,
       "relationship_types": [
         "bounded_by",
         "adjacent_to",
