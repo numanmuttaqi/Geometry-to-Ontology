@@ -1,5 +1,6 @@
 @prefix sh:         <http://www.w3.org/ns/shacl#> .
 @prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
 @prefix bot:        <https://w3id.org/bot#> .
@@ -10,7 +11,7 @@
 
 ### C01: Each habitable room must be reachable through a sequence door chain from the entry node.
 resplan:C01_RoomConnectivity a sh:NodeShape ;
-    sh:targetClass resplan:Room ;
+    sh:targetSubjectOf resplan:hasRoomType ;
     sh:message "Habitable room is not reachable from front door through door connections." ;
     sh:sparql [
         a sh:SPARQLConstraint ;
@@ -32,7 +33,7 @@ resplan:C01_RoomConnectivity a sh:NodeShape ;
 ### C02: Each bedroom must have access to a bathroom through shared door.
 ### the example only has bedroom - bathroom direct connection, no hallway.
 resplan:C02_BedroomBathroomConnectivity a sh:NodeShape ;
-sh:targetClass resplan:Bedroom ;
+sh:targetSubjectOf resplan:hasRoomType ;
 sh:message "Bedroom does not have access to a bathroom through shared door." ;
 sh:sparql [
     sh:severity sh:Violation ;
@@ -41,12 +42,13 @@ sh:sparql [
 
         SELECT $this
         WHERE {
-            $this a resplan:Bedroom .
+            $this resplan:hasRoomType resplan:Bedroom .
+
             FILTER NOT EXISTS 
             # Bedroom - Bathroom direct connection
                 {
                 $this (resplan:ConnectedViaDoor | ^resplan:ConnectedViaDoor)+ ?bathroom .
-                ?bathroom a resplan:Bathroom .
+                ?bathroom resplan:hasRoomType resplan:Bathroom .
                 }
         }
 """ ;
@@ -54,7 +56,7 @@ sh:sparql [
 
 ### C03: Kitchen - Dining - Living should be connected directly or through open space.
 resplan:C03_KitchenDiningLivingConnectivity a sh:NodeShape ; 
-sh:targetClass resplan:Kitchen ;
+sh:targetSubjectOf resplan:hasRoomType ;
 sh:message "Kitchen is not connected to Dining or Living room directly or adjacent with each other." ;
 sh:sparql [
     sh:severity sh:Violation ;
@@ -63,48 +65,55 @@ sh:sparql [
 
         SELECT $this
         WHERE {
-            $this a resplan:Kitchen .
+            $this resplan:hasRoomType resplan:Kitchen .
+            FILTER NOT EXISTS { $this rdf:type owl:Class . }
 
-            ?d a resplan:DiningRoom .
-            ?l a resplan:LivingRoom .
+            ?d a resplan:hasRoomType resplan:DiningRoom .
+            ?l a resplan:hasRoomType resplan:LivingRoom .
 
             # Kitchen adjacent to Dining or Living
             FILTER NOT EXISTS
             {
                 $this (resplan:AdjacentTo | ^resplan:AdjacentTo)+ ?d . 
-                ?d a resplan:DiningRoom . 
+                ?d a resplan:hasRoomType resplan:DiningRoom . 
             }
             UNION
             {
                 $this (resplan:AdjacentTo | ^resplan:AdjacentTo)+ ?l .
-                ?l a resplan:LivingRoom .
+                ?l a resplan:hasRoomType resplan:LivingRoom .
             }
         }
     """ ;
 ] .
                 
-### C04: Private zones (bedrooms, bathrooms) should be separated from public zones (living room, kitchen) by doors or walls.
+### C04: Private zones (bedrooms, bathrooms) should not be adjacent with public zones (living room, kitchen).
 resplan:C04_PrivatePublicSeparation a sh:NodeShape ;
-sh:targetClass resplan:Bedroom, resplan:Bathroom  ;
+sh:targetSubjectOf resplan:hasRoomType ;
 sh:message "Private zones (bedrooms, bathrooms) are not separated from public zones (living room, kitchen) by doors or walls." ;
 sh:sparql [
+    a sh:SPARQLConstraint ;
     sh:severity sh:Violation ;
     sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
 
         SELECT $this
         WHERE {
-            $this a resplan:Bedroom .
+            $this resplan:hasRoomType ?ptype .
+            FILTER ( ?ptype OM (resplan:Bedroom, resplan:Bathroom) ) .
+     
             FILTER EXISTS 
-            # Private Area adjacent to Public Area without door or wall
+            # Private Area adjacent to Public Area
                 {
-                $this (resplan:AdjacentTo | ^resplan:AdjacentTo)+ ?k .
-                ?k a resplan:Kitchen .
-                }
-            UNION
-                {
-                $this (resplan:AdjacentTo | ^resplan:AdjacentTo)+ ?l .
-                ?l a resplan:LivingRoom .
+                $this resplan:AdjacentTo ?pub .
+                ?pub resplan:hasRoomType ?pubtype .
+                FILTER ( ?pubtype OM (resplan:LivingRoom, 
+                                    resplan:Kitchen, 
+                                    resplan:Storage, 
+                                    resplan:Balcony, 
+                                    resplan:Veranda,
+                                    resplan:Parking
+                                    resplan:Stair
+                    ) ) .
                 }
         }
 """ ;
@@ -122,6 +131,7 @@ sh:sparql [
         SELECT DISTINCT $this
         WHERE {
             $this a resplan:Balcony .
+            FILTER NOT EXISTS { $this rdf:type owl:Class . }
             $this (resplan:ConnectedViaDoor | ^resplan:ConnectedViaDoor)+ ?bathroom .
             ?bathroom a resplan:Bathroom .
             }
@@ -140,6 +150,7 @@ sh:sparql [
         SELECT DISTINCT $this
         WHERE {
             $this a resplan:Storage .
+            FILTER NOT EXISTS { $this rdf:type owl:Class . }
             $this (resplan:ConnectedViaDoor | ^resplan:ConnectedViaDoor)+ ?bedroom .
             ?bedroom a resplan:Bedroom .
             }

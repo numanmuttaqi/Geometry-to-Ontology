@@ -10,34 +10,28 @@
 
 ### DW1: Every Door must belong to exactly one wall
 resplan:DW1_DoorHasExactlyOneWall a sh:NodeShape ;
+    rdfs:label "DW1: Door must be hosted by a wall" ;
     sh:targetClass resplan:Door ;
     sh:property [
+        a sh:PropertyShape ;
         sh:path [ sh:inversePath resplan:hostsOpening] ;
-        sh:minCount 1 ;
-        sh:maxCount 2 ; #some doors might belong to 2 walls in the json structure
-        sh:message "Door is not hosted by any wall" ; # specify error message
+        sh:minCount 2 ;
+        sh:maxCount 2 ;
+        sh:message "This door's wall is missing" ;
     ] .
 
-### DW2: Door width compliance (internal doors >= 0.8m, external doors >= 0.9m)
-### skip dimension checks for now
-# resplan:DW2_DoorWidth_Min a sh:NodeShape ;
-#   sh:targetClass resplan:Door ;
-#   sh:property [
-#     sh:path resplan:width ;
-#     sh:minInclusive 0.80 ;
-#     sh:datatype xsd:double ;
-#     sh:message "Door width < 0.80 m (internal door minimum)." ;
-#   ] .
 
-### DW3: Door Missing = If there is a space adjacent with another space via a door 'connectedViaDoor', the door connects spaces
-resplan:DW3_MissingDoor a sh:NodeShape ;
+### DW2: Door Missing = If there is a space adjacent with another space via a door 'connectedViaDoor', the door connects spaces
+resplan:DW2_MissingDoor a sh:NodeShape ;
+rdfs:label "DW2: Missing door between spaces declared as connectedViaDoor" ;
     sh:targetClass bot:Space ;
-    sh:message "Door must connect exactly two spaces via connected_via_door relationships." ;
     sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Door must connect exactly two spaces via connected_via_door relationships." ;
         sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
         PREFIX bot: <https://w3id.org/bot#>
-        SELECT DISTINCT ?this ?other ?msg WHERE {
+        SELECT DISTINCT ?this ?other WHERE {
             ?this resplan:connectedViaDoor ?other .
             FILTER (?this != ?other)
             FILTER (STR(?this) < STR(?other))
@@ -51,17 +45,13 @@ resplan:DW3_MissingDoor a sh:NodeShape ;
         """ ;
     ] .
 
-
-### DW4: Wall Missing = Doors must connect exactly two spaces with shared boundary wall
-resplan:DW4_DoorsImpliesSharedBoundary a sh:NodeShape ;
+### DW3: Wall Missing = Doors must connect exactly two spaces with shared boundary wall
+resplan:DW3_DoorsImpliesSharedBoundary a sh:NodeShape ;
+    rdfs:label "DW3: Host wall must bound both connected spaces" ;
     sh:targetClass resplan:Door ;
-    sh:property [
-        sh:path resplan:connectsSpace ;
-        sh:minCount 2 ;
-        sh:maxCount 2 ;
-    ] ;
-    sh:message "Door must connect exactly two spaces with shared boundary wall." ;
     sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Door connects two spaces but their shared boundary wall is missing." ;
         sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
         SELECT DISTINCT ?this WHERE {

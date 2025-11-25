@@ -11,8 +11,10 @@
 ### W1: Every habitable room (Living/Bedroom/Kitchen) must have at least one window
 resplan:W1_MinOneWindow_Habitable
   a sh:NodeShape ;
+  rdfs:label "W1: Habitable rooms must have at least one window" ;
   sh:targetClass bot:Space ;
   sh:sparql [
+    a sh:SPARQLConstraint ;
     sh:message "Habitable space (Living/Bedroom/Kitchen) has no window hosted on its walls." ;
     sh:select """
       PREFIX resplan: <http://resplan.org/resplan#>
@@ -32,8 +34,10 @@ resplan:W1_MinOneWindow_Habitable
 ### W2: Bathrooms must have a window (since mechanical ventilation is not modelled)
 resplan:W2_BathroomNeedsWindow
   a sh:NodeShape ;
+  rdfs:label "W2: Bathrooms must have at least one window" ;
   sh:targetClass bot:Space ;
   sh:sparql [
+    a sh:SPARQLConstraint ;
     sh:message "Bathroom has no window hosted on its walls." ;
     sh:select """
       PREFIX resplan: <http://resplan.org/resplan#>
@@ -52,8 +56,10 @@ resplan:W2_BathroomNeedsWindow
 ### change into: every room that has window on exterior wall now missing the window
 resplan:W3_HabitableHasExteriorWall
   a sh:NodeShape ;
+  rdfs:label "W3: Habitable rooms must have at least one exterior wall" ;
   sh:targetClass bot:Space ;
   sh:sparql [
+    a sh:SPARQLConstraint ;
     sh:message "Habitable space (Living/Bedroom/Kitchen) has no bounding exterior wall." ;
     sh:select """
       PREFIX resplan: <http://resplan.org/resplan#>
@@ -71,8 +77,10 @@ resplan:W3_HabitableHasExteriorWall
 ### W4: Windows must be hosted only on exterior walls
 resplan:W4_WindowOnExteriorWallOnly
   a sh:NodeShape ;
+  rdfs:label "W4: Windows must be mounted on exterior walls" ;
   sh:targetClass resplan:Window ;
   sh:sparql [
+    a sh:SPARQLConstraint ;
     sh:message "Window must be mounted on an exterior wall." ;
     sh:select """
       PREFIX resplan: <http://resplan.org/resplan#>
