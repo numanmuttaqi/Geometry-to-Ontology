@@ -32,6 +32,7 @@ resplan:DW1_DoorHasExactlyOneWall a sh:NodeShape ;
 ### DW3: Door Missing = If there is a space adjacent with another space via a door 'connectedViaDoor', the door connects spaces
 resplan:DW3_MissingDoor a sh:NodeShape ;
     sh:targetClass bot:Space ;
+    sh:message "Door must connect exactly two spaces via connected_via_door relationships." ;
     sh:sparql [
         sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
@@ -46,19 +47,8 @@ resplan:DW3_MissingDoor a sh:NodeShape ;
                 ?door resplan:connectsSpace ?this .
                 ?door resplan:connectsSpace ?other .
             }
-            BIND(CONCAT(
-                "connectedViaDoor declared between ",
-                STRAFTER(STR(?this), "#"),
-                " and ",
-                STRAFTER(STR(?other), "#"),
-                ", but no door instance connects them."
-            ) AS ?msg)
         }
         """ ;
-        sh:resultAnnotation [
-            sh:annotationProperty sh:resultMessage ;
-            sh:annotationVarName "msg"
-        ]
     ] .
 
 
@@ -69,10 +59,9 @@ resplan:DW4_DoorsImpliesSharedBoundary a sh:NodeShape ;
         sh:path resplan:connectsSpace ;
         sh:minCount 2 ;
         sh:maxCount 2 ;
-        sh:message "Door must connect exactly two spaces via connected_via_door relationships." ;
     ] ;
+    sh:message "Door must connect exactly two spaces with shared boundary wall." ;
     sh:sparql [
-        sh:message "Door does not connect two spaces that share the hosting wall." ;
         sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
         SELECT DISTINCT ?this WHERE {

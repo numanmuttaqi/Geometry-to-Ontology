@@ -9,15 +9,139 @@
 @prefix resplan:    <http://resplan.org/resplan#> .
 
 ### C01: Each habitable room must be reachable through a sequence door chain from the entry node.
+resplan:C01_RoomConnectivity a sh:NodeShape ;
+    sh:targetClass resplan:Room ;
+    sh:message "Habitable room is not reachable from front door through door connections." ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:severity sh:Violation ;
+        sh:select """
+                PREFIX resplan: <http://resplan.org/resplan#>
+                SELECT $this
+                WHERE {
+                # $this = focus room
+                FILTER NOT EXISTS {
+                ?entry a resplan:EntryNode .
+                ?entry (resplan:ConnectedViaDoor | ^resplan:ConnectedViaDoor)+ $this .
+                }
+            }
+        """ ;
+    ] .
 
-### C02: Each bedroom must have access to a bathroom through a hallway or shared door.
+
+### C02: Each bedroom must have access to a bathroom through shared door.
+### the example only has bedroom - bathroom direct connection, no hallway.
+resplan:C02_BedroomBathroomConnectivity a sh:NodeShape ;
+sh:targetClass resplan:Bedroom ;
+sh:message "Bedroom does not have access to a bathroom through shared door." ;
+sh:sparql [
+    sh:severity sh:Violation ;
+    sh:select """
+        PREFIX resplan: <http://resplan.org/resplan#>
+
+        SELECT $this
+        WHERE {
+            $this a resplan:Bedroom .
+            FILTER NOT EXISTS 
+            # Bedroom - Bathroom direct connection
+                {
+                $this (resplan:ConnectedViaDoor | ^resplan:ConnectedViaDoor)+ ?bathroom .
+                ?bathroom a resplan:Bathroom .
+                }
+        }
+""" ;
+] .
 
 ### C03: Kitchen - Dining - Living should be connected directly or through open space.
+resplan:C03_KitchenDiningLivingConnectivity a sh:NodeShape ; 
+sh:targetClass resplan:Kitchen ;
+sh:message "Kitchen is not connected to Dining or Living room directly or adjacent with each other." ;
+sh:sparql [
+    sh:severity sh:Violation ;
+    sh:select """"
+        PREFIX resplan: <http://resplan.org/resplan#>
 
-### C04: Bedrooms requires at least two egress options (doors/windows) for emergency exit.
+        SELECT $this
+        WHERE {
+            $this a resplan:Kitchen .
 
-### C05: Private zones (bedrooms, bathrooms) should be separated from public zones (living room, kitchen) by doors or walls.
+            ?d a resplan:DiningRoom .
+            ?l a resplan:LivingRoom .
 
-### C06: Balcony accessed from living room, hallway, or bedroom NOT bathroom
+            # Kitchen adjacent to Dining or Living
+            FILTER NOT EXISTS
+            {
+                $this (resplan:AdjacentTo | ^resplan:AdjacentTo)+ ?d . 
+                ?d a resplan:DiningRoom . 
+            }
+            UNION
+            {
+                $this (resplan:AdjacentTo | ^resplan:AdjacentTo)+ ?l .
+                ?l a resplan:LivingRoom .
+            }
+        }
+    """ ;
+] .
+                
+### C04: Private zones (bedrooms, bathrooms) should be separated from public zones (living room, kitchen) by doors or walls.
+resplan:C04_PrivatePublicSeparation a sh:NodeShape ;
+sh:targetClass resplan:Bedroom, resplan:Bathroom  ;
+sh:message "Private zones (bedrooms, bathrooms) are not separated from public zones (living room, kitchen) by doors or walls." ;
+sh:sparql [
+    sh:severity sh:Violation ;
+    sh:select """
+        PREFIX resplan: <http://resplan.org/resplan#>
 
-### C07: Storage room and Utility spaces accessed via hallway or kitchen NOT bedroom
+        SELECT $this
+        WHERE {
+            $this a resplan:Bedroom .
+            FILTER EXISTS 
+            # Private Area adjacent to Public Area without door or wall
+                {
+                $this (resplan:AdjacentTo | ^resplan:AdjacentTo)+ ?k .
+                ?k a resplan:Kitchen .
+                }
+            UNION
+                {
+                $this (resplan:AdjacentTo | ^resplan:AdjacentTo)+ ?l .
+                ?l a resplan:LivingRoom .
+                }
+        }
+""" ;
+] .
+
+### C05: Balcony accessed from living room, hallway, or bedroom NOT bathroom
+resplan:C05_BalconyAccess a sh:NodeShape ;
+sh:targetClass resplan:Balcony ;
+sh:message "Balcony is not supposed to have access from bathroom." ;
+sh:sparql [
+    sh:severity sh:Violation ;
+    sh:select """
+        PREFIX resplan: <http://resplan.org/resplan#>
+      
+        SELECT DISTINCT $this
+        WHERE {
+            $this a resplan:Balcony .
+            $this (resplan:ConnectedViaDoor | ^resplan:ConnectedViaDoor)+ ?bathroom .
+            ?bathroom a resplan:Bathroom .
+            }
+    """ ;
+] .
+
+### C06: Storage room and Utility spaces accessed via hallway or kitchen NOT bedroom
+resplan:C06_StorageUtilityAccess a sh:NodeShape ;
+sh:targetClass resplan:Storage ;
+sh:message "Storage room is not supposed to have direct access from bedroom." ;
+sh:sparql [
+    sh:severity sh:Violation ;
+    sh:select """
+        PREFIX resplan: <http://resplan.org/resplan#>
+      
+        SELECT DISTINCT $this
+        WHERE {
+            $this a resplan:Storage .
+            $this (resplan:ConnectedViaDoor | ^resplan:ConnectedViaDoor)+ ?bedroom .
+            ?bedroom a resplan:Bedroom .
+            }
+    """ ;
+] .
