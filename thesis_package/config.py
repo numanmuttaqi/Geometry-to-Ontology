@@ -10,7 +10,7 @@ from typing import Any, Dict
 import matplotlib.pyplot as plt
 import resplan_utils as R
 
-from .circulation import build_circulation
+from .circulation import build_circulation, embed_structural_analyses_in_relations
 from .constants import ROOM_KEYS, STRUCT_KEYS
 # --- directories and canonical paths import from config_path ---
 from .config_path import ROOT, DATA, OUTPUT, PLOT_DIR, PLOT_LABEL_DIR, JSON_DIR, PKL_PATH
@@ -53,6 +53,7 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
         "instances": {"room": rooms, "structural": structural},
         "graph": graph,
     }
+    embed_structural_analyses_in_relations(circulation_plan)
     circulation = build_circulation(circulation_plan)
 
     room_counts = {key: len(rooms[key]) for key in ROOM_KEYS}

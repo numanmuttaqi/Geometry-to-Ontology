@@ -105,8 +105,9 @@ def convert(json_path: Path, output_path: Path | None = None, base_uri: str | No
     _add_plan_metadata(graph, plan_uri, metadata)
     rooms = _add_rooms(graph, base_ns, data.get("instances", {}).get("room", {}))
     structural = _add_structurals(graph, base_ns, data.get("instances", {}).get("structural", {}))
-    _add_relationships(graph, base_ns, rooms, structural, data.get("graph", {}).get("relations", {}))
-    window_analysis = data.get("circulation", {}).get("window_analysis", {})
+    relations = data.get("graph", {}).get("relations", {})
+    _add_relationships(graph, base_ns, rooms, structural, relations)
+    window_analysis = relations.get("window_analysis", {})
     _add_window_memberships(graph, base_ns, rooms, structural, window_analysis)
 
     output_path = output_path or json_path.with_suffix(".ttl")

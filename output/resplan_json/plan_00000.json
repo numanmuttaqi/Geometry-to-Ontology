@@ -3301,220 +3301,6 @@
         "BED-02",
         "BAL-02"
       ]
-    },
-    "window_analysis": {
-      "windows": [
-        {
-          "id": "WI-01",
-          "wall": "EX-14",
-          "host_walls": [
-            "EX-14",
-            "EX-16"
-          ],
-          "area": 0.1
-        },
-        {
-          "id": "WI-02",
-          "wall": "EX-12",
-          "host_walls": [
-            "EX-12",
-            "EX-23"
-          ],
-          "area": 0.37
-        },
-        {
-          "id": "WI-03",
-          "wall": "EX-23",
-          "host_walls": [
-            "EX-23",
-            "EX-28"
-          ],
-          "area": 0.3
-        },
-        {
-          "id": "WI-04",
-          "wall": "EX-19",
-          "host_walls": [
-            "EX-19",
-            "EX-20"
-          ],
-          "area": 0.1
-        }
-      ],
-      "rooms": [
-        {
-          "roomHasWindow": "BTH-01",
-          "exterior_walls": [
-            "EX-18",
-            "EX-19",
-            "EX-20",
-            "EX-21"
-          ],
-          "windows_on_exterior": [
-            "WI-04"
-          ]
-        },
-        {
-          "roomHasWindow": "BTH-02",
-          "exterior_walls": [
-            "EX-01",
-            "EX-02",
-            "EX-14",
-            "EX-15",
-            "EX-16"
-          ],
-          "windows_on_exterior": [
-            "WI-01"
-          ]
-        },
-        {
-          "roomHasWindow": "KIT-01",
-          "exterior_walls": [
-            "EX-23",
-            "EX-26",
-            "EX-27",
-            "EX-28"
-          ],
-          "windows_on_exterior": [
-            "WI-03"
-          ]
-        },
-        {
-          "roomHasWindow": "STRG-01",
-          "exterior_walls": [
-            "EX-12",
-            "EX-13",
-            "EX-23"
-          ],
-          "windows_on_exterior": [
-            "WI-02"
-          ]
-        }
-      ]
-    },
-    "door_wall_consistency": {
-      "doors": [
-        {
-          "id": "DO-01",
-          "wall": [
-            "IN-02"
-          ],
-          "host_walls": [
-            "EX-02",
-            "IN-02"
-          ],
-          "rooms": [
-            "BED-01",
-            "BTH-02"
-          ],
-          "width": 0.19,
-          "height": 0.79,
-          "wall_exists": true
-        },
-        {
-          "id": "DO-02",
-          "wall": [
-            "IN-04"
-          ],
-          "host_walls": [
-            "IN-03",
-            "IN-04"
-          ],
-          "rooms": [
-            "BED-01",
-            "LIV-01"
-          ],
-          "width": 0.19,
-          "height": 0.92,
-          "wall_exists": true
-        },
-        {
-          "id": "DO-03",
-          "wall": [
-            "IN-03"
-          ],
-          "host_walls": [
-            "IN-03",
-            "IN-06"
-          ],
-          "rooms": [
-            "BED-02",
-            "LIV-01"
-          ],
-          "width": 0.19,
-          "height": 0.92,
-          "wall_exists": true
-        },
-        {
-          "id": "DO-04",
-          "wall": [
-            "IN-04"
-          ],
-          "host_walls": [
-            "IN-04",
-            "IN-08"
-          ],
-          "rooms": [
-            "BTH-01",
-            "LIV-01"
-          ],
-          "width": 0.19,
-          "height": 0.83,
-          "wall_exists": true
-        },
-        {
-          "id": "DO-05",
-          "wall": [
-            "IN-06"
-          ],
-          "host_walls": [
-            "IN-06",
-            "IN-09"
-          ],
-          "rooms": [
-            "LIV-01",
-            "STRG-01"
-          ],
-          "width": 0.19,
-          "height": 0.93,
-          "wall_exists": true
-        },
-        {
-          "id": "DO-06",
-          "wall": [
-            "EX-08"
-          ],
-          "host_walls": [
-            "EX-08",
-            "EX-09"
-          ],
-          "rooms": [
-            "BAL-02",
-            "BED-02"
-          ],
-          "width": 0.19,
-          "height": 0.91,
-          "wall_exists": true
-        },
-        {
-          "id": "DO-07",
-          "wall": [
-            "EX-02"
-          ],
-          "host_walls": [
-            "EX-02",
-            "EX-03"
-          ],
-          "rooms": [
-            "BAL-01",
-            "BED-01"
-          ],
-          "width": 0.19,
-          "height": 0.91,
-          "wall_exists": true
-        }
-      ],
-      "wall_thickness_mean": 0.19
     }
   },
   "graph": {
@@ -6299,7 +6085,221 @@
             "outside"
           ]
         }
-      ]
+      ],
+      "window_analysis": {
+        "windows": [
+          {
+            "id": "WI-01",
+            "wall": "EX-14",
+            "host_walls": [
+              "EX-14",
+              "EX-16"
+            ],
+            "area": 0.1
+          },
+          {
+            "id": "WI-02",
+            "wall": "EX-12",
+            "host_walls": [
+              "EX-12",
+              "EX-23"
+            ],
+            "area": 0.37
+          },
+          {
+            "id": "WI-03",
+            "wall": "EX-23",
+            "host_walls": [
+              "EX-23",
+              "EX-28"
+            ],
+            "area": 0.3
+          },
+          {
+            "id": "WI-04",
+            "wall": "EX-19",
+            "host_walls": [
+              "EX-19",
+              "EX-20"
+            ],
+            "area": 0.1
+          }
+        ],
+        "rooms": [
+          {
+            "roomHasWindow": "BTH-01",
+            "exterior_walls": [
+              "EX-18",
+              "EX-19",
+              "EX-20",
+              "EX-21"
+            ],
+            "windows_on_exterior": [
+              "WI-04"
+            ]
+          },
+          {
+            "roomHasWindow": "BTH-02",
+            "exterior_walls": [
+              "EX-01",
+              "EX-02",
+              "EX-14",
+              "EX-15",
+              "EX-16"
+            ],
+            "windows_on_exterior": [
+              "WI-01"
+            ]
+          },
+          {
+            "roomHasWindow": "KIT-01",
+            "exterior_walls": [
+              "EX-23",
+              "EX-26",
+              "EX-27",
+              "EX-28"
+            ],
+            "windows_on_exterior": [
+              "WI-03"
+            ]
+          },
+          {
+            "roomHasWindow": "STRG-01",
+            "exterior_walls": [
+              "EX-12",
+              "EX-13",
+              "EX-23"
+            ],
+            "windows_on_exterior": [
+              "WI-02"
+            ]
+          }
+        ]
+      },
+      "door_wall_consistency": {
+        "doors": [
+          {
+            "id": "DO-01",
+            "wall": [
+              "IN-02"
+            ],
+            "host_walls": [
+              "EX-02",
+              "IN-02"
+            ],
+            "rooms": [
+              "BED-01",
+              "BTH-02"
+            ],
+            "width": 0.19,
+            "height": 0.79,
+            "wall_exists": true
+          },
+          {
+            "id": "DO-02",
+            "wall": [
+              "IN-04"
+            ],
+            "host_walls": [
+              "IN-03",
+              "IN-04"
+            ],
+            "rooms": [
+              "BED-01",
+              "LIV-01"
+            ],
+            "width": 0.19,
+            "height": 0.92,
+            "wall_exists": true
+          },
+          {
+            "id": "DO-03",
+            "wall": [
+              "IN-03"
+            ],
+            "host_walls": [
+              "IN-03",
+              "IN-06"
+            ],
+            "rooms": [
+              "BED-02",
+              "LIV-01"
+            ],
+            "width": 0.19,
+            "height": 0.92,
+            "wall_exists": true
+          },
+          {
+            "id": "DO-04",
+            "wall": [
+              "IN-04"
+            ],
+            "host_walls": [
+              "IN-04",
+              "IN-08"
+            ],
+            "rooms": [
+              "BTH-01",
+              "LIV-01"
+            ],
+            "width": 0.19,
+            "height": 0.83,
+            "wall_exists": true
+          },
+          {
+            "id": "DO-05",
+            "wall": [
+              "IN-06"
+            ],
+            "host_walls": [
+              "IN-06",
+              "IN-09"
+            ],
+            "rooms": [
+              "LIV-01",
+              "STRG-01"
+            ],
+            "width": 0.19,
+            "height": 0.93,
+            "wall_exists": true
+          },
+          {
+            "id": "DO-06",
+            "wall": [
+              "EX-08"
+            ],
+            "host_walls": [
+              "EX-08",
+              "EX-09"
+            ],
+            "rooms": [
+              "BAL-02",
+              "BED-02"
+            ],
+            "width": 0.19,
+            "height": 0.91,
+            "wall_exists": true
+          },
+          {
+            "id": "DO-07",
+            "wall": [
+              "EX-02"
+            ],
+            "host_walls": [
+              "EX-02",
+              "EX-03"
+            ],
+            "rooms": [
+              "BAL-01",
+              "BED-01"
+            ],
+            "width": 0.19,
+            "height": 0.91,
+            "wall_exists": true
+          }
+        ],
+        "wall_thickness_mean": 0.19
+      }
     },
     "statistics": {
       "total_nodes": 59,

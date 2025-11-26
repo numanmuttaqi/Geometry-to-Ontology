@@ -8,7 +8,7 @@ import random
 from pathlib import Path
 from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
-from .circulation import build_circulation
+from .circulation import build_circulation, embed_structural_analyses_in_relations
 
 STRUCT_CATEGORIES = ("interior_wall","exterior_wall", "door", "window", "front_door")
 
@@ -246,6 +246,7 @@ def _update_summary_counts(plan: Mapping) -> None:
 def _rebuild_circulation(plan: Mapping) -> None:
     if not isinstance(plan, dict):
         return
+    embed_structural_analyses_in_relations(plan)
     circulation = build_circulation(plan)
     if isinstance(circulation, dict) and circulation:
         plan["circulation"] = circulation
