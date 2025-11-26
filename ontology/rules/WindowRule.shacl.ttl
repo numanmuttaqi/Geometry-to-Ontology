@@ -8,22 +8,23 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
-### W1: Every habitable room (Living/Bedroom/Kitchen) must have at least one window
+### W1: 
 resplan:W1_MinOneWindow_Habitable
   a sh:NodeShape ;
-  rdfs:label "W1: Habitable rooms must have at least one window" ;
+  rdfs:label "W1: Expected window on this room" ;
   sh:targetClass bot:Space ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "Habitable space (Living/Bedroom/Kitchen) has no window recorded on its exterior walls." ;
+    sh:message "Window is missing in this room" ;
     sh:select """
       PREFIX resplan: <http://resplan.org/resplan#>
       SELECT ?this WHERE {
         ?this resplan:hasRoomType ?type .
-        FILTER (?type IN (resplan:LivingRoom, resplan:Bedroom, resplan:Kitchen))
+        FILTER (?type NOT IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
+        ?this resplan:windowOpening ?w .
         FILTER NOT EXISTS {
-          ?this resplan:hasWindow ?window .
-          ?window a resplan:Window .
+          ?this resplan:hasWindow ?w .
+          ?w a resplan:Window .
         }
       }
     """ ;
@@ -91,24 +92,22 @@ resplan:W4_WindowOnExteriorWallOnly
     """ ;
   ] .
 
-# ### W5: Window is missing except for Balcony, Parking, Veranda
-# resplan:W5_RoomMissingWindow
-#   a sh:NodeShape ;
-#   rdfs:label "W5: Room is missing window on exterior wall" ;
-#   sh:targetClass bot:Space ;
-#   sh:sparql [
-#     a sh:SPARQLConstraint ;
-#     sh:message "Window is missing in this room." ;
-#     sh:select """
-#       PREFIX resplan: <http://resplan.org/resplan#>
-#         SELECT ?this WHERE {
-#         ?this resplan:hasRoomType ?type .
-#         FILTER (?type NOT IN (resplan:Balcony, resplan:Parking, resplan:Veranda))
-#         FILTER NOT EXISTS {
-#           ?this resplan:hasWindow ?window .
-#           ?window a resplan:Window .
-#         }
-#       }
-#     """ ;
-#   ] .
+### W5: Room has window opening on exterior wall but window is not present
+resplan:W5_RoomMissingWindow
+  a sh:NodeShape ;
+  rdfs:label "W5: window is not present" ;
+  sh:targetClass bot:Space ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "Room has window opening on exterior wall but window is not present." ;
+    sh:select """
+      PREFIX resplan: <http://resplan.org/resplan#>
+        SELECT ?this WHERE {
+            ?this resplan:windowOpening ?expected .
+            FILTER NOT EXISTS { 
+            ?this resplan:hasWindow ?expected . 
+            ?expected a resplan:Window . }
+          }
+        """ ;
+  ] .
 

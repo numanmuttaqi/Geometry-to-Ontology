@@ -10,7 +10,7 @@ from typing import Any, Dict
 import matplotlib.pyplot as plt
 import resplan_utils as R
 
-from .circulation import build_circulation, embed_structural_analyses_in_relations
+from .circulation import build_circulation
 from .constants import ROOM_KEYS, STRUCT_KEYS
 # --- directories and canonical paths import from config_path ---
 from .config_path import ROOT, DATA, OUTPUT, PLOT_DIR, PLOT_LABEL_DIR, JSON_DIR, PKL_PATH
@@ -29,7 +29,11 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
         scale_plan_to_meters,
         split_walls,
     )
-    from .graph import export_graph, relabel_rooms_with_subtype_prefixes_inplace
+    from .graph import (
+        embed_structural_analyses_in_relations,
+        export_graph,
+        relabel_rooms_with_subtype_prefixes_inplace,
+    )
 
     normalized = R.normalize_keys(plan.copy())
     scaled_plan, scale_info = scale_plan_to_meters(normalized)
@@ -43,17 +47,20 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
         plot_relpath=str(plot_path),
     )
 
-    temp_plan = {"instances": {"room": rooms}, "graph": {"relations": {}}}
+    temp_plan = {"instances": {"room": rooms}, "relations": {}}
     relabel_rooms_with_subtype_prefixes_inplace(temp_plan)
     rooms = temp_plan["instances"]["room"]
 
     graph = export_graph(scaled_plan, rooms, structural)
+    relations = graph.pop("relations", {})
 
     circulation_plan = {
         "instances": {"room": rooms, "structural": structural},
         "graph": graph,
+        "relations": relations,
     }
     embed_structural_analyses_in_relations(circulation_plan)
+    relations = circulation_plan.get("relations", relations) or relations
     circulation = build_circulation(circulation_plan)
 
     room_counts = {key: len(rooms[key]) for key in ROOM_KEYS}
@@ -88,8 +95,9 @@ def assemble_json(plan: Dict[str, Any], idx: int, json_path: Path, plot_path: Pa
     return {
         "metadata": metadata,
         "instances": {"room": rooms, "structural": structural},
-        "geom": layers,
         "circulation": circulation,
+        "relations": relations,
+        "geom": layers,
         "graph": graph,
     }
 

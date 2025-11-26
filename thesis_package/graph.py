@@ -232,9 +232,6 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         window_ids.append(window_id)
         windows_by_id[window_id] = record
 
-    if not window_ids:
-        return None
-
     exterior_ids: Set[str] = set()
     for wall in exterior_walls:
         wall_id = as_id(wall)
@@ -315,6 +312,10 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         if not window_id or not wall_id:
             continue
         window_to_walls[window_id].add(wall_id)
+        if window_id not in windows_by_id:
+            # Window instance was removed; create a stub so expected openings are preserved.
+            windows_by_id[window_id] = {"id": window_id, "props": {}, "removed": True}
+            window_ids.append(window_id)
 
     WINDOW_MARGIN = 0.05
     ROOM_MARGIN = 0.05
@@ -339,7 +340,8 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             room_to_walls[room_id].add(wall_id)
             wall_to_rooms[wall_id].add(room_id)
 
-    room_windows: Dict[str, Set[str]] = defaultdict(set)
+    room_windows_expected: Dict[str, Set[str]] = defaultdict(set)
+    room_windows_present: Dict[str, Set[str]] = defaultdict(set)
     window_entries: List[Dict[str, Any]] = []
 
     for window_id in window_ids:
@@ -373,66 +375,66 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             continue
 
         if len(candidate_rooms) == 1:
-            room_windows[candidate_rooms[0]].add(window_id)
-            continue
-
-        window_bbox = window_bboxes.get(window_id)
-        if window_bbox:
-            overlaps = []
-            expanded_window = _expand_bbox(window_bbox, WINDOW_MARGIN)
-            for room_id in candidate_rooms:
-                room_bbox = room_bboxes.get(room_id)
-                if not room_bbox:
-                    continue
-                area = _bbox_overlap_area(expanded_window, room_bbox)
-                if area > 0:
-                    overlaps.append((room_id, area))
-            if overlaps:
-                overlaps.sort(key=lambda item: item[1], reverse=True)
-                filtered_rooms = [room_id for room_id, _ in overlaps]
-                if len(filtered_rooms) > 1:
-                    best_area = overlaps[0][1]
-                    threshold = best_area * 0.5
-                    filtered_rooms = [room_id for room_id, area in overlaps if area >= threshold]
-                if filtered_rooms:
-                    for room_id in filtered_rooms:
-                        room_windows[room_id].add(window_id)
-                    continue
-                filtered_rooms = [room_id for room_id, _ in overlaps]
-            else:
-                filtered_rooms = candidate_rooms
+            room_windows_expected[candidate_rooms[0]].add(window_id)
         else:
-            filtered_rooms = candidate_rooms
+            window_bbox = window_bboxes.get(window_id)
+            if window_bbox:
+                overlaps = []
+                expanded_window = _expand_bbox(window_bbox, WINDOW_MARGIN)
+                for room_id in candidate_rooms:
+                    room_bbox = room_bboxes.get(room_id)
+                    if not room_bbox:
+                        continue
+                    area = _bbox_overlap_area(expanded_window, room_bbox)
+                    if area > 0:
+                        overlaps.append((room_id, area))
+                if overlaps:
+                    overlaps.sort(key=lambda item: item[1], reverse=True)
+                    filtered_rooms = [room_id for room_id, _ in overlaps]
+                    if len(filtered_rooms) > 1:
+                        best_area = overlaps[0][1]
+                        threshold = best_area * 0.5
+                        filtered_rooms = [room_id for room_id, area in overlaps if area >= threshold]
+                    if filtered_rooms:
+                        candidate_rooms = filtered_rooms
+            window_centroid = window_centroids.get(window_id)
+            if window_centroid and len(candidate_rooms) > 1:
+                best_room = None
+                best_dist = None
+                for room_id in candidate_rooms:
+                    centroid = room_centroids.get(room_id)
+                    if not centroid:
+                        continue
+                    dist = _distance_sq(window_centroid, centroid)
+                    if best_dist is None or dist < best_dist:
+                        best_dist = dist
+                        best_room = room_id
+                if best_room:
+                    candidate_rooms = [best_room]
+            for room_id in candidate_rooms:
+                room_windows_expected[room_id].add(window_id)
 
-        window_centroid = window_centroids.get(window_id)
-        if not window_centroid:
-            continue
-        best_room = None
-        best_dist = None
-        for room_id in filtered_rooms:
-            centroid = room_centroids.get(room_id)
-            if not centroid:
-                continue
-            dist = _distance_sq(window_centroid, centroid)
-            if best_dist is None or dist < best_dist:
-                best_dist = dist
-                best_room = room_id
-        if best_room:
-            room_windows[best_room].add(window_id)
+        if connected_walls and any(w in exterior_ids for w in connected_walls):
+            for room_id in candidate_rooms:
+                room_windows_present[room_id].add(window_id)
+
+        # Skip detailed overlap/centroid refinement because handled above
 
     room_summaries: List[Dict[str, Any]] = []
-    for room_id in sorted(room_windows):
-        windows = sorted(room_windows.get(room_id, set()))
-        if not windows:
+    all_rooms_with_data = sorted(set(room_windows_expected) | set(room_windows_present))
+    for room_id in all_rooms_with_data:
+        expected = sorted(room_windows_expected.get(room_id, set()))
+        present = sorted(room_windows_present.get(room_id, set()))
+        if not expected and not present:
             continue
         exterior = sorted(w for w in room_to_walls.get(room_id, set()) if w in exterior_ids)
         room_summaries.append(
             {
                 "roomHasWindow": room_id,
                 "exterior_walls": exterior,
-                "windows_on_exterior": windows,
+                "windows_on_exterior": present,
                 # Persist expected openings even if window instances are removed in a drop scenario.
-                "window_openings": windows,
+                "window_openings": expected,
             }
         )
 

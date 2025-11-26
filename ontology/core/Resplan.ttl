@@ -92,6 +92,10 @@ resplan:connectsSpace   a owl:ObjectProperty ; # new property
     rdfs:domain resplan:Door ;
     rdfs:range bot:Space ;
     rdfs:comment "Associates a door with the spaces connected via that opening." .
+resplan:windowOpening a owl:ObjectProperty ;
+    rdfs:domain bot:Space ;          # or resplan:Room if you prefer stricter
+    rdfs:range resplan:Window ;
+    rdfs:comment "Expected window openings for a space, even if the window instance is missing." .
 
 # DATA PROPERTIES
 # ------ To store Metadata about the plan ------ #

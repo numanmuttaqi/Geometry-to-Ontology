@@ -8,7 +8,9 @@ import random
 from pathlib import Path
 from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
-from .circulation import build_circulation, embed_structural_analyses_in_relations
+from .circulation import build_circulation
+from .graph import embed_structural_analyses_in_relations
+from .relations import get_relations_dict
 
 STRUCT_CATEGORIES = ("interior_wall","exterior_wall", "door", "window", "front_door")
 
@@ -134,7 +136,7 @@ def _choose_ids_to_drop(
 
 def _purge_graph(plan: Mapping, removed: Mapping[str, Iterable[str]]) -> None:
     graph = plan.get("graph") or {}
-    relations = graph.get("relations") or {}
+    relations = get_relations_dict(plan, create=True)
 
     removed_walls = set(removed.get("interior_wall", []))
     removed_walls.update(removed.get("exterior_wall", []))
@@ -165,11 +167,13 @@ def _purge_graph(plan: Mapping, removed: Mapping[str, Iterable[str]]) -> None:
 
     # hosts_opening
     hosts = relations.get("hosts_opening") or []
+    # Keep window host relations even if the window instance was marked removed, so downstream
+    # analyses still know the expected opening. Doors are still purged when removed.
     relations["hosts_opening"] = [
         e
         for e in hosts
-        if e.get("opening") not in removed_doors | removed_windows
-        and e.get("wall") not in removed_walls
+        if e.get("wall") not in removed_walls
+        and e.get("opening") not in removed_doors
     ]
 
     # connected_via_door

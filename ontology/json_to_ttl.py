@@ -105,7 +105,7 @@ def convert(json_path: Path, output_path: Path | None = None, base_uri: str | No
     _add_plan_metadata(graph, plan_uri, metadata)
     rooms = _add_rooms(graph, base_ns, data.get("instances", {}).get("room", {}))
     structural = _add_structurals(graph, base_ns, data.get("instances", {}).get("structural", {}))
-    relations = data.get("graph", {}).get("relations", {})
+    relations = data.get("relations") or data.get("graph", {}).get("relations", {})
     _add_relationships(graph, base_ns, rooms, structural, relations)
     window_analysis = relations.get("window_analysis", {})
     _add_window_memberships(graph, base_ns, rooms, structural, window_analysis)
@@ -316,12 +316,25 @@ def _add_window_memberships(
         room_uri = _resolve_room(room_id, graph, ns, rooms)
         if not room_uri:
             continue
-        for window_id in entry.get("windows_on_exterior") or []:
+
+        present_windows = entry.get("windows_on_exterior") or []
+        expected_windows = entry.get("window_openings") or []
+
+        # Link to windows that are still present in the structural payload.
+        for window_id in present_windows:
             window_uri = structural.get(window_id)
             if window_uri:
                 graph.add((room_uri, RESPLAN.hasWindow, window_uri))
             else:
-                LOGGER.warning("Window %s referenced in window_analysis but not found.", window_id)
+                LOGGER.warning("Window %s referenced in windows_on_exterior but not found.", window_id)
+
+        # Persist expected openings even if the window instance was removed.
+        for window_id in expected_windows:
+            window_uri = structural.get(window_id) or ns[window_id]
+            graph.add((room_uri, RESPLAN.windowOpening, window_uri))
+            # If the instance was missing, still type the placeholder so it is queryable.
+            if window_id not in structural:
+                graph.add((window_uri, RDF.type, RESPLAN.Window))
 
 
 def parse_args() -> argparse.Namespace:

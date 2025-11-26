@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections import defaultdict, deque
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
-from .relations import as_id, normalize_relation_ids
+from .relations import as_id, normalize_relation_ids, get_relations_dict
 
 OUTSIDE_ID = "OUT-0000"
 
@@ -86,8 +86,7 @@ def build_circulation(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
     entry_node = f"front_door_{entry_id}"
 
-    relations = plan.get("graph", {}).get("relations") or {}
-    relations = normalize_relation_ids(relations)
+    relations = normalize_relation_ids(get_relations_dict(plan))
     passages = relations.get("connected_via_door") or []
     if not passages:
         return None

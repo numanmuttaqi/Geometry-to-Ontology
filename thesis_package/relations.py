@@ -9,6 +9,44 @@ from shapely.geometry import shape
 
 import resplan_utils as R
 
+def get_relations_dict(plan: Dict[str, Any], *, create: bool = False, promote: bool = True) -> Dict[str, Any]:
+    """
+    Return the relations dictionary stored on the plan, preferring the top-level key.
+
+    When `promote` is True (default), any legacy storage under ``plan["graph"]["relations"]``
+    gets moved to the top level to keep the JSON structure consistent. When `create`
+    is True, the function ensures that ``plan["relations"]`` exists and is a dict.
+    """
+    if not isinstance(plan, dict):
+        return {}
+
+    relations = plan.get("relations")
+    if isinstance(relations, dict):
+        return relations
+
+    graph = plan.get("graph")
+    nested: Optional[Dict[str, Any]] = None
+    if isinstance(graph, dict):
+        candidate = graph.get("relations")
+        if isinstance(candidate, dict):
+            nested = candidate
+
+    if nested is not None:
+        if promote or create:
+            plan["relations"] = nested
+            if isinstance(graph, dict):
+                graph.pop("relations", None)
+        return nested
+
+    if create:
+        relations = {}
+        plan["relations"] = relations
+        if isinstance(graph, dict):
+            graph.pop("relations", None)
+        return relations
+
+    return {}
+
 
 def as_id(value: Any) -> Optional[str]:
     """Return an identifier string from a dict/list entry."""
@@ -122,8 +160,7 @@ def _build_lookups(plan: Dict[str, Any]):
             if geom is not None:
                 room_geom[room_id] = geom
 
-    relations = plan.get("graph", {}).get("relations", {}) or {}
-    relations = normalize_relation_ids(relations)
+    relations = normalize_relation_ids(get_relations_dict(plan))
 
     bounded_rel = relations.get("bounded_by", [])
     if isinstance(bounded_rel, dict):
