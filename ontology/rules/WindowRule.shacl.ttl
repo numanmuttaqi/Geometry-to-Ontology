@@ -8,27 +8,26 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
-### W1: Every habitable room (Living/Bedroom/Kitchen) must have at least one window
-resplan:W1_MinOneWindow_Habitable
-  a sh:NodeShape ;
-  rdfs:label "W1: Habitable rooms must have at least one window" ;
-  sh:targetClass bot:Space ;
-  sh:sparql [
-    a sh:SPARQLConstraint ;
-    sh:message "Habitable space (Living/Bedroom/Kitchen) has no window hosted on its walls." ;
-    sh:select """
-      PREFIX resplan: <http://resplan.org/resplan#>
-      SELECT ?this WHERE {
-        ?this resplan:hasRoomType ?type .
-        FILTER (?type IN (resplan:LivingRoom, resplan:Bedroom, resplan:Kitchen))
-        FILTER NOT EXISTS {
-          ?this resplan:boundedBy ?wall .
-          ?wall resplan:hostsOpening ?window .
-          ?window a resplan:Window .
-        }
-      }
-    """ ;
-  ] .
+# ### W1: Every habitable room (Living/Bedroom/Kitchen) must have at least one window
+# resplan:W1_MinOneWindow_Habitable
+#   a sh:NodeShape ;
+#   rdfs:label "W1: Habitable rooms must have at least one window" ;
+#   sh:targetClass bot:Space ;
+#   sh:sparql [
+#     a sh:SPARQLConstraint ;
+#     sh:message "Habitable space (Living/Bedroom/Kitchen) has no window recorded on its exterior walls." ;
+#     sh:select """
+#       PREFIX resplan: <http://resplan.org/resplan#>
+#       SELECT ?this WHERE {
+#         ?this resplan:hasRoomType ?type .
+#         FILTER (?type IN (resplan:LivingRoom, resplan:Bedroom, resplan:Kitchen))
+#         FILTER NOT EXISTS {
+#           ?this resplan:hasWindow ?window .
+#           ?window a resplan:Window .
+#         }
+#       }
+#     """ ;
+#   ] .
 
 
 ### W2: Bathrooms must have a window (since mechanical ventilation is not modelled)
@@ -38,14 +37,13 @@ resplan:W2_BathroomNeedsWindow
   sh:targetClass bot:Space ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "Bathroom has no window hosted on its walls." ;
+    sh:message "Bathroom has no window recorded on its exterior walls." ;
     sh:select """
       PREFIX resplan: <http://resplan.org/resplan#>
       SELECT ?this WHERE {
         ?this resplan:hasRoomType resplan:Bathroom .
         FILTER NOT EXISTS {
-          ?this resplan:boundedBy ?wall .
-          ?wall resplan:hostsOpening ?window .
+          ?this resplan:hasWindow ?window .
           ?window a resplan:Window .
         }
       }
@@ -92,3 +90,25 @@ resplan:W4_WindowOnExteriorWallOnly
       }
     """ ;
   ] .
+
+### W5: Window is missing except for Balcony, Parking, Veranda
+resplan:W5_RoomMissingWindow
+  a sh:NodeShape ;
+  rdfs:label "W5: Room is missing window on exterior wall" ;
+  sh:targetClass bot:Space ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "Window is missing in this room." ;
+    sh:select """
+      PREFIX resplan: <http://resplan.org/resplan#>
+        SELECT ?this WHERE {
+        ?this resplan:hasRoomType ?type .
+        FILTER (?type NOT IN (resplan:Balcony, resplan:Parking, resplan:Veranda))
+        FILTER NOT EXISTS {
+          ?this resplan:hasWindow ?window .
+          ?window a resplan:Window .
+        }
+      }
+    """ ;
+  ] .
+

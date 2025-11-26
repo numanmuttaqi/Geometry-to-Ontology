@@ -8,4 +8,233 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
-# A11: 
+###################################################################
+# MODELING ASSUMPTIONS
+###################################################################
+# - Door connectivity is materialized: ?a resplan:connectedViaDoor ?b .
+# - "Wall required = door required"
+# 1. Room instances and room types
+#    - Room instances are things like :LIV-01, :BED-01, :BTH-01, etc.
+#    - Room type is given via:
+#         ?room resplan:hasRoomType ?roomType .
+#      where ?roomType is one of:
+#         resplan:LivingRoom, resplan:Kitchen, resplan:Bedroom,
+#         resplan:Bathroom, resplan:Dining, resplan:Hallway,
+#         resplan:Storage, resplan:Balcony, resplan:Entry, ...
+#
+# 2. Adjacency between rooms
+#    - resplan:AdjacentTo expresses a topological adjacency between
+#      two room instances (they share a boundary).
+#    - Adjacency is intended to be symmetric:
+#         if A resplan:AdjacentTo B then B resplan:AdjacentTo A.
+#    - AdjacencyTo is adjacency between spaces without any wall or door in between (open space)
+#
+# 3. Doors and door connectivity
+#    - Door instances represent door openings, e.g. :DOOR-01.
+#    - resplan:connects links a door to each of the two rooms it connects:
+#         ?door a resplan:Door ;
+#               resplan:connects ?room1 ;
+#               resplan:connects ?room2 .
+#    - “Door required” in the rules means:
+#         there exists a resplan:Door d such that
+#            d resplan:connects RoomA
+#            d resplan:connects RoomB
+#
+# 4. Walls and bounding relationships
+#    - Wall instances represent wall segments between rooms.
+#    - resplan:bounds links a wall to each of the rooms it bounds:
+#         ?wall a resplan:Wall ;
+#               resplan:bounds ?room1 ;
+#               resplan:bounds ?room2 .
+#    - “Wall required” in the rules means:
+#         there exists a resplan:Wall w such that
+#            w resplan:bounds RoomA
+#            w resplan:bounds RoomB
+#
+# 5. Interpretation of constraint phrases:
+#    - "Wall preferred / optional door":
+#         If RoomA and RoomB are AdjacentTo,
+#         then at least one Wall bounds both rooms.
+#         A Door between them may or may not exist, but is allowed.
+#
+#    - "Door required through wall":
+#         If RoomA and RoomB are AdjacentTo,
+#         then there must be:
+#           (a) at least one Wall bounding both rooms, AND
+#           (b) at least one Door connecting both rooms.
+#
+#    - "Open or partial separation":
+#         Adjacency between RoomA and RoomB is allowed without a
+#         continuous wall barrier. In the SHACL rules here, a violation
+#         is raised only if a full wall exists between them AND no door
+#         connects them (i.e. adjacency is fully blocked).
+#
+#    - "Not adjacent":
+#         RoomA and RoomB must not be AdjacentTo each other at all.
+#
+# 6. Targeting only room instances (not room classes)
+#    - Node shapes use:
+#         sh:targetSubjectsOf resplan:hasRoomType
+#      so that only instances that actually appear in a plan
+#      (e.g. :LIV-01, :BED-01) are validated, and OWL classes such as
+#      resplan:LivingRoom, resplan:Bedroom are not treated as focus nodes.
+##################################################################
+
+# BEDROOM ADJACENCY RULES (A11-A15)
+
+# A11: Bedroom - Kitchen should have wall between them (no adjacency).
+resplan:A11_BedroomKitchenAdjacency
+    a sh:NodeShape ;
+    rdfs:label "A11_Bedroom-Kitchen needs wall";
+    sh:targetSubjectOf resplan:hasRoomType ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "A11: Missing interior wall between Bedroom and Kitchen." ;
+        sh:severity sh:violation ;
+        sh:select """
+                PREFIX resplan: <http://resplan.org/resplan#>
+                SELECT $this ?value
+                WHERE {
+                    $this resplan:hasRoomType resplan:Bedroom .
+                    $this (resplan:adjacentTo | ^resplan:adjacentTo)+ ?k .
+                    ?k resplan:hasRoomType resplan:Kitchen .
+                    BIND (?k AS ?value) .
+
+                    FILTER NOT EXISTS {
+                        ?wall a resplan:Wall .
+                            resplan:boundedBy $this ;
+                            resplan:boundedBy ?k .
+                    
+                    }
+                }
+    """ ;
+    ] . 
+
+# A12  Bedroom–Living: Wall required .
+resplan:A12_BedroomLivingWallShape
+    a sh:NodeShape ;
+    rdfs:label "A12 Bedroom–Living wall required" ;
+    sh:targetSubjectsOf resplan:hasRoomType ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "A12: Missing interior wall between Bedroom and Living room." ;
+        sh:severity sh:Violation ;
+        sh:select """
+            PREFIX resplan: <http://resplan.org/resplan#>
+
+            SELECT $this ?value
+            WHERE {
+              $this resplan:hasRoomType resplan:Bedroom .
+              $this (resplan:adjacentTo | ^resplan:adjacentTo) ?l .
+              ?l    resplan:hasRoomType resplan:LivingRoom .
+              BIND(?l AS ?value)
+
+              FILTER NOT EXISTS {
+                ?wall a resplan:Wall ;
+                      resplan:boundedBy $this ;
+                      resplan:boundedBy ?l .
+              }
+            }
+        """ ;
+    ] .
+
+# A13  Bedroom–Bathroom: Wall + door required
+resplan:A13_BedroomBathroomDoorWallShape
+    a sh:NodeShape ;
+    rdfs:label "A13 Bedroom–Bathroom wall and door required" ;
+    sh:targetSubjectsOf resplan:hasRoomType ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "A13: Bedroom–Bathroom adjacency must have wall and door." ;
+        sh:severity sh:Violation ;
+        sh:select """
+            PREFIX resplan: <http://resplan.org/resplan#>
+
+            SELECT $this ?value
+            WHERE {
+              $this resplan:hasRoomType resplan:Bedroom .
+              $this (resplan:adjacentTo | ^resplan:adjacentTo) ?b .
+              ?b    resplan:hasRoomType resplan:Bathroom .
+              BIND(?b AS ?value)
+
+              FILTER NOT EXISTS {
+                ?wall a resplan:Wall ;
+                      resplan:boundedBy $this ;
+                      resplan:boundedBy ?b .
+                ?door a resplan:Door ;
+                      resplan:connectedViaDoor $this ;
+                      resplan:connectedViaDoor ?b .
+              }
+            }
+        """ ;
+    ] .
+
+# A14  Bedroom–Hallway: Wall + door required
+resplan:A14_BedroomHallwayDoorWallShape
+    a sh:NodeShape ;
+    rdfs:label "A14 Bedroom–Hallway wall and door required" ;
+    sh:targetSubjectsOf resplan:hasRoomType ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "A14: Bedroom–Hallway adjacency must have wall and door." ;
+        sh:severity sh:Violation ;
+        sh:select """
+            PREFIX resplan: <http://resplan.org/resplan#>
+
+            SELECT $this ?value
+            WHERE {
+              $this resplan:hasRoomType resplan:Bedroom .
+              $this (resplan:adjacentTo | ^resplan:adjacentTo) ?h .
+              ?h    resplan:hasRoomType resplan:Hallway .
+              BIND(?h AS ?value)
+
+              FILTER NOT EXISTS {
+                ?wall a resplan:Wall ;
+                      resplan:boundedBy $this ;
+                      resplan:boundedBy ?h .
+                ?door a resplan:Door ;
+                      resplan:connectedViaDoor $this ;
+                      resplan:connectedViaDoor ?h .
+              }
+            }
+        """ ;
+    ] .
+
+# A15  Bedroom–Dining: Wall required (door optional)
+resplan:A15_BedroomDiningWallShape
+    a sh:NodeShape ;
+    rdfs:label "A15 Bedroom–Dining wall required" ;
+    sh:targetSubjectsOf resplan:hasRoomType ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "A15: Missing interior wall between Bedroom and Dining." ;
+        sh:severity sh:Violation ;
+        sh:select """
+            PREFIX resplan: <http://resplan.org/resplan#>
+
+            SELECT $this ?value
+            WHERE {
+              $this resplan:hasRoomType resplan:Bedroom .
+              $this (resplan:adjacentTo | ^resplan:adjacentTo) ?d .
+              ?d    resplan:hasRoomType resplan:Dining .
+              BIND(?d AS ?value)
+
+              FILTER NOT EXISTS {
+                ?wall a resplan:Wall ;
+                      resplan:boundedBy $this ;
+                      resplan:boundedBy ?d .
+              }
+            }
+        """ ;
+    ] .
+
+# BATHROOM ADJACECNY RULES (A21-25)
+
+# KITCHEN ADJACENCY RULES (A31-34)
+# KITCHEN - BATHROOM IS COVERED IN BATHROOM RULES
+
+# ENTRY ADJACENCY RULES (A41-43)
+
+# LIVING ADJACENCY RULES (A51-53)
+
+# BALCONY ADJACENCY RULES (A61-64)

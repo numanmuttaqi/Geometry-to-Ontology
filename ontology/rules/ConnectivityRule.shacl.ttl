@@ -12,9 +12,9 @@
 ### C01: Each habitable room must be reachable through a sequence door chain from the entry node.
 resplan:C01_RoomConnectivity a sh:NodeShape ;
     sh:targetSubjectOf resplan:hasRoomType ;
-    sh:message "Habitable room is not reachable from front door through door connections." ;
     sh:sparql [
         a sh:SPARQLConstraint ;
+        sh:message "Habitable room is not reachable from front door through door connections." ;
         sh:severity sh:Violation ;
         sh:select """
                 PREFIX resplan: <http://resplan.org/resplan#>
@@ -34,8 +34,9 @@ resplan:C01_RoomConnectivity a sh:NodeShape ;
 ### the example only has bedroom - bathroom direct connection, no hallway.
 resplan:C02_BedroomBathroomConnectivity a sh:NodeShape ;
 sh:targetSubjectOf resplan:hasRoomType ;
-sh:message "Bedroom does not have access to a bathroom through shared door." ;
 sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "Bedroom does not have access to a bathroom through shared door." ;
     sh:severity sh:Violation ;
     sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>
@@ -59,6 +60,8 @@ resplan:C03_KitchenDiningLivingConnectivity a sh:NodeShape ;
 sh:targetSubjectOf resplan:hasRoomType ;
 sh:message "Kitchen is not connected to Dining or Living room directly or adjacent with each other." ;
 sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "Kitchen is not connected to Dining or Living room directly or adjacent with each other." ;
     sh:severity sh:Violation ;
     sh:select """"
         PREFIX resplan: <http://resplan.org/resplan#>
@@ -89,9 +92,9 @@ sh:sparql [
 ### C04: Private zones (bedrooms, bathrooms) should not be adjacent with public zones (living room, kitchen).
 resplan:C04_PrivatePublicSeparation a sh:NodeShape ;
 sh:targetSubjectOf resplan:hasRoomType ;
-sh:message "Private zones (bedrooms, bathrooms) are not separated from public zones (living room, kitchen) by doors or walls." ;
 sh:sparql [
     a sh:SPARQLConstraint ;
+    sh:message "Private zones (bedrooms, bathrooms) are not separated from public zones (living room, kitchen) by doors or walls." ;
     sh:severity sh:Violation ;
     sh:select """
         PREFIX resplan: <http://resplan.org/resplan#>

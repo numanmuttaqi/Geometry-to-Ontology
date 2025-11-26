@@ -311,7 +311,8 @@ def _add_window_memberships(
     if not isinstance(window_analysis, dict):
         return
     for entry in window_analysis.get("rooms", []):
-        room_uri = _resolve_room(entry.get("room"), graph, ns, rooms)
+        room_id = entry.get("roomHasWindow") or entry.get("room")
+        room_uri = _resolve_room(room_id, graph, ns, rooms)
         if not room_uri:
             continue
         for window_id in entry.get("windows_on_exterior") or []:

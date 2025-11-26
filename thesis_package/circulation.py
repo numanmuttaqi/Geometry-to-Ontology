@@ -322,14 +322,15 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         if best_room:
             room_windows[best_room].add(window_id)
 
-    room_ids = sorted(_collect_room_ids(plan))
     room_summaries: List[Dict[str, Any]] = []
-    for room_id in room_ids:
-        exterior = sorted(w for w in room_to_walls.get(room_id, set()) if w in exterior_ids)
+    for room_id in sorted(room_windows):
         windows = sorted(room_windows.get(room_id, set()))
+        if not windows:
+            continue
+        exterior = sorted(w for w in room_to_walls.get(room_id, set()) if w in exterior_ids)
         room_summaries.append(
             {
-                "room": room_id,
+                "roomHasWindow": room_id,
                 "exterior_walls": exterior,
                 "windows_on_exterior": windows,
             }
