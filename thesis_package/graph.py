@@ -9,6 +9,7 @@ from .relations import (
     as_id,
     bounded_by_per_room,
     build_connected_via_door_from_hosts,
+    get_relations_dict,
     normalize_relation_ids,
 )
 
@@ -116,21 +117,13 @@ def apply_room_id_map_to_relations_inplace(plan: dict, id_map: dict) -> int:
         return 0
     total = 0
 
-    rel = plan.get("relations")
-    if isinstance(rel, dict):
+    rel = get_relations_dict(plan)
+    if isinstance(rel, dict) and rel:
         total += _update_rel_table(rel.get("bounded_by"),         ["room"],     id_map)
         total += _update_rel_table(rel.get("adjacent_to"),        ["a","b"],    id_map)
         total += _update_rel_table(rel.get("connected_via_door"), ["rooms"],    id_map)
         total += _update_rel_table(rel.get("window_connects"),    ["from","to"],id_map)
         total += _update_rel_table(rel.get("contains"),           ["container"],id_map)
-
-    grel = plan.get("graph", {}).get("relations")
-    if isinstance(grel, dict):
-        total += _update_rel_table(grel.get("bounded_by"),         ["room"],     id_map)
-        total += _update_rel_table(grel.get("adjacent_to"),        ["a","b"],    id_map)
-        total += _update_rel_table(grel.get("connected_via_door"), ["rooms"],    id_map)
-        total += _update_rel_table(grel.get("window_connects"),    ["from","to"],id_map)
-        total += _update_rel_table(grel.get("contains"),           ["container"],id_map)
 
     circ = plan.get("circulation")
     if isinstance(circ, dict):
@@ -206,11 +199,12 @@ def ensure_outside_virtual_inplace(plan):
 def rebuild_connected_via_door_inplace(plan):
     ensure_outside_virtual_inplace(plan)
     # pastikan relasi lain sudah dinormalisasi agar downstream aman
-    gr = plan.setdefault("graph", {})
-    rel = gr.setdefault("relations", {})
-    rel.update(normalize_relation_ids(rel))
+    relations = get_relations_dict(plan, create=True)
+    normalized = normalize_relation_ids(relations)
+    relations.clear()
+    relations.update(normalized)
     passages = build_connected_via_door_from_hosts(plan)
-    rel["connected_via_door"] = passages
+    relations["connected_via_door"] = passages
     metadata = plan.setdefault("metadata", {})
     summary = metadata.setdefault("summary", {})
     rel_summary = summary.setdefault("relationship_summary", {})
@@ -286,7 +280,7 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             if bbox:
                 wall_bboxes[wall_id] = bbox
 
-    relations = plan.get("graph", {}).get("relations", {}) or {}
+    relations = get_relations_dict(plan)
     bounded = relations.get("bounded_by")
 
     room_to_walls: Dict[str, Set[str]] = defaultdict(set)
@@ -437,6 +431,8 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                 "roomHasWindow": room_id,
                 "exterior_walls": exterior,
                 "windows_on_exterior": windows,
+                # Persist expected openings even if window instances are removed in a drop scenario.
+                "window_openings": windows,
             }
         )
 
@@ -472,7 +468,7 @@ def derive_door_consistency(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     interior_wall_ids: Set[str] = {as_id(wall) for wall in interior_walls if as_id(wall)}
     all_wall_ids: Set[str] = interior_wall_ids | {as_id(wall) for wall in exterior_walls if as_id(wall)}
 
-    relations = plan.get("graph", {}).get("relations", {}) or {}
+    relations = get_relations_dict(plan)
     hosts_opening = relations.get("hosts_opening") or []
     connected = relations.get("connected_via_door") or []
 
@@ -558,10 +554,10 @@ def derive_door_consistency(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
 
 def embed_structural_analyses_in_relations(plan: Dict[str, Any]) -> None:
-    """Compute window/door structural analyses and store them under graph.relations."""
+    """Compute window/door structural analyses and store them under plan relations."""
     if not isinstance(plan, dict):
         return
-    relations = plan.setdefault("graph", {}).setdefault("relations", {})
+    relations = get_relations_dict(plan, create=True)
     window_analysis = derive_window_analysis(plan)
     if window_analysis:
         relations["window_analysis"] = window_analysis
@@ -588,7 +584,7 @@ def export_graph(plan, room_instances, struct_instances=None):
 
     relations = compute_relations(mock_plan)
     relations = normalize_relation_ids(relations)
-    mock_plan.setdefault("graph", {}).setdefault("relations", relations)
+    mock_plan["relations"] = relations
 
     bounded_edges = relations.get("bounded_by", [])
     relations["bounded_by"] = {
