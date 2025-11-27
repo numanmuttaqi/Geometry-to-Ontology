@@ -3948,108 +3948,56 @@
         ]
       }
     ],
-    "window_analysis": {
-      "windows": [
-        {
-          "id": "WI-01",
-          "wall": "EX-14",
-          "host_walls": [
-            "EX-14",
-            "EX-16"
-          ],
-          "area": 0.1
-        },
-        {
-          "id": "WI-02",
-          "wall": "EX-12",
-          "host_walls": [
-            "EX-12",
-            "EX-23"
-          ],
-          "area": 0.37
-        },
-        {
-          "id": "WI-03",
-          "wall": "EX-23",
-          "host_walls": [
-            "EX-23",
-            "EX-28"
-          ],
-          "area": 0.3
-        },
-        {
-          "id": "WI-04",
-          "wall": "EX-19",
-          "host_walls": [
-            "EX-19",
-            "EX-20"
-          ],
-          "area": 0.1
-        }
-      ],
-      "rooms": [
-        {
-          "roomHasWindow": "BTH-01",
-          "exterior_walls": [
-            "EX-18",
-            "EX-19",
-            "EX-20",
-            "EX-21"
-          ],
-          "windows_on_exterior": [
-            "WI-04"
-          ],
-          "window_openings": [
-            "WI-04"
-          ]
-        },
-        {
-          "roomHasWindow": "BTH-02",
-          "exterior_walls": [
-            "EX-01",
-            "EX-02",
-            "EX-14",
-            "EX-15",
-            "EX-16"
-          ],
-          "windows_on_exterior": [
-            "WI-01"
-          ],
-          "window_openings": [
-            "WI-01"
-          ]
-        },
-        {
-          "roomHasWindow": "KIT-01",
-          "exterior_walls": [
-            "EX-23",
-            "EX-26",
-            "EX-27",
-            "EX-28"
-          ],
-          "windows_on_exterior": [
-            "WI-03"
-          ],
-          "window_openings": [
-            "WI-03"
-          ]
-        },
-        {
-          "roomHasWindow": "STRG-01",
-          "exterior_walls": [
-            "EX-12",
-            "EX-13",
-            "EX-23"
-          ],
-          "windows_on_exterior": [
-            "WI-02"
-          ],
-          "window_openings": [
-            "WI-02"
-          ]
-        }
-      ]
-    },
+    "window_connects": [
+      {
+        "id": "E-wcon-WI-01-BTH-02",
+        "room": "BTH-02",
+        "window": "WI-01",
+        "host_walls": [
+          "EX-14",
+          "EX-16"
+        ],
+        "primary_wall": "EX-14",
+        "is_exterior": true,
+        "present": true
+      },
+      {
+        "id": "E-wcon-WI-02-STRG-01",
+        "room": "STRG-01",
+        "window": "WI-02",
+        "host_walls": [
+          "EX-12",
+          "EX-23"
+        ],
+        "primary_wall": "EX-12",
+        "is_exterior": true,
+        "present": true
+      },
+      {
+        "id": "E-wcon-WI-03-KIT-01",
+        "room": "KIT-01",
+        "window": "WI-03",
+        "host_walls": [
+          "EX-23",
+          "EX-28"
+        ],
+        "primary_wall": "EX-23",
+        "is_exterior": true,
+        "present": true
+      },
+      {
+        "id": "E-wcon-WI-04-BTH-01",
+        "room": "BTH-01",
+        "window": "WI-04",
+        "host_walls": [
+          "EX-19",
+          "EX-20"
+        ],
+        "primary_wall": "EX-19",
+        "is_exterior": true,
+        "present": true
+      }
+    ],
     "door_wall_consistency": {
       "doors": [
         {

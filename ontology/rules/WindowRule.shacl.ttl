@@ -51,28 +51,6 @@ resplan:W2_BathroomNeedsWindow
     """ ;
   ] .
 
-# ### W3: Habitable rooms must share at least one exterior wall
-# ### change into: every room that has window on exterior wall now missing the window
-# resplan:W3_HabitableHasExteriorWall
-#   a sh:NodeShape ;
-#   rdfs:label "W3: Habitable rooms must have at least one exterior wall" ;
-#   sh:targetClass bot:Space ;
-#   sh:sparql [
-#     a sh:SPARQLConstraint ;
-#     sh:message "Habitable space (Living/Bedroom/Kitchen) has no bounding exterior wall." ;
-#     sh:select """
-#       PREFIX resplan: <http://resplan.org/resplan#>
-#       SELECT ?this WHERE {
-#         ?this resplan:hasRoomType ?type .
-#         FILTER (?type IN (resplan:LivingRoom, resplan:Bedroom, resplan:Kitchen))
-#         FILTER NOT EXISTS {
-#           ?this resplan:boundedBy ?wall .
-#           ?wall a resplan:ExteriorWall .
-#         }
-#       }
-#     """ ;
-#   ] .
-
 ### W4: Windows must be hosted only on exterior walls
 resplan:W4_WindowOnExteriorWallOnly
   a sh:NodeShape ;
@@ -92,22 +70,4 @@ resplan:W4_WindowOnExteriorWallOnly
     """ ;
   ] .
 
-### W5: Room has window opening on exterior wall but window is not present
-resplan:W5_RoomMissingWindow
-  a sh:NodeShape ;
-  rdfs:label "W5: window is not present" ;
-  sh:targetClass bot:Space ;
-  sh:sparql [
-    a sh:SPARQLConstraint ;
-    sh:message "Room has window opening on exterior wall but window is not present." ;
-    sh:select """
-      PREFIX resplan: <http://resplan.org/resplan#>
-        SELECT ?this WHERE {
-            ?this resplan:windowOpening ?expected .
-            FILTER NOT EXISTS { 
-            ?this resplan:hasWindow ?expected . 
-            ?expected a resplan:Window . }
-          }
-        """ ;
-  ] .
 

@@ -107,8 +107,7 @@ def convert(json_path: Path, output_path: Path | None = None, base_uri: str | No
     structural = _add_structurals(graph, base_ns, data.get("instances", {}).get("structural", {}))
     relations = data.get("relations") or data.get("graph", {}).get("relations", {})
     _add_relationships(graph, base_ns, rooms, structural, relations)
-    window_analysis = relations.get("window_analysis", {})
-    _add_window_memberships(graph, base_ns, rooms, structural, window_analysis)
+    _add_window_memberships(graph, base_ns, rooms, structural, relations)
 
     output_path = output_path or json_path.with_suffix(".ttl")
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -307,34 +306,38 @@ def _add_window_memberships(
     ns: Namespace,
     rooms: Dict[str, URIRef],
     structural: Dict[str, URIRef],
-    window_analysis: Dict,
+    window_relations: Dict,
 ) -> None:
-    if not isinstance(window_analysis, dict):
+    if not isinstance(window_relations, dict):
         return
-    for entry in window_analysis.get("rooms", []):
-        room_id = entry.get("roomHasWindow") or entry.get("room")
+
+    window_connects = window_relations.get("window_connects")
+    # Backward compatibility: fall back to legacy window_analysis structure if present.
+    if window_connects is None and isinstance(window_relations.get("window_analysis"), dict):
+        window_connects = window_relations["window_analysis"].get("window_connects")
+
+    if not window_connects:
+        return
+
+    for entry in window_connects:
+        if not isinstance(entry, dict):
+            continue
+        room_id = entry.get("room")
+        window_id = entry.get("window")
+        if not room_id or not window_id:
+            continue
         room_uri = _resolve_room(room_id, graph, ns, rooms)
         if not room_uri:
             continue
 
-        present_windows = entry.get("windows_on_exterior") or []
-        expected_windows = entry.get("window_openings") or []
+        window_uri = structural.get(window_id) or ns[window_id]
+        # Always record expected opening.
+        graph.add((room_uri, RESPLAN.windowOpening, window_uri))
+        if window_id not in structural:
+            graph.add((window_uri, RDF.type, RESPLAN.Window))
 
-        # Link to windows that are still present in the structural payload.
-        for window_id in present_windows:
-            window_uri = structural.get(window_id)
-            if window_uri:
-                graph.add((room_uri, RESPLAN.hasWindow, window_uri))
-            else:
-                LOGGER.warning("Window %s referenced in windows_on_exterior but not found.", window_id)
-
-        # Persist expected openings even if the window instance was removed.
-        for window_id in expected_windows:
-            window_uri = structural.get(window_id) or ns[window_id]
-            graph.add((room_uri, RESPLAN.windowOpening, window_uri))
-            # If the instance was missing, still type the placeholder so it is queryable.
-            if window_id not in structural:
-                graph.add((window_uri, RDF.type, RESPLAN.Window))
+        if entry.get("present") and entry.get("is_exterior") and window_id in structural:
+            graph.add((room_uri, RESPLAN.hasWindow, window_uri))
 
 
 def parse_args() -> argparse.Namespace:
