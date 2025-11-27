@@ -212,10 +212,8 @@ def rebuild_connected_via_door_inplace(plan):
     return passages
 
 
-def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    """
-    Extract window exposure information for downstream validation/exports.
-    """
+def derive_window_connects(plan: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Derive room-to-window connections (with presence flag) for downstream validation."""
     instances = plan.get("instances", {}) or {}
     structural = instances.get("structural", {}) or {}
     room_instances = instances.get("room", {}) or {}
@@ -340,24 +338,29 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             room_to_walls[room_id].add(wall_id)
             wall_to_rooms[wall_id].add(room_id)
 
-    room_windows_expected: Dict[str, Set[str]] = defaultdict(set)
-    room_windows_present: Dict[str, Set[str]] = defaultdict(set)
-    window_entries: List[Dict[str, Any]] = []
+    window_connections: List[Dict[str, Any]] = []
 
     for window_id in window_ids:
         connected_walls = sorted(window_to_walls.get(window_id, set()))
         room_entries = sorted(wall_to_rooms.get(wall_id, set()) for wall_id in connected_walls)
         flattened_rooms = sorted({room for rooms in room_entries for room in rooms})
 
-        window_entry = {
-            "id": window_id,
-            "wall": connected_walls[0] if connected_walls else None,
-            "host_walls": connected_walls,
-            "area": round(float(windows_by_id[window_id].get("props", {}).get("area") or 0.0), 2),
-        }
-        window_entries.append(window_entry)
-
         candidate_rooms = flattened_rooms
+        # Prefer rooms that actually own the host walls (highest intersection count).
+        if candidate_rooms and connected_walls:
+            scored = []
+            for room_id in candidate_rooms:
+                owned = room_to_walls.get(room_id, set())
+                if not owned:
+                    continue
+                score = len(set(connected_walls) & owned)
+                scored.append((score, room_id))
+            if scored:
+                scored.sort(key=lambda item: item[0], reverse=True)
+                best_score = scored[0][0]
+                if best_score > 0:
+                    candidate_rooms = [room_id for score, room_id in scored if score == best_score]
+
         if not candidate_rooms:
             window_bbox = window_bboxes.get(window_id)
             if window_bbox:
@@ -374,9 +377,7 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         if not candidate_rooms:
             continue
 
-        if len(candidate_rooms) == 1:
-            room_windows_expected[candidate_rooms[0]].add(window_id)
-        else:
+        if len(candidate_rooms) > 1:
             window_bbox = window_bboxes.get(window_id)
             if window_bbox:
                 overlaps = []
@@ -411,37 +412,28 @@ def derive_window_analysis(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                         best_room = room_id
                 if best_room:
                     candidate_rooms = [best_room]
-            for room_id in candidate_rooms:
-                room_windows_expected[room_id].add(window_id)
 
         if connected_walls and any(w in exterior_ids for w in connected_walls):
-            for room_id in candidate_rooms:
-                room_windows_present[room_id].add(window_id)
+            is_exterior = True
+        else:
+            is_exterior = False
 
-        # Skip detailed overlap/centroid refinement because handled above
+        is_present = not windows_by_id[window_id].get("removed")
+        for room_id in candidate_rooms:
+            conn_id = f"E-wcon-{window_id}-{room_id}"
+            window_connections.append(
+                {
+                    "id": conn_id,
+                    "room": room_id,
+                    "window": window_id,
+                    "host_walls": connected_walls,
+                    "primary_wall": connected_walls[0] if connected_walls else None,
+                    "is_exterior": is_exterior,
+                    "present": is_present,
+                }
+            )
 
-    room_summaries: List[Dict[str, Any]] = []
-    all_rooms_with_data = sorted(set(room_windows_expected) | set(room_windows_present))
-    for room_id in all_rooms_with_data:
-        expected = sorted(room_windows_expected.get(room_id, set()))
-        present = sorted(room_windows_present.get(room_id, set()))
-        if not expected and not present:
-            continue
-        exterior = sorted(w for w in room_to_walls.get(room_id, set()) if w in exterior_ids)
-        room_summaries.append(
-            {
-                "roomHasWindow": room_id,
-                "exterior_walls": exterior,
-                "windows_on_exterior": present,
-                # Persist expected openings even if window instances are removed in a drop scenario.
-                "window_openings": expected,
-            }
-        )
-
-    if not window_entries and not room_summaries:
-        return None
-
-    return {"windows": window_entries, "rooms": room_summaries}
+    return window_connections
 
 
 def derive_door_consistency(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -560,11 +552,12 @@ def embed_structural_analyses_in_relations(plan: Dict[str, Any]) -> None:
     if not isinstance(plan, dict):
         return
     relations = get_relations_dict(plan, create=True)
-    window_analysis = derive_window_analysis(plan)
-    if window_analysis:
-        relations["window_analysis"] = window_analysis
+    window_connects = derive_window_connects(plan)
+    relations.pop("window_analysis", None)
+    if window_connects:
+        relations["window_connects"] = window_connects
     else:
-        relations.pop("window_analysis", None)
+        relations.pop("window_connects", None)
     door_consistency = derive_door_consistency(plan)
     if door_consistency:
         relations["door_wall_consistency"] = door_consistency
