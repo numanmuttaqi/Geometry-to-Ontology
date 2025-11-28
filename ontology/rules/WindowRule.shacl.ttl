@@ -8,7 +8,7 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
-### W1: 
+### W1: Window is missing in the room
 resplan:W1_MinOneWindow_Habitable
   a sh:NodeShape ;
   rdfs:label "W1: Expected window on this room" ;
@@ -30,7 +30,6 @@ resplan:W1_MinOneWindow_Habitable
     """ ;
   ] .
 
-
 ### W2: Bathrooms must have a window (since mechanical ventilation is not modelled)
 resplan:W2_BathroomNeedsWindow
   a sh:NodeShape ;
@@ -51,10 +50,10 @@ resplan:W2_BathroomNeedsWindow
     """ ;
   ] .
 
-### W4: Windows must be hosted only on exterior walls
+### W3: Windows must be hosted only on exterior walls
 resplan:W4_WindowOnExteriorWallOnly
   a sh:NodeShape ;
-  rdfs:label "W4: Windows must be mounted on exterior walls" ;
+  rdfs:label "W3: Windows must be mounted on exterior walls" ;
   sh:targetClass resplan:Window ;
   sh:sparql [
     a sh:SPARQLConstraint ;

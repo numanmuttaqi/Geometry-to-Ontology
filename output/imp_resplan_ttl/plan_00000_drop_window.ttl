@@ -79,6 +79,8 @@
     resplan:roomArea 5.73 ;
     resplan:windowOpening <http://resplan.org/resplan/plan_00000#WI-03> .
 
+<http://resplan.org/resplan/plan_00000#WI-01> a resplan:Window .
+
 <http://resplan.org/resplan/plan_00000#BAL-01> a resplan:Room,
         bot:Space ;
     rdfs:label "balcony" ;
@@ -319,8 +321,6 @@
     resplan:roomArea 7.61 ;
     resplan:windowOpening <http://resplan.org/resplan/plan_00000#WI-02> .
 
-<http://resplan.org/resplan/plan_00000#WI-01> a resplan:Window .
-
 <http://resplan.org/resplan/plan_00000#EX-02> a resplan:ExteriorWall,
         ifc:Wall ;
     rdfs:label "EX-02" ;
@@ -425,8 +425,7 @@
         <http://resplan.org/resplan/plan_00000#BTH-02>,
         <http://resplan.org/resplan/plan_00000#LIV-01> ;
     resplan:hasRoomType resplan:Bedroom ;
-    resplan:roomArea 14.7 ;
-    resplan:windowOpening <http://resplan.org/resplan/plan_00000#WI-01> .
+    resplan:roomArea 14.7 .
 
 <http://resplan.org/resplan/plan_00000#LIV-01> a resplan:Room,
         bot:Space ;

@@ -115,8 +115,9 @@
     resplan:hasRoomType resplan:Kitchen ;
     resplan:hasWindow <http://resplan.org/resplan/plan_00000#WI-03> ;
     resplan:roomArea 5.73 ;
-    resplan:windowOpening <http://resplan.org/resplan/plan_00000#WI-02>,
-        <http://resplan.org/resplan/plan_00000#WI-03> .
+    resplan:windowOpening <http://resplan.org/resplan/plan_00000#WI-03> .
+
+<http://resplan.org/resplan/plan_00000#WI-02> a resplan:Window .
 
 <http://resplan.org/resplan/plan_00000#BAL-02> a resplan:Room,
         bot:Space ;
@@ -393,13 +394,10 @@
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BAL-02>,
         <http://resplan.org/resplan/plan_00000#LIV-01> ;
     resplan:hasRoomType resplan:Bedroom ;
-    resplan:roomArea 13.39 ;
-    resplan:windowOpening <http://resplan.org/resplan/plan_00000#WI-02> .
+    resplan:roomArea 13.39 .
 
 <http://resplan.org/resplan/plan_00000#WI-01> a resplan:Window ;
     rdfs:label "WI-01" .
-
-<http://resplan.org/resplan/plan_00000#WI-02> a resplan:Window .
 
 <http://resplan.org/resplan/plan_00000#WI-03> a resplan:Window ;
     rdfs:label "WI-03" .
@@ -437,6 +435,5 @@
         <http://resplan.org/resplan/plan_00000#OUT-0000>,
         <http://resplan.org/resplan/plan_00000#STRG-01> ;
     resplan:hasRoomType resplan:LivingRoom ;
-    resplan:roomArea 21.88 ;
-    resplan:windowOpening <http://resplan.org/resplan/plan_00000#WI-02> .
+    resplan:roomArea 21.88 .
 
