@@ -103,7 +103,7 @@ resplan:A11_BedroomKitchenAdjacency
                     FILTER NOT EXISTS {
                         $this resplan:boundedBy ?wall .
                         ?k    resplan:boundedBy ?wall .
-                        ?wall a resplan:Wall .
+                        ?wall a resplan:InteriorWall  .
                     }
                 }
     """ ;
@@ -121,7 +121,7 @@ resplan:A12_BedroomLivingWallShape
         sh:select """
             PREFIX resplan: <http://resplan.org/resplan#>
 
-            SELECT $this ?value
+            SELECT DISTINCT $this ?value
             WHERE {
               $this resplan:hasRoomType resplan:Bedroom .
               $this (resplan:adjacentTo | ^resplan:adjacentTo) ?l .
@@ -131,7 +131,7 @@ resplan:A12_BedroomLivingWallShape
               FILTER NOT EXISTS {
                 $this resplan:boundedBy ?wall .
                 ?l    resplan:boundedBy ?wall .
-                ?wall a resplan:Wall .
+                ?wall a resplan:InteriorWall .
               }
             }
         """ ;
@@ -149,7 +149,7 @@ resplan:A13_BedroomBathroomDoorWallShape
         sh:select """
             PREFIX resplan: <http://resplan.org/resplan#>
 
-            SELECT $this ?value
+            SELECT DISTINCT $this ?value
             WHERE {
               $this resplan:hasRoomType resplan:Bedroom .
               $this (resplan:adjacentTo | ^resplan:adjacentTo) ?b .
@@ -159,7 +159,7 @@ resplan:A13_BedroomBathroomDoorWallShape
               FILTER NOT EXISTS {
                 $this resplan:boundedBy ?wall .
                 ?b    resplan:boundedBy ?wall .
-                ?wall a resplan:Wall .
+                ?wall a resplan:InteriorWall .
 
                 FILTER EXISTS {
                   ?door a resplan:Door .
@@ -190,7 +190,7 @@ resplan:A14_BedroomHallwayDoorWallShape
         sh:select """
             PREFIX resplan: <http://resplan.org/resplan#>
 
-            SELECT $this ?value
+            SELECT DISTINCT $this ?value
             WHERE {
               $this resplan:hasRoomType resplan:Bedroom .
               $this (resplan:adjacentTo | ^resplan:adjacentTo) ?h .
@@ -200,7 +200,8 @@ resplan:A14_BedroomHallwayDoorWallShape
               FILTER NOT EXISTS {
                 $this resplan:boundedBy ?wall .
                 ?h    resplan:boundedBy ?wall .
-                ?wall a resplan:Wall .
+                ?wall a ?wallType .
+                FILTER(?wallType IN (resplan:Wall, resplan:InteriorWall, resplan:ExteriorWall, ifc:Wall))
 
                 FILTER EXISTS {
                   ?door a resplan:Door .
@@ -231,7 +232,7 @@ resplan:A15_BedroomDiningWallShape
         sh:select """
             PREFIX resplan: <http://resplan.org/resplan#>
 
-            SELECT $this ?value
+            SELECT DISTINCT $this ?value
             WHERE {
               $this resplan:hasRoomType resplan:Bedroom .
               $this (resplan:adjacentTo | ^resplan:adjacentTo) ?d .
@@ -241,7 +242,7 @@ resplan:A15_BedroomDiningWallShape
               FILTER NOT EXISTS {
                 $this resplan:boundedBy ?wall .
                 ?d    resplan:boundedBy ?wall .
-                ?wall a resplan:Wall .
+                ?wall a resplan:InteriorWall  .
               }
             }
         """ ;
