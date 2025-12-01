@@ -38,8 +38,8 @@
         "front_door": 1
       },
       "relationship_summary": {
-        "total_relationships": 95,
-        "adjacency_count": 1,
+        "total_relationships": 108,
+        "adjacency_count": 14,
         "door_connections": 8,
         "bounded_by_count": 70,
         "hosts_opening_count": 20
@@ -3477,7 +3477,156 @@
         "id": "E-adj-00001",
         "a": "KIT-01",
         "b": "LIV-01",
-        "overlap_length": 8.35
+        "overlap_length": 8.35,
+        "shared_walls": [
+          "EX-23",
+          "EX-26",
+          "EX-27",
+          "EX-28",
+          "IN-09",
+          "IN-10"
+        ]
+      },
+      {
+        "id": "E-adj-00002",
+        "a": "BED-01",
+        "b": "BED-02",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-03",
+          "EX-05",
+          "IN-03"
+        ]
+      },
+      {
+        "id": "E-adj-00003",
+        "a": "BED-01",
+        "b": "BTH-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-18",
+          "IN-04",
+          "IN-05"
+        ]
+      },
+      {
+        "id": "E-adj-00004",
+        "a": "BED-01",
+        "b": "BTH-02",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-02",
+          "EX-15",
+          "EX-16",
+          "IN-01",
+          "IN-02"
+        ]
+      },
+      {
+        "id": "E-adj-00005",
+        "a": "BED-01",
+        "b": "LIV-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "IN-03",
+          "IN-04"
+        ]
+      },
+      {
+        "id": "E-adj-00006",
+        "a": "BED-02",
+        "b": "LIV-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "IN-03",
+          "IN-06"
+        ]
+      },
+      {
+        "id": "E-adj-00007",
+        "a": "BED-02",
+        "b": "STRG-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-12",
+          "EX-13",
+          "IN-06"
+        ]
+      },
+      {
+        "id": "E-adj-00008",
+        "a": "BTH-01",
+        "b": "LIV-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-21",
+          "IN-04",
+          "IN-07",
+          "IN-08"
+        ]
+      },
+      {
+        "id": "E-adj-00009",
+        "a": "KIT-01",
+        "b": "STRG-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-23",
+          "IN-09",
+          "IN-10"
+        ]
+      },
+      {
+        "id": "E-adj-00010",
+        "a": "LIV-01",
+        "b": "STRG-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-23",
+          "IN-06",
+          "IN-09",
+          "IN-10"
+        ]
+      },
+      {
+        "id": "E-adj-00011",
+        "a": "BAL-01",
+        "b": "BED-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-02",
+          "EX-03"
+        ]
+      },
+      {
+        "id": "E-adj-00012",
+        "a": "BAL-01",
+        "b": "BED-02",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-03",
+          "EX-04"
+        ]
+      },
+      {
+        "id": "E-adj-00013",
+        "a": "BAL-01",
+        "b": "BTH-02",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-02"
+        ]
+      },
+      {
+        "id": "E-adj-00014",
+        "a": "BAL-02",
+        "b": "BED-02",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-07",
+          "EX-08",
+          "EX-10"
+        ]
       }
     ],
     "hosts_opening": [
@@ -5082,6 +5231,110 @@
         }
       },
       {
+        "source": "BED-01",
+        "target": "BED-02",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BED-01",
+        "target": "BTH-01",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BED-01",
+        "target": "BTH-02",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BED-01",
+        "target": "LIV-01",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BED-02",
+        "target": "LIV-01",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BED-02",
+        "target": "STRG-01",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BTH-01",
+        "target": "LIV-01",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "KIT-01",
+        "target": "STRG-01",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "LIV-01",
+        "target": "STRG-01",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BAL-01",
+        "target": "BED-01",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BAL-01",
+        "target": "BED-02",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BAL-01",
+        "target": "BTH-02",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
+        "source": "BAL-02",
+        "target": "BED-02",
+        "type": "adjacent",
+        "properties": {
+          "overlap_length": 0.0
+        }
+      },
+      {
         "source": "LIV-01",
         "target": "BED-01",
         "type": "connected_via_door",
@@ -5906,7 +6159,7 @@
     ],
     "statistics": {
       "total_nodes": 59,
-      "total_edges": 106,
+      "total_edges": 119,
       "relationship_types": [
         "bounded_by",
         "adjacent_to",

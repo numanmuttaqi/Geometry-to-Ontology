@@ -101,10 +101,9 @@ resplan:A11_BedroomKitchenAdjacency
                     BIND (?k AS ?value) .
 
                     FILTER NOT EXISTS {
+                        $this resplan:boundedBy ?wall .
+                        ?k    resplan:boundedBy ?wall .
                         ?wall a resplan:Wall .
-                            resplan:boundedBy $this ;
-                            resplan:boundedBy ?k .
-                    
                     }
                 }
     """ ;
@@ -130,9 +129,9 @@ resplan:A12_BedroomLivingWallShape
               BIND(?l AS ?value)
 
               FILTER NOT EXISTS {
-                ?wall a resplan:Wall ;
-                      resplan:boundedBy $this ;
-                      resplan:boundedBy ?l .
+                $this resplan:boundedBy ?wall .
+                ?l    resplan:boundedBy ?wall .
+                ?wall a resplan:Wall .
               }
             }
         """ ;
@@ -158,12 +157,22 @@ resplan:A13_BedroomBathroomDoorWallShape
               BIND(?b AS ?value)
 
               FILTER NOT EXISTS {
-                ?wall a resplan:Wall ;
-                      resplan:boundedBy $this ;
-                      resplan:boundedBy ?b .
-                ?door a resplan:Door ;
-                      resplan:connectedViaDoor $this ;
-                      resplan:connectedViaDoor ?b .
+                $this resplan:boundedBy ?wall .
+                ?b    resplan:boundedBy ?wall .
+                ?wall a resplan:Wall .
+
+                FILTER EXISTS {
+                  ?door a resplan:Door .
+                  {
+                    ?door resplan:connectsSpace $this ;
+                          resplan:connectsSpace ?b .
+                  }
+                  UNION
+                  {
+                    ?door resplan:connectedViaDoor $this ;
+                          resplan:connectedViaDoor ?b .
+                  }
+                }
               }
             }
         """ ;
@@ -189,12 +198,22 @@ resplan:A14_BedroomHallwayDoorWallShape
               BIND(?h AS ?value)
 
               FILTER NOT EXISTS {
-                ?wall a resplan:Wall ;
-                      resplan:boundedBy $this ;
-                      resplan:boundedBy ?h .
-                ?door a resplan:Door ;
-                      resplan:connectedViaDoor $this ;
-                      resplan:connectedViaDoor ?h .
+                $this resplan:boundedBy ?wall .
+                ?h    resplan:boundedBy ?wall .
+                ?wall a resplan:Wall .
+
+                FILTER EXISTS {
+                  ?door a resplan:Door .
+                  {
+                    ?door resplan:connectsSpace $this ;
+                          resplan:connectsSpace ?h .
+                  }
+                  UNION
+                  {
+                    ?door resplan:connectedViaDoor $this ;
+                          resplan:connectedViaDoor ?h .
+                  }
+                }
               }
             }
         """ ;
@@ -220,9 +239,9 @@ resplan:A15_BedroomDiningWallShape
               BIND(?d AS ?value)
 
               FILTER NOT EXISTS {
-                ?wall a resplan:Wall ;
-                      resplan:boundedBy $this ;
-                      resplan:boundedBy ?d .
+                $this resplan:boundedBy ?wall .
+                ?d    resplan:boundedBy ?wall .
+                ?wall a resplan:Wall .
               }
             }
         """ ;

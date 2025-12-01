@@ -242,9 +242,15 @@ def _add_relationships(
     bounded = relations.get("bounded_by", {}).get("edges", [])
     for edge in bounded:
         room_uri = _resolve_room(edge.get("room"), graph, ns, rooms)
-        wall_uri = structural.get(edge.get("wall"))
-        if room_uri and wall_uri:
+        wall_id = edge.get("wall")
+        wall_uri = structural.get(wall_id) if wall_id else None
+        if room_uri and wall_id:
+            # Keep the boundedBy link even if the wall instance was dropped;
+            # in that case the wall stays untyped so SHACL can flag it as missing.
+            wall_uri = wall_uri or ns[wall_id]
             graph.add((room_uri, RESPLAN.boundedBy, wall_uri))
+        elif room_uri:
+            LOGGER.warning("Skipping bounded_by edge with unknown wall id: %s", edge)
         else:
             LOGGER.warning("Skipping bounded_by edge with unknown ids: %s", edge)
 
@@ -264,6 +270,11 @@ def _add_relationships(
         if a and b:
             graph.add((a, RESPLAN.adjacentTo, b))
             graph.add((b, RESPLAN.adjacentTo, a))
+            shared_walls = entry.get("shared_walls") or []
+            for wall_id in shared_walls:
+                wall_uri = structural.get(wall_id) or ns[wall_id]
+                graph.add((a, RESPLAN.boundedBy, wall_uri))
+                graph.add((b, RESPLAN.boundedBy, wall_uri))
         else:
             LOGGER.warning("Skipping adjacency edge with unknown ids: %s", entry)
 

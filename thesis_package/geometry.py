@@ -200,8 +200,8 @@ def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
             overlap = boundary_overlap_length(room.geom, wall.geom)
             if overlap < EPS_LEN:
                 overlap = round_float(_shared_span(room_bounds, wall.geom.bounds))
-                if overlap <= 0:
-                    continue
+            if overlap <= 0:
+                continue
             bounded_by.append(
                 {
                     "id": f"E-bnd-{len(bounded_by) + 1:05d}",
@@ -212,6 +212,11 @@ def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
                 }
             )
             existing_pairs.add(pair)
+
+    # Pre-index walls per room so we can report which wall segments two rooms share.
+    room_walls = {}
+    for edge in bounded_by:
+        room_walls.setdefault(edge["room"], set()).add(edge["wall"])
 
     adjacent_to: List[Dict[str, Any]] = []
     seen_pairs = set()
@@ -230,8 +235,34 @@ def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
                         "a": room_a.id,
                         "b": room_b.id,
                         "overlap_length": shared_length,
+                        "shared_walls": sorted(
+                            room_walls.get(room_a.id, set()) & room_walls.get(room_b.id, set())
+                        ),
                     }
                 )
+
+    # Fallback: if two rooms share a wall via bounded_by edges but the geometry
+    # intersection is below threshold, still treat them as adjacent using that wall list.
+    for room_a in rooms:
+        for room_b in rooms:
+            if room_a.id >= room_b.id:
+                continue
+            key = (room_a.id, room_b.id)
+            if key in seen_pairs:
+                continue
+            shared = room_walls.get(room_a.id, set()) & room_walls.get(room_b.id, set())
+            if not shared:
+                continue
+            seen_pairs.add(key)
+            adjacent_to.append(
+                {
+                    "id": f"E-adj-{len(adjacent_to) + 1:05d}",
+                    "a": room_a.id,
+                    "b": room_b.id,
+                    "overlap_length": 0.0,
+                    "shared_walls": sorted(shared),
+                }
+            )
 
     hosts_opening: List[Dict[str, Any]] = []
     for opening in openings:
