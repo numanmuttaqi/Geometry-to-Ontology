@@ -1,6 +1,6 @@
  PREFIX resplan: <http://resplan.org/resplan#>
 
- CREATE {
+ CONSTRUCT {
     ?newWindow a resplan:Window ;
                  resplan:sourceId ?newId .
     ?room        resplan:hasWindow ?win .
