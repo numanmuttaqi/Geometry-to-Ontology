@@ -1,21 +1,30 @@
- PREFIX resplan: <http://resplan.org/resplan#>
+PREFIX resplan: <http://resplan.org/resplan#>
 
- CONSTRUCT {
-    ?newWindow a resplan:Window ;
-                 resplan:sourceId ?newId .
-    ?room        resplan:hasWindow ?win .
- }
- WHERE {
+CONSTRUCT {
+  ?win a resplan:Window ;
+       resplan:sourceId ?newId .
+  ?room resplan:hasWindow ?win .
+}
+WHERE {
+  # Expected window (W1) or bathroom window requirement (W2)
+  {
     ?room resplan:windowOpening ?expected .
-    FILTER NOT EXISTS {
-        ?room    resplan:hasWindow ?win .
-    }
+    FILTER NOT EXISTS { ?room resplan:hasWindow ?expected . }
+    BIND(?expected AS ?candidate)
+  }
+  UNION
+  {
+    ?room resplan:hasRoomType resplan:Bathroom .
+    FILTER NOT EXISTS { ?room resplan:hasWindow ?anyWin . }
+    BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID())) AS ?candidate)
+  }
 
-    FILTER NOT EXISTS {
-        ?room resplan:hasRoomType ?t .
-        FILTER (?t NOT IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
-    }
+  # Only apply to habitable-ish spaces (exclude balcony/veranda/parking)
+  FILTER NOT EXISTS {
+    ?room resplan:hasRoomType ?t .
+    FILTER (?t IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
+  }
 
-    BIND(COALESCE(?expected, IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID()))) AS ?newWindow)
-    BIND(CONCAT("WI-INF=", STRUUID()) AS ?newId )
- }
+  BIND(COALESCE(?candidate, IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID()))) AS ?win)
+  BIND(CONCAT("WI-INF-", STRUUID()) AS ?newId)
+}

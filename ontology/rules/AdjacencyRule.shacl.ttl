@@ -179,34 +179,6 @@ resplan:A13_BedroomBathroomDoorWallShape
         """ ;
     ] .
 
-# A14  Bedroom–Dining: Wall required (door optional)
-resplan:A14_BedroomDiningWallShape
-    a sh:NodeShape ;
-    rdfs:label "A14 Bedroom–Dining wall required" ;
-    sh:targetSubjectsOf resplan:hasRoomType ;
-    sh:sparql [
-        a sh:SPARQLConstraint ;
-        sh:message "A14: Missing interior wall between Bedroom and Dining." ;
-        sh:severity sh:Violation ;
-        sh:select """
-            PREFIX resplan: <http://resplan.org/resplan#>
-
-            SELECT DISTINCT $this ?value
-            WHERE {
-              $this resplan:hasRoomType resplan:Bedroom .
-              $this (resplan:adjacentTo | ^resplan:adjacentTo) ?d .
-              ?d    resplan:hasRoomType resplan:Dining .
-              BIND(?d AS ?value)
-
-              FILTER NOT EXISTS {
-                $this resplan:boundedBy ?wall .
-                ?d    resplan:boundedBy ?wall .
-                ?wall a resplan:InteriorWall  .
-              }
-            }
-        """ ;
-    ] .
-
 ##################################################################
 # BATHROOM ADJACECNY RULES (A21-25)
 ##################################################################
@@ -251,49 +223,8 @@ resplan:A21_BathroomKitchenDoorShape
       """ ;
     ] .
 
-# A22: Bathroom - Dining: Wall and door required.
-resplan:A22_BathroomDiningDoorWallShape
-    a sh:NodeShape ;
-    rdfs:label "A22_Bathroom-Dining wall and door required" ;
-    sh:targetSubjectOf resplan:hasRoomType ;
-    sh:sparql [
-        a sh:SPARQLConstraint ;
-        sh:message "A22: Bathroom-Dining adjacency must have wall and door." ;
-        sh:severity sh:violation ;
-        sh:select """
-                PREFIX resplan: <http://resplan.org/resplan#>
-
-                SELECT DISTINCT $this ?value
-                WHERE {
-                  $this resplan:hasRoomType resplan:Bathroom .
-                  $this (resplan:adjacentTo | ^resplan:adjacentTo) ?d .
-                  ?d    resplan:hasRoomType resplan:Dining .
-                  BIND (?d AS ?value)
-
-                  FILTER NOT EXISTS {
-                    $this resplan:boundedBy ?wall .
-                    ?d    resplan:boundedBy ?wall .
-                    ?wall a resplan:InteriorWall .
-
-                    FILTER EXISTS {
-                      ?door a resplan:Door .
-                      {
-                        ?door resplan:connectsSpace $this ;
-                              resplan:connectsSpace ?d .
-                      }
-                      UNION
-                      {
-                        ?door resplan:connectedViaDoor $this ;
-                              resplan:connectedViaDoor ?d .
-                      }
-                    }
-                  }
-                }
-        """ ;
-    ] .
-
-# A23: Bathroom - Living: Wall and Door required.
-resplan:A23_BathroomLivingWallShape
+# A22: Bathroom - Living: Wall and Door required.
+resplan:A22_BathroomLivingWallShape
     a sh:NodeShape ;
     rdfs:label "A23_Bathroom-Living wall required" ;
     sh:targetSubjectOf resplan:hasRoomType ;

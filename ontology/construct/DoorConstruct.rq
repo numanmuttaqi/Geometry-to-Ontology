@@ -1,18 +1,25 @@
- PREFIX resplan: <http://resplan.org/resplan#>
+PREFIX resplan: <http://resplan.org/resplan#>
 
- CONSTRUCT {
-    ?newDoor a resplan:Door ;
-            resplan:sourceId ?newId ;
-            resplan:connectsSpace ?a, ?b .
- }
- WHERE {
-    ?a resplan:connectedViaDoor ?b .
-    FILTER (?a != ?b)
-    FILTER (STR(?a) < STR(?b))  # To avoid duplicate doors between same spaces
-    FILTER NOT EXISTS {
-        ?door a resplan:Door ;
-                resplan:connectsSpace ?a, ?b .  
-    }
-    BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID())) AS ?newDoor)
-    BIND(CONCAT("DO-INF-", STRUUID()) AS ?newId )
- }
+CONSTRUCT {
+  ?door a resplan:Door ;
+        resplan:sourceId ?newId ;
+        resplan:connectsSpace ?a, ?b .
+}
+WHERE {
+  # Any pair of spaces declared connectedViaDoor but lacking a Door instance
+  { ?a resplan:connectedViaDoor ?b }
+  UNION
+  { ?b resplan:connectedViaDoor ?a }
+
+  FILTER (?a != ?b)
+  FILTER (STR(?a) < STR(?b))  # canonical ordering to avoid duplicates
+
+  FILTER NOT EXISTS {
+    ?d a resplan:Door ;
+       resplan:connectsSpace ?a ;
+       resplan:connectsSpace ?b .
+  }
+
+  BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID())) AS ?door)
+  BIND(CONCAT("DO-INF-", STRUUID()) AS ?newId)
+}

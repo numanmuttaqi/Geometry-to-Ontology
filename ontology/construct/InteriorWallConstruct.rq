@@ -2,3 +2,34 @@ PREFIX resplan: <http://resplan.org/resplan#>
 PREFIX ifc:     <https://w3id.org/ifc/IFC4_ADD2#>
 PREFIX bot:     <https://w3id.org/bot#>
 
+CONSTRUCT {
+  ?wall a ifc:Wall, resplan:InteriorWall ;
+        resplan:sourceId ?newId .
+  ?a resplan:boundedBy ?wall .
+  ?b resplan:boundedBy ?wall .
+}
+WHERE {
+  # Room-type pairs that must have an interior wall between them (per AdjacencyRule SHACL)
+  VALUES (?ta ?tb) {
+    (resplan:Bedroom   resplan:Kitchen)      # A11
+    (resplan:Bedroom   resplan:LivingRoom)   # A12
+    (resplan:Bedroom   resplan:Bathroom)     # A13
+    (resplan:Bathroom  resplan:Kitchen)      # A21
+    (resplan:Bathroom  resplan:LivingRoom)   # A22
+  }
+
+  # Adjacency can be either direction
+  { ?a resplan:adjacentTo ?b } UNION { ?b resplan:adjacentTo ?a }
+  ?a resplan:hasRoomType ?ta .
+  ?b resplan:hasRoomType ?tb .
+
+  # Skip if an interior wall already bounds both
+  FILTER NOT EXISTS {
+    ?a resplan:boundedBy ?w .
+    ?b resplan:boundedBy ?w .
+    ?w a resplan:InteriorWall .
+  }
+
+  BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID())) AS ?wall)
+  BIND(CONCAT("WALL-INF-", STRUUID()) AS ?newId)
+}
