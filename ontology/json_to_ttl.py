@@ -86,6 +86,45 @@ def _estimate_opening_width(bbox):
     return max(spans)
 
 
+def _add_geom_literals(graph: Graph, uri: URIRef, entry: Dict) -> None:
+    """Attach geometry-related literals (geom JSON, area, centroid, bbox) to a node."""
+    geom = entry.get("geom")
+    if geom:
+        try:
+            geom_json = json.dumps(geom, separators=(",", ":"), ensure_ascii=False)
+            graph.add((uri, RESPLAN.geomJSON, Literal(geom_json)))
+        except Exception:
+            LOGGER.warning("Failed to serialize geom for %s", uri)
+
+    props = entry.get("props", {}) or {}
+    area = _literal(props.get("area"))
+    if area is not None:
+        graph.add((uri, RESPLAN.area, area))
+
+    centroid = props.get("centroid") or []
+    if len(centroid) == 2:
+        cx, cy = centroid
+        cx_literal = _literal(cx)
+        cy_literal = _literal(cy)
+        if cx_literal is not None:
+            graph.add((uri, RESPLAN.centroidX, cx_literal))
+        if cy_literal is not None:
+            graph.add((uri, RESPLAN.centroidY, cy_literal))
+
+    bbox = props.get("bbox") or []
+    if len(bbox) == 4:
+        minx, miny, maxx, maxy = bbox
+        for pred, value in (
+            (RESPLAN.bboxMinX, minx),
+            (RESPLAN.bboxMinY, miny),
+            (RESPLAN.bboxMaxX, maxx),
+            (RESPLAN.bboxMaxY, maxy),
+        ):
+            literal = _literal(value)
+            if literal is not None:
+                graph.add((uri, pred, literal))
+
+
 def convert(json_path: Path, output_path: Path | None = None, base_uri: str | None = None) -> Path:
     data = json.loads(json_path.read_text())
     metadata = data.get("metadata", {})
@@ -104,7 +143,12 @@ def convert(json_path: Path, output_path: Path | None = None, base_uri: str | No
 
     _add_plan_metadata(graph, plan_uri, metadata)
     rooms = _add_rooms(graph, base_ns, data.get("instances", {}).get("room", {}))
-    structural = _add_structurals(graph, base_ns, data.get("instances", {}).get("structural", {}))
+    structural = _add_structurals(
+        graph,
+        base_ns,
+        data.get("instances", {}).get("structural", {}),
+        global_wall_depth=metadata.get("wall_depth"),
+    )
     relations = data.get("relations") or data.get("graph", {}).get("relations", {})
     _add_relationships(graph, base_ns, rooms, structural, relations)
     _add_window_memberships(graph, base_ns, rooms, structural, relations)
@@ -138,6 +182,9 @@ def _add_plan_metadata(graph: Graph, plan_uri: URIRef, metadata: Dict) -> None:
     plot_path = artifacts.get("plot_path")
     if plot_path:
         graph.add((plan_uri, RESPLAN.plotPath, Literal(Path(plot_path).resolve().as_uri(), datatype=XSD.anyURI)))
+    wall_depth = _literal(metadata.get("wall_depth"))
+    if wall_depth is not None:
+        graph.add((plan_uri, RESPLAN.wallDepth, wall_depth))
 
 
 def _add_rooms(graph: Graph, ns: Namespace, rooms_payload: Dict) -> Dict[str, URIRef]:
@@ -151,36 +198,18 @@ def _add_rooms(graph: Graph, ns: Namespace, rooms_payload: Dict) -> Dict[str, UR
             graph.add((room_uri, RDF.type, RESPLAN.Room))
             room_label = entry.get("type", room_id)
             graph.add((room_uri, RDFS.label, Literal(room_label)))
+            graph.add((room_uri, RESPLAN.sourceId, Literal(room_id)))
 
             room_type = ROOM_CLASS_MAP.get(entry.get("type", "").lower())
             if room_type:
                 graph.add((room_uri, RESPLAN.hasRoomType, room_type))
 
+            _add_geom_literals(graph, room_uri, entry)
+            # Keep room-specific area as well
             props = entry.get("props", {})
-            area = _literal(props.get("area"))
-            if area is not None:
-                graph.add((room_uri, RESPLAN.roomArea, area))
-            centroid = props.get("centroid") or []
-            if len(centroid) == 2:
-                cx, cy = centroid
-                cx_literal = _literal(cx)
-                cy_literal = _literal(cy)
-                if cx_literal is not None:
-                    graph.add((room_uri, RESPLAN.centroidX, cx_literal))
-                if cy_literal is not None:
-                    graph.add((room_uri, RESPLAN.centroidY, cy_literal))
-            bbox = props.get("bbox") or []
-            if len(bbox) == 4:
-                minx, miny, maxx, maxy = bbox
-                for pred, value in (
-                    (RESPLAN.bboxMinX, minx),
-                    (RESPLAN.bboxMinY, miny),
-                    (RESPLAN.bboxMaxX, maxx),
-                    (RESPLAN.bboxMaxY, maxy),
-                ):
-                    literal = _literal(value)
-                    if literal is not None:
-                        graph.add((room_uri, pred, literal))
+            room_area = _literal(props.get("area"))
+            if room_area is not None:
+                graph.add((room_uri, RESPLAN.roomArea, room_area))
     return room_nodes
 
 
@@ -205,7 +234,12 @@ def _resolve_room(room_id: str | None, graph: Graph, ns: Namespace, rooms: Dict[
     return rooms.get(room_id)
 
 
-def _add_structurals(graph: Graph, ns: Namespace, struct_payload: Dict) -> Dict[str, URIRef]:
+def _add_structurals(
+    graph: Graph,
+    ns: Namespace,
+    struct_payload: Dict,
+    global_wall_depth=None,
+) -> Dict[str, URIRef]:
     structural_nodes: Dict[str, URIRef] = {}
     for entries in struct_payload.values():
         for entry in entries:
@@ -214,6 +248,7 @@ def _add_structurals(graph: Graph, ns: Namespace, struct_payload: Dict) -> Dict[
             struct_uri = ns[struct_id]
             structural_nodes[struct_id] = struct_uri
             graph.add((struct_uri, RDFS.label, Literal(struct_id)))
+            graph.add((struct_uri, RESPLAN.sourceId, Literal(struct_id)))
 
             class_uri = STRUCT_CLASS_MAP.get(struct_type)
             if class_uri:
@@ -229,6 +264,19 @@ def _add_structurals(graph: Graph, ns: Namespace, struct_payload: Dict) -> Dict[
                 width_literal = _literal(width)
                 if width_literal is not None:
                     graph.add((struct_uri, RESPLAN.width, width_literal))
+
+            # Geometry props for all structural elements
+            _add_geom_literals(graph, struct_uri, entry)
+
+            # Apply global wall depth if present in metadata (propagated via plan)
+            if struct_type in ("interior_wall", "exterior_wall"):
+                # wall depth may be stored per element in props or globally in plan metadata; prefer element
+                wall_depth = entry.get("props", {}).get("depth") or entry.get("props", {}).get("wall_depth")
+                if wall_depth is None:
+                    wall_depth = global_wall_depth
+                wall_depth_literal = _literal(wall_depth)
+                if wall_depth_literal is not None:
+                    graph.add((struct_uri, RESPLAN.wallDepth, wall_depth_literal))
     return structural_nodes
 
 

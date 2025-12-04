@@ -129,31 +129,85 @@ resplan:plotPath a owl:DatatypeProperty ;
     rdfs:comment "Path to the visualization plot image file." .
 
 # ------ Room-level measurements (align with json props) ------ #
+resplan:area a owl:DatatypeProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Area of an element (room, wall, door, window) in plan units." .
 resplan:roomArea a owl:DatatypeProperty ;
     rdfs:domain resplan:Room ;
     rdfs:range xsd:decimal ;
     rdfs:comment "Net area of an individual room instance." .
 resplan:centroidX a owl:DatatypeProperty ;
-    rdfs:domain resplan:Room ;
+    rdfs:domain rdfs:Resource ;
     rdfs:range xsd:decimal ;
-    rdfs:comment "Room centroid X coordinate in plan units." .
+    rdfs:comment "Centroid X coordinate in plan units." .
 resplan:centroidY a owl:DatatypeProperty ;
-    rdfs:domain resplan:Room ;
+    rdfs:domain rdfs:Resource ;
     rdfs:range xsd:decimal ;
-    rdfs:comment "Room centroid Y coordinate in plan units." .
+    rdfs:comment "Centroid Y coordinate in plan units." .
 resplan:bboxMinX a owl:DatatypeProperty ;
-    rdfs:domain resplan:Room ;
+    rdfs:domain rdfs:Resource ;
     rdfs:range xsd:decimal ;
-    rdfs:comment "Minimum X coordinate of the room bounding box." .
+    rdfs:comment "Minimum X coordinate of the element bounding box." .
 resplan:bboxMinY a owl:DatatypeProperty ;
-    rdfs:domain resplan:Room ;
+    rdfs:domain rdfs:Resource ;
     rdfs:range xsd:decimal ;
-    rdfs:comment "Minimum Y coordinate of the room bounding box." .
+    rdfs:comment "Minimum Y coordinate of the element bounding box." .
 resplan:bboxMaxX a owl:DatatypeProperty ;
-    rdfs:domain resplan:Room ;
+    rdfs:domain rdfs:Resource ;
     rdfs:range xsd:decimal ;
-    rdfs:comment "Maximum X coordinate of the room bounding box." .
+    rdfs:comment "Maximum X coordinate of the element bounding box." .
 resplan:bboxMaxY a owl:DatatypeProperty ;
-    rdfs:domain resplan:Room ;
+    rdfs:domain rdfs:Resource ;
     rdfs:range xsd:decimal ;
-    rdfs:comment "Maximum Y coordinate of the room bounding box." .
+    rdfs:comment "Maximum Y coordinate of the element bounding box." .
+
+# ------ Geometry (rooms, walls, openings) ------ #
+resplan:geomJSON a owl:DatatypeProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string ;
+    rdfs:comment "GeoJSON geometry serialized as string (polygon/linestring) from source data." .
+resplan:geomWKT a owl:DatatypeProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Geometry as WKT string for spatial processing." .
+resplan:originX a owl:DatatypeProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Anchor X coordinate of the element (e.g., wall start or opening origin) in plan units." .
+resplan:originY a owl:DatatypeProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Anchor Y coordinate of the element (e.g., wall start or opening origin) in plan units." .
+resplan:rotation a owl:DatatypeProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Element rotation in plan (degrees or radians, consistent with source JSON)." .
+resplan:length a owl:DatatypeProperty ;
+    rdfs:domain ifc:Wall ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Wall segment length in plan units." .
+resplan:wallDepth a owl:DatatypeProperty ;
+    rdfs:domain ifc:Wall ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Wall thickness/depth in plan units." .
+resplan:openingHeight a owl:DatatypeProperty ;
+    rdfs:domain resplan:Opening ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Opening height in plan units." .
+resplan:openingSillHeight a owl:DatatypeProperty ;
+    rdfs:domain resplan:Opening ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Sill height or offset from floor for the opening." .
+resplan:openingWidth a owl:DatatypeProperty ;
+    rdfs:domain resplan:Opening ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Clear width of an opening (door/window) in plan units." .
+resplan:width a owl:DatatypeProperty ;
+    rdfs:domain resplan:Opening ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Width of a door/window opening; alias of openingWidth for legacy data." .
+resplan:sourceId a owl:DatatypeProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Identifier from the source JSON/geometry to keep round-trip mapping intact." .

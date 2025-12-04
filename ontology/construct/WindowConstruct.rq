@@ -1,0 +1,21 @@
+ PREFIX resplan: <http://resplan.org/resplan#>
+
+ CREATE {
+    ?newWindow a resplan:Window ;
+                 resplan:sourceId ?newId .
+    ?room        resplan:hasWindow ?win .
+ }
+ WHERE {
+    ?room resplan:windowOpening ?expected .
+    FILTER NOT EXISTS {
+        ?room    resplan:hasWindow ?win .
+    }
+
+    FILTER NOT EXISTS {
+        ?room resplan:hasRoomType ?t .
+        FILTER (?t NOT IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
+    }
+
+    BIND(COALESCE(?expected, IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID()))) AS ?newWindow)
+    BIND(CONCAT("WI-INF=", STRUUID()) AS ?newId )
+ }
