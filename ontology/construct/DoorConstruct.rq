@@ -1,25 +1,50 @@
 PREFIX resplan: <http://resplan.org/resplan#>
+PREFIX ifc:     <http://ifcowl.openbimstandards.org/IFC2X3_Final#>
+PREFIX bot:     <https://w3id.org/bot#>
+PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
+  # new door
   ?door a resplan:Door ;
         resplan:sourceId ?newId ;
-        resplan:connectsSpace ?a, ?b .
+        resplan:connectsSpace ?a , ?b .
+
+  # Connectivity between spaces
+  ?a resplan:connectedViaDoor ?b .
+  ?b resplan:connectedViaDoor ?a .
+
+  # host wall
+  ?wall resplan:hostsOpening ?door .
 }
 WHERE {
-  # Any pair of spaces declared connectedViaDoor but lacking a Door instance
-  { ?a resplan:connectedViaDoor ?b }
-  UNION
-  { ?b resplan:connectedViaDoor ?a }
+  {
+    # Select space pairs that are connected via door 
+    # and doesn't yet have a door connecting them
+    SELECT ?a ?b (SAMPLE(?wall) AS ?wall)
+    WHERE {
+      { ?a resplan:connectedViaDoor ?b } 
+      UNION 
+      { ?b resplan:connectedViaDoor ?a }
 
-  FILTER (?a != ?b)
-  FILTER (STR(?a) < STR(?b))  # canonical ordering to avoid duplicates
+      FILTER(?a != ?b)
+      FILTER(STR(?a) < STR(?b))               # to avoid duplicate pairs (a,b) and (b,a)
 
-  FILTER NOT EXISTS {
-    ?d a resplan:Door ;
-       resplan:connectsSpace ?a ;
-       resplan:connectsSpace ?b .
+      # no door connecting both spaces yet
+      FILTER NOT EXISTS {
+        ?d a resplan:Door ;
+           resplan:connectsSpace ?a ;
+           resplan:connectsSpace ?b .
+      }
+
+      # find a wall that bounds both spaces
+      ?a    resplan:boundedBy ?wall .
+      ?b    resplan:boundedBy ?wall .
+      ?wall a resplan:InteriorWall .
+    }
+    GROUP BY ?a ?b
   }
 
+  # create new door instance
   BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID())) AS ?door)
   BIND(CONCAT("DO-INF-", STRUUID()) AS ?newId)
 }
