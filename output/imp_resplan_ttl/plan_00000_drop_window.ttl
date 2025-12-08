@@ -159,8 +159,6 @@
     resplan:sourceId "EX-25" ;
     resplan:wallDepth 3.564 .
 
-<http://resplan.org/resplan/plan_00000#WI-01> a resplan:Window .
-
 <http://resplan.org/resplan/plan_00000#DO-01> a resplan:Door ;
     rdfs:label "DO-01" ;
     resplan:area 0.15 ;
@@ -586,6 +584,7 @@
         <http://resplan.org/resplan/plan_00000#IN-10> ;
     resplan:centroidX 2.99 ;
     resplan:centroidY 7.8 ;
+    resplan:expectedWindow true ;
     resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[2.323434282027798,9.33327801748986],[2.323434282027798,9.364889440674993],[3.9040160854433315,9.364889440674993],[3.9040160854433315,6.235363867426312],[2.070542896546737,6.235363867426312],[2.070542896546737,9.33327801748986],[2.323434282027798,9.33327801748986]]]}" ;
     resplan:hasRoomType resplan:Kitchen ;
     resplan:hasWindow <http://resplan.org/resplan/plan_00000#WI-03> ;
@@ -766,6 +765,7 @@
     resplan:centroidX 6.72 ;
     resplan:centroidY 4.35 ;
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#LIV-01> ;
+    resplan:expectedWindow true ;
     resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.626833326953609,5.160564834972902],[7.808021526727761,5.160564834972902],[7.808021526727761,3.5483822525311384],[5.626833326953609,3.5483822525311384],[5.626833326953609,5.160564834972902]]]}" ;
     resplan:hasRoomType resplan:Bathroom ;
     resplan:hasWindow <http://resplan.org/resplan/plan_00000#WI-04> ;
@@ -793,11 +793,11 @@
     resplan:centroidX 12.82 ;
     resplan:centroidY 5.15 ;
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#BED-01> ;
+    resplan:expectedWindow true ;
     resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[13.624523392792165,6.266964646452546],[13.624523392792165,4.038359311900692],[12.0123408103504,4.038359311900692],[12.0123408103504,6.266964646452546],[13.624523392792165,6.266964646452546]]]}" ;
     resplan:hasRoomType resplan:Bathroom ;
     resplan:roomArea 3.59 ;
-    resplan:sourceId "BTH-02" ;
-    resplan:windowOpening <http://resplan.org/resplan/plan_00000#WI-01> .
+    resplan:sourceId "BTH-02" .
 
 <http://resplan.org/resplan/plan_00000#WI-02> a resplan:Window ;
     rdfs:label "WI-02" ;
@@ -877,6 +877,7 @@
     resplan:centroidX 5.34 ;
     resplan:centroidY 7.88 ;
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00000#LIV-01> ;
+    resplan:expectedWindow true ;
     resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[6.622593157285286,9.364884118595542],[6.622593157285286,6.393410339193075],[4.062067879289543,6.393410339193075],[4.062067879289543,9.364884118595542],[6.622593157285286,9.364884118595542]]]}" ;
     resplan:hasRoomType resplan:Storage ;
     resplan:hasWindow <http://resplan.org/resplan/plan_00000#WI-02> ;

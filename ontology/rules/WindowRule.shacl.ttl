@@ -9,7 +9,7 @@
 @prefix resplan:    <http://resplan.org/resplan#> .
 
 ### W1: Window is missing in the room
-resplan:W1_MinOneWindow_Habitable
+resplan:W1_WindowisMissing
   a sh:NodeShape ;
   rdfs:label "W1: Expected window on this room" ;
   sh:targetClass bot:Space ;
@@ -21,12 +21,12 @@ resplan:W1_MinOneWindow_Habitable
       SELECT ?this WHERE {
         ?this resplan:hasRoomType ?type .
         FILTER (?type NOT IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
-        ?this resplan:windowOpening ?w .
+        ?this resplan:expectedWindow true .
         FILTER NOT EXISTS {
           ?this resplan:hasWindow ?w .
           ?w a resplan:Window .
-        }
       }
+    }
     """ ;
   ] .
 
@@ -53,7 +53,7 @@ resplan:W2_BathroomNeedsWindow
 ### W3: Windows must be hosted only on exterior walls
 resplan:W4_WindowOnExteriorWallOnly
   a sh:NodeShape ;
-  rdfs:label "W3: Windows must be mounted on exterior walls" ;
+  rdfs:label "W: Windows must be mounted on exterior walls" ;
   sh:targetClass resplan:Window ;
   sh:sparql [
     a sh:SPARQLConstraint ;

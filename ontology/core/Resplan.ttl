@@ -96,6 +96,10 @@ resplan:windowOpening a owl:ObjectProperty ;
     rdfs:domain bot:Space ;          # or resplan:Room if you prefer stricter
     rdfs:range resplan:Window ;
     rdfs:comment "Expected window openings for a space, even if the window instance is missing." .
+resplan:expectedWindow a owl:DatatypeProperty ;
+    rdfs:domain bot:Space ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "Indicates a room should have at least one window (used when the window instance is missing)." .
 
 # DATA PROPERTIES
 # ------ To store Metadata about the plan ------ #

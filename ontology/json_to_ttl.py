@@ -378,6 +378,7 @@ def _add_window_memberships(
     if not window_connects:
         return
 
+    expected_rooms: set[str] = set()
     for entry in window_connects:
         if not isinstance(entry, dict):
             continue
@@ -388,15 +389,21 @@ def _add_window_memberships(
         room_uri = _resolve_room(room_id, graph, ns, rooms)
         if not room_uri:
             continue
+        expected_rooms.add(room_id)
 
-        window_uri = structural.get(window_id) or ns[window_id]
-        # Always record expected opening.
-        graph.add((room_uri, RESPLAN.windowOpening, window_uri))
-        if window_id not in structural:
-            graph.add((window_uri, RDF.type, RESPLAN.Window))
+        present = bool(entry.get("present"))
+        window_uri = structural.get(window_id)
 
-        if entry.get("present") and entry.get("is_exterior") and window_id in structural:
-            graph.add((room_uri, RESPLAN.hasWindow, window_uri))
+        if present and window_uri:
+            # Window instance exists; record both expected slot and presence.
+            graph.add((room_uri, RESPLAN.windowOpening, window_uri))
+            if entry.get("is_exterior"):
+                graph.add((room_uri, RESPLAN.hasWindow, window_uri))
+
+    for room_id in expected_rooms:
+        room_uri = _resolve_room(room_id, graph, ns, rooms)
+        if room_uri:
+            graph.add((room_uri, RESPLAN.expectedWindow, Literal(True)))
 
 
 def parse_args() -> argparse.Namespace:
