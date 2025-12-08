@@ -1,8 +1,13 @@
 PREFIX resplan: <http://resplan.org/resplan#>
+PREFIX ifc:     <http://ifcowl.openbimstandards.org/IFC2X3_Final#>
+PREFIX bot:     <https://w3id.org/bot#>
+PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
+  # new window
   ?win a resplan:Window ;
        resplan:sourceId ?newId .
+
   ?room resplan:hasWindow ?win .
 }
 WHERE {
