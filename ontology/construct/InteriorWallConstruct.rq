@@ -1,35 +1,25 @@
 PREFIX resplan: <http://resplan.org/resplan#>
 PREFIX ifc:     <https://w3id.org/ifc/IFC4_ADD2#>
-PREFIX bot:     <https://w3id.org/bot#>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 CONSTRUCT {
-  ?wall a ifc:Wall, resplan:InteriorWall ;
-        resplan:sourceId ?newId .
-  ?a resplan:boundedBy ?wall .
-  ?b resplan:boundedBy ?wall .
+  ?newWall a resplan:InteriorWall , ifc:Wall ;
+           resplan:isInferred true ;
+           resplan:sourceId ?srcId ;
+           resplan:replacesWall ?w .
+
+  ?s1 resplan:boundedBy ?newWall .
+  ?s2 resplan:boundedBy ?newWall .
 }
 WHERE {
-  # Room-type pairs that must have an interior wall between them (per AdjacencyRule SHACL)
-  VALUES (?ta ?tb) {
-    (resplan:Bedroom   resplan:Kitchen)      # A11
-    (resplan:Bedroom   resplan:LivingRoom)   # A12
-    (resplan:Bedroom   resplan:Bathroom)     # A13
-    (resplan:Bathroom  resplan:Kitchen)      # A21
-    (resplan:Bathroom  resplan:LivingRoom)   # A22
-  }
+  ?adj a resplan:AdjacencyEdge ;
+       resplan:spaceA ?s1 ;
+       resplan:spaceB ?s2 ;
+       resplan:sharedWall ?w .
 
-  # Adjacency can be either direction
-  { ?a resplan:adjacentTo ?b } UNION { ?b resplan:adjacentTo ?a }
-  ?a resplan:hasRoomType ?ta .
-  ?b resplan:hasRoomType ?tb .
+  FILTER(CONTAINS(STR(?w), "#IN-"))
+  FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
-  # Skip if an interior wall already bounds both
-  FILTER NOT EXISTS {
-    ?a resplan:boundedBy ?w .
-    ?b resplan:boundedBy ?w .
-    ?w a resplan:InteriorWall .
-  }
-
-  BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID())) AS ?wall)
-  BIND(CONCAT("WALL-INF-", STRUUID()) AS ?newId)
+  BIND( IRI(CONCAT("http://resplan.org/resplan/infer#IW-INF-", STRUUID())) AS ?newWall )
+  BIND( STRAFTER(STR(?w), "#") AS ?srcId )
 }

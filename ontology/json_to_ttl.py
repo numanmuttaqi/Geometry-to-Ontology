@@ -86,6 +86,14 @@ def _estimate_opening_width(bbox):
     return max(spans)
 
 
+def _shorten_uri(uri: URIRef | str) -> str:
+    """Return the local part of a URIRef or string."""
+    s = str(uri)
+    if "#" in s:
+        return s.split("#")[-1]
+    return Path(s).name
+
+
 def _add_geom_literals(graph: Graph, uri: URIRef, entry: Dict) -> None:
     """Attach geometry-related literals (geom JSON, area, centroid, bbox) to a node."""
     geom = entry.get("geom")
@@ -287,6 +295,9 @@ def _add_relationships(
     structural: Dict[str, URIRef],
     relations: Dict,
 ) -> None:
+    def _order_pair(a: URIRef, b: URIRef):
+        return (a, b) if str(a) <= str(b) else (b, a)
+
     bounded = relations.get("bounded_by", {}).get("edges", [])
     for edge in bounded:
         room_uri = _resolve_room(edge.get("room"), graph, ns, rooms)
@@ -312,6 +323,7 @@ def _add_relationships(
             LOGGER.warning("Skipping hosts_opening edge with unknown ids: %s", edge)
 
     adjacency = relations.get("adjacent_to", [])
+    seen_adj_edges = set()
     for entry in adjacency:
         a = _resolve_room(entry.get("a"), graph, ns, rooms)
         b = _resolve_room(entry.get("b"), graph, ns, rooms)
@@ -323,6 +335,23 @@ def _add_relationships(
                 wall_uri = structural.get(wall_id) or ns[wall_id]
                 graph.add((a, RESPLAN.boundedBy, wall_uri))
                 graph.add((b, RESPLAN.boundedBy, wall_uri))
+
+            # Materialize an adjacency edge node so we can store meta (e.g., shared walls count)
+            oa, ob = _order_pair(a, b)
+            adj_id = f"adj-{Path(_shorten_uri(oa)).name}-{Path(_shorten_uri(ob)).name}"
+            if adj_id not in seen_adj_edges:
+                seen_adj_edges.add(adj_id)
+                adj_uri = ns[adj_id]
+                graph.add((adj_uri, RDF.type, RESPLAN.AdjacencyEdge))
+                graph.add((adj_uri, RESPLAN.spaceA, oa))
+                graph.add((adj_uri, RESPLAN.spaceB, ob))
+            else:
+                adj_uri = ns[adj_id]
+
+            graph.add((adj_uri, RESPLAN.sharedWallCount, Literal(len(shared_walls), datatype=XSD.integer)))
+            for wall_id in shared_walls:
+                wall_uri = structural.get(wall_id) or ns[wall_id]
+                graph.add((adj_uri, RESPLAN.sharedWall, wall_uri))
         else:
             LOGGER.warning("Skipping adjacency edge with unknown ids: %s", entry)
 

@@ -11,7 +11,6 @@ CONSTRUCT {
   ?room resplan:hasWindow ?win .
 }
 WHERE {
-  # Expected window (W1) or bathroom window requirement (W2)
   {
     ?room resplan:windowOpening ?expected .
     FILTER NOT EXISTS { ?room resplan:hasWindow ?expected . }
@@ -24,7 +23,7 @@ WHERE {
     BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID())) AS ?candidate)
   }
 
-  # Only apply to habitable-ish spaces (exclude balcony/veranda/parking)
+  # exclude balcony/veranda/parking
   FILTER NOT EXISTS {
     ?room resplan:hasRoomType ?t .
     FILTER (?t IN (resplan:Balcony, resplan:Veranda, resplan:Parking))

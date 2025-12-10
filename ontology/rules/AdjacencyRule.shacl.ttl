@@ -138,46 +138,38 @@ resplan:A12_BedroomLivingWallShape
         """ ;
     ] .
 
-# A13  Bedroom–Bathroom: Wall + door required
-resplan:A13_BedroomBathroomDoorWallShape
+# A13  Bedroom–Bathroom: Interior wall required
+resplan:A13_BedroomBathroomWallShape
     a sh:NodeShape ;
-    rdfs:label "A13 Bedroom–Bathroom wall and door required" ;
-    sh:targetSubjectsOf resplan:hasRoomType ;
-    sh:sparql [
-        a sh:SPARQLConstraint ;
-        sh:message "A13: Bedroom–Bathroom adjacency must have wall and door." ;
-        sh:severity sh:Violation ;
-        sh:select """
-            PREFIX resplan: <http://resplan.org/resplan#>
+  rdfs:label "A13 Bedroom–Bathroom missing interior wall segments" ;
+  sh:targetClass resplan:AdjacencyEdge ;
+  sh:sparql [
+    a sh:SPARQLConstraint ;
+    sh:message "A13: Bedroom–Bathroom adjacency is missing one or more interior wall segments." ;
+    sh:select """
+      PREFIX resplan: <http://resplan.org/resplan#>
+      PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-            SELECT DISTINCT $this ?value
-            WHERE {
-              $this resplan:hasRoomType resplan:Bedroom .
-              $this (resplan:adjacentTo | ^resplan:adjacentTo) ?b .
-              ?b    resplan:hasRoomType resplan:Bathroom .
-              BIND(?b AS ?value)
+        SELECT ?this WHERE {
+          ?this a resplan:AdjacencyEdge ;
+                resplan:spaceA ?s1 ;
+                resplan:spaceB ?s2 .
 
-              FILTER NOT EXISTS {
-                $this resplan:boundedBy ?wall .
-                ?b    resplan:boundedBy ?wall .
-                ?wall a resplan:InteriorWall .
+          { ?s1 resplan:hasRoomType resplan:Bedroom . ?s2 resplan:hasRoomType resplan:Bathroom . }
+          UNION
+          { ?s1 resplan:hasRoomType resplan:Bathroom . ?s2 resplan:hasRoomType resplan:Bedroom . }
+          
+          # check only Interior Wall
+          FILTER (CONTAINS(STR(?w), "#IN-"))
+          # raised violation if not exist
+          FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
-                FILTER EXISTS {
-                  ?door a resplan:Door .
-                  {
-                    ?door resplan:connectsSpace $this ;
-                          resplan:connectsSpace ?b .
-                  }
-                  UNION
-                  {
-                    ?door resplan:connectedViaDoor $this ;
-                          resplan:connectedViaDoor ?b .
-                  }
-                }
-              }
-            }
-        """ ;
-    ] .
+        }
+    """ ;
+  ] .
+
+
+
 
 ##################################################################
 # BATHROOM ADJACECNY RULES (A21-25)
@@ -185,11 +177,11 @@ resplan:A13_BedroomBathroomDoorWallShape
 # A21: Bathroom - Kitchen: Adjacent allowed. Should have wall between them and door required.
 resplan:A21_BathroomKitchenDoorShape
   a sh:NodeShape ;
-  rdfs:label "A21_Bathroom-Kitchen door required" ;
+  rdfs:label "A21_Bathroom-Kitchen wall required" ;
   sh:targetSubjectOf resplan:hasRoomType ;
   sh:sparql [
       a sh:SPARQLConstraint ;
-      sh:message "A21: Bathroom-Kitchen adjacency must have wall and door." ;
+      sh:message "A21: Bathroom-Kitchen adjacency must have wall." ;
       sh:severity sh:violation ;
       sh:select """
               PREFIX resplan: <http://resplan.org/resplan#>
@@ -274,39 +266,60 @@ resplan:A31_KitchenStorageAdjacency
   sh:targetSubjectOf resplan:hasRoomType ;
   sh:sparql [
       a sh:SPARQLConstraint ;
-      sh:message "A31: Kitchen-Storage is missing wall or door." ;
+      sh:message "A31: Kitchen-Storage is missing wall." ;
       sh:severity sh:violation ;
       sh:select """
               PREFIX resplan: <http://resplan.org/resplan#>
 
-              SELECT DISTINCT $this ?value
-              WHERE {
-                $this resplan:hasRoomType resplan:Kitchen .
-                $this (resplan:adjacentTo | ^resplan:adjacentTo) ?s .
-                ?s    resplan:hasRoomType resplan:Storage .
-                BIND (?s AS ?value)
+              SELECT ?this WHERE {
+              ?this a resplan:AdjacencyEdge ;
+              ?s1 a 
+                    resplan:spaceB ?s2 .
 
-                FILTER NOT EXISTS {
-                  $this resplan:boundedBy ?wall .
-                  ?s    resplan:boundedBy ?wall .
-                  ?wall a resplan:InteriorWall  .
-                  
-                  FILTER EXISTS {
-                    ?door a resplan:Door .
-                    {
-                      ?door resplan:connectsSpace $this ;
-                            resplan:connectsSpace ?d .
-                    }
-                    UNION
-                    {
-                      ?door resplan:connectedViaDoor $this ;
-                            resplan:connectedViaDoor ?d .
-                    }
-                  }
-                }
+              { ?s1 resplan:hasRoomType resplan:Kitchen . ?s2 resplan:hasRoomType resplan:Storage . }
+              UNION
+              { ?s1 resplan:hasRoomType resplan:Storage . ?s2 resplan:hasRoomType resplan:Kitchen . }
+
+              OPTIONAL {
+                SELECT ?this (COUNT(?wAll) AS ?totalWalls) WHERE {
+                  ?this resplan:sharedWall ?wAll .
+                } GROUP BY ?this
               }
+              OPTIONAL {
+                SELECT ?this (COUNT(?wInt) AS ?interiorWalls) WHERE {
+                  ?this resplan:sharedWall ?wInt .
+                  ?wInt a resplan:InteriorWall .
+                } GROUP BY ?this
+              }
+
+              BIND(COALESCE(?totalWalls,0) AS ?t)
+              BIND(COALESCE(?interiorWalls,0) AS ?i)
+              FILTER (?t > ?i)
+            }
       """ ;
   ] .
 
 
+resplan:MissingInteriorWallSegmentsShape
+    a sh:NodeShape ;
+    rdfs:label "Adjacency has missing interior wall segment(s)" ;
+    sh:targetClass resplan:AdjacencyEdge ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Adjacency has sharedWall IDs from JSON that are not instantiated as InteriorWall." ;
+        sh:select """
+            PREFIX resplan: <http://resplan.org/resplan#>
+            PREFIX ifc:     <https://w3id.org/ifc/IFC4_ADD2#>
 
+            SELECT DISTINCT ?this WHERE {
+              ?this a resplan:AdjacencyEdge ;
+                    resplan:sharedWall ?w .
+
+              # check only Interior Wall
+              FILTER (CONTAINS(STR(?w), "#IN-"))
+
+              # raised violation if not exist
+              FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+            }
+        """ ;
+    ] .

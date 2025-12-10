@@ -75,6 +75,9 @@ resplan:Veranda a rdfs:Class ;
     rdfs:subClassOf resplan:RoomType .
 resplan:Parking a rdfs:Class ;
     rdfs:subClassOf resplan:RoomType .  
+resplan:AdjacencyEdge a rdfs:Class ;
+    rdfs:label "Adjacency Edge" ;
+    rdfs:comment "Explicit adjacency between two spaces, carrying shared wall metadata." .
 
 # ------ PROPERTIES ------ #
 # OBJECT PROPERTIES 
@@ -85,6 +88,9 @@ resplan:hostsOpening    a owl:ObjectProperty ;
     rdfs:range resplan:Opening ;
     rdfs:comment "Associates a wall with the opening (door or window) hosted on it." .
 resplan:adjacentTo      a owl:ObjectProperty ; rdfs:domain bot:Space; rdfs:range bot:Space .  
+resplan:spaceA          a owl:ObjectProperty ; rdfs:domain resplan:AdjacencyEdge ; rdfs:range bot:Space .
+resplan:spaceB          a owl:ObjectProperty ; rdfs:domain resplan:AdjacencyEdge ; rdfs:range bot:Space .
+resplan:sharedWall      a owl:ObjectProperty ; rdfs:domain resplan:AdjacencyEdge ; rdfs:range ifc:Wall .
 resplan:connectedViaDoor a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range bot:Space . # a door to each space
 resplan:hasWindow       a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range resplan:Window .
 resplan:isReachableFrom  a owl:ObjectProperty ; rdfs:domain bot:Space ; rdfs:range resplan:EntryNode .
@@ -100,6 +106,10 @@ resplan:expectedWindow a owl:DatatypeProperty ;
     rdfs:domain bot:Space ;
     rdfs:range xsd:boolean ;
     rdfs:comment "Indicates a room should have at least one window (used when the window instance is missing)." .
+resplan:sharedWallCount a owl:DatatypeProperty ;
+    rdfs:domain resplan:AdjacencyEdge ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "Number of wall segments reported as shared between the two spaces in this adjacency." .
 
 # DATA PROPERTIES
 # ------ To store Metadata about the plan ------ #
