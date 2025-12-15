@@ -80,6 +80,33 @@
 #      resplan:LivingRoom, resplan:Bedroom are not treated as focus nodes.
 ##################################################################
 
+# #################################################################
+# # GENERAL QUERY
+# #################################################################
+# resplan:AMissingInteriorWallSegmentsShape
+#     a sh:NodeShape ;
+#     rdfs:label "Adjacency has missing interior wall segment(s)" ;
+#     sh:targetClass resplan:AdjacencyEdge ;
+#     sh:sparql [
+#         a sh:SPARQLConstraint ;
+#         sh:message "Adjacency has missing interior wall instance(s)" ;
+#         sh:select """
+#             PREFIX resplan: <http://resplan.org/resplan#>
+
+#             SELECT DISTINCT ?this WHERE {
+#               ?this a resplan:AdjacencyEdge ;
+#                     resplan:sharedWall ?w .
+
+#               # check only Interior Wall
+#               FILTER (CONTAINS(STR(?w), "#IN-"))
+
+#               # raised violation if not exist
+#               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+#             }
+#         """ ;
+#     ] .
+
+
 ##################################################################
 # BEDROOM ADJACENCY RULES (A11-A15)
 ##################################################################
@@ -280,28 +307,3 @@ resplan:A31_KitchenStorageAdjacency
       """ ;
   ] .
 
-# #################################################################
-# # GENERAL 
-# #################################################################
-# resplan:AMissingInteriorWallSegmentsShape
-#     a sh:NodeShape ;
-#     rdfs:label "Adjacency has missing interior wall segment(s)" ;
-#     sh:targetClass resplan:AdjacencyEdge ;
-#     sh:sparql [
-#         a sh:SPARQLConstraint ;
-#         sh:message "Adjacency has missing interior wall instance(s)" ;
-#         sh:select """
-#             PREFIX resplan: <http://resplan.org/resplan#>
-
-#             SELECT DISTINCT ?this WHERE {
-#               ?this a resplan:AdjacencyEdge ;
-#                     resplan:sharedWall ?w .
-
-#               # check only Interior Wall
-#               FILTER (CONTAINS(STR(?w), "#IN-"))
-
-#               # raised violation if not exist
-#               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
-#             }
-#         """ ;
-#     ] .
