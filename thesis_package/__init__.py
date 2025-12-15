@@ -11,4 +11,5 @@ __all__ = [
     "synthetic",
     "visualize",
     "io",
+    "ttl_to_json",
 ]

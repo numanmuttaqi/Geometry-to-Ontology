@@ -1,25 +1,56 @@
 PREFIX resplan: <http://resplan.org/resplan#>
 PREFIX ifc:     <https://w3id.org/ifc/IFC4_ADD2#>
-PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+# CONSTRUCT {
+#   ?newWall a resplan:InteriorWall , ifc:Wall ;
+#            resplan:isInferred true ;
+#            resplan:sourceId ?srcId ;
+#            resplan:replacesWall ?w .
+
+#   ?s1 resplan:boundedBy ?newWall .
+#   ?s2 resplan:boundedBy ?newWall .
+# }
+# WHERE {
+#   ?adj a resplan:AdjacencyEdge ;
+#        resplan:spaceA ?s1 ;
+#        resplan:spaceB ?s2 ;
+#        resplan:sharedWall ?w .
+
+#   FILTER(CONTAINS(STR(?w), "#IN-"))
+#   FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+
+#   BIND( IRI(CONCAT("http://resplan.org/resplan/infer#IW-INF-", STRUUID())) AS ?newWall )
+#   BIND( STRAFTER(STR(?w), "#") AS ?srcId )
+# }
 
 CONSTRUCT {
-  ?newWall a resplan:InteriorWall , ifc:Wall ;
-           resplan:isInferred true ;
-           resplan:sourceId ?srcId ;
-           resplan:replacesWall ?w .
+
+  ?newWall
+      a resplan:InteriorWall , ifc:Wall ;
+      resplan:isInferred true ;
+      resplan:derivedFrom ?adj ;
+      resplan:separatesSpace ?s1 , ?s2 .
 
   ?s1 resplan:boundedBy ?newWall .
   ?s2 resplan:boundedBy ?newWall .
+
 }
 WHERE {
+
   ?adj a resplan:AdjacencyEdge ;
+       resplan:missingInteriorWall true ;
        resplan:spaceA ?s1 ;
-       resplan:spaceB ?s2 ;
-       resplan:sharedWall ?w .
+       resplan:spaceB ?s2 .
 
-  FILTER(CONTAINS(STR(?w), "#IN-"))
-  FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+  FILTER NOT EXISTS {
+    ?existingWall a resplan:InteriorWall ;
+                  resplan:derivedFrom ?adj .
+  }
 
-  BIND( IRI(CONCAT("http://resplan.org/resplan/infer#IW-INF-", STRUUID())) AS ?newWall )
-  BIND( STRAFTER(STR(?w), "#") AS ?srcId )
+  BIND(
+    IRI(CONCAT(
+      "http://resplan.org/resplan/infer#InteriorWall_",
+      STRAFTER(STR(?adj), "#")
+    )) AS ?newWall
+  )
 }

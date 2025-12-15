@@ -1,4 +1,5 @@
 @prefix owl:        <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:       <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:        <http://www.w3.org/2001/XMLSchema#> .
 @prefix bot:        <https://w3id.org/bot#> .
@@ -6,6 +7,7 @@
 @prefix igml-core:  <http://www.opengis.net/indoorgml/1.0/core#> .
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
+@prefix sh:         <http://www.w3.org/ns/shacl#> .
 
 
 resplan:ResPlan a rdfs:Class ;
@@ -110,6 +112,36 @@ resplan:sharedWallCount a owl:DatatypeProperty ;
     rdfs:domain resplan:AdjacencyEdge ;
     rdfs:range xsd:integer ;
     rdfs:comment "Number of wall segments reported as shared between the two spaces in this adjacency." .
+resplan:derivedFrom a owl:ObjectProperty ;
+    rdfs:domain ifc:Wall ;
+    rdfs:range resplan:AdjacencyEdge ;
+    rdfs:comment "Inferred structural element derived from an adjacency edge." .
+resplan:separatesSpace a owl:ObjectProperty ;
+    rdfs:domain ifc:Wall ;
+    rdfs:range bot:Space ;
+    rdfs:comment "Wall separates the listed spaces (used for inferred walls without explicit geometry)." .
+resplan:replacesWall a owl:ObjectProperty ;
+    rdfs:domain ifc:Wall ;
+    rdfs:range ifc:Wall ;
+    rdfs:comment "Links an inferred wall to the wall identifier it replaces or was derived from." .
+resplan:isInferred a owl:DatatypeProperty ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:boolean ;
+    rdfs:comment "Flags individuals produced by inference/construct." .
+
+# added for validation result
+resplan:violatesRule
+    a rdf:Property ;
+    rdfs:domain resplan:AdjacencyEdge ;
+    rdfs:range sh:NodeShape ;
+    rdfs:label "violates rule" ;
+    rdfs:comment "Links an adjacency edge to the SHACL rule it violates." .
+resplan:missingInteriorWall
+    a rdf:Property ;
+    rdfs:domain resplan:AdjacencyEdge ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "missing interior wall" ;
+    rdfs:comment "Indicates that an adjacency edge requires an inferred interior wall." .
 
 # DATA PROPERTIES
 # ------ To store Metadata about the plan ------ #

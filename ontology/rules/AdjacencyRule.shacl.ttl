@@ -197,8 +197,12 @@ resplan:A13_BedroomBathroomWallShape
           { ?s1 resplan:hasRoomType resplan:Bathroom . 
             ?s2 resplan:hasRoomType resplan:Bedroom . }
           
-          FILTER (CONTAINS(STR(?w), "#IN-"))
-          FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+          # FILTER (CONTAINS(STR(?w), "#IN-"))
+          # FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+          FILTER NOT EXISTS {
+                              ?wall a resplan:InteriorWall ;
+                                    resplan:derivedFrom ?this .
+                            }
 
         }
     """ ;

@@ -16,27 +16,27 @@ from rdflib.namespace import RDFS, XSD
 RESPLAN = Namespace("http://resplan.org/resplan#")
 BOT = Namespace("https://w3id.org/bot#")
 IFC = Namespace("https://w3id.org/ifc/IFC4_ADD2#")
-# adding more namespaces here if needed
+
 OUTSIDE_ID = "OUT-0000"
 
 ROOM_CLASS_MAP = {
-    "living": RESPLAN.LivingRoom,
-    "bedroom": RESPLAN.Bedroom,
-    "kitchen": RESPLAN.Kitchen,
-    "bathroom": RESPLAN.Bathroom,
-    "balcony": RESPLAN.Balcony,
-    "storage": RESPLAN.Storage,
-    "stair": RESPLAN.Stair,
-    "veranda": RESPLAN.Veranda,
-    "parking": RESPLAN.Parking,
+    "living"    : RESPLAN.LivingRoom,
+    "bedroom"   : RESPLAN.Bedroom,
+    "kitchen"   : RESPLAN.Kitchen,
+    "bathroom"  : RESPLAN.Bathroom,
+    "balcony"   : RESPLAN.Balcony,
+    "storage"   : RESPLAN.Storage,
+    "stair"     : RESPLAN.Stair,
+    "veranda"   : RESPLAN.Veranda,
+    "parking"   : RESPLAN.Parking,
 }
 
 STRUCT_CLASS_MAP = {
-    "interior_wall": RESPLAN.InteriorWall,
-    "exterior_wall": RESPLAN.ExteriorWall,
-    "door": RESPLAN.Door,
-    "front_door": RESPLAN.FrontDoor,
-    "window": RESPLAN.Window,
+    "interior_wall" : RESPLAN.InteriorWall,
+    "exterior_wall" : RESPLAN.ExteriorWall,
+    "door"          : RESPLAN.Door,
+    "front_door"    : RESPLAN.FrontDoor,
+    "window"        : RESPLAN.Window,
 }
 
 LOGGER = logging.getLogger("json_to_ttl")
@@ -151,14 +151,14 @@ def convert(json_path: Path, output_path: Path | None = None, base_uri: str | No
 
     _add_plan_metadata(graph, plan_uri, metadata)
     rooms = _add_rooms(graph, base_ns, data.get("instances", {}).get("room", {}))
-    structural = _add_structurals(
+    structural, structural_entries = _add_structurals(
         graph,
         base_ns,
         data.get("instances", {}).get("structural", {}),
         global_wall_depth=metadata.get("wall_depth"),
     )
     relations = data.get("relations") or data.get("graph", {}).get("relations", {})
-    _add_relationships(graph, base_ns, rooms, structural, relations)
+    _add_relationships(graph, base_ns, rooms, structural, structural_entries, relations)
     _add_window_memberships(graph, base_ns, rooms, structural, relations)
 
     output_path = output_path or json_path.with_suffix(".ttl")
@@ -247,11 +247,13 @@ def _add_structurals(
     ns: Namespace,
     struct_payload: Dict,
     global_wall_depth=None,
-) -> Dict[str, URIRef]:
+) -> Tuple[Dict[str, URIRef], Dict[str, Dict]]:
     structural_nodes: Dict[str, URIRef] = {}
+    structural_entries: Dict[str, Dict] = {}
     for entries in struct_payload.values():
         for entry in entries:
             struct_id = entry["id"]
+            structural_entries[struct_id] = entry
             struct_type = entry.get("type", "").lower()
             struct_uri = ns[struct_id]
             structural_nodes[struct_id] = struct_uri
@@ -283,9 +285,9 @@ def _add_structurals(
                 if wall_depth is None:
                     wall_depth = global_wall_depth
                 wall_depth_literal = _literal(wall_depth)
-                if wall_depth_literal is not None:
-                    graph.add((struct_uri, RESPLAN.wallDepth, wall_depth_literal))
-    return structural_nodes
+            if wall_depth_literal is not None:
+                graph.add((struct_uri, RESPLAN.wallDepth, wall_depth_literal))
+    return structural_nodes, structural_entries
 
 
 def _add_relationships(
@@ -293,6 +295,7 @@ def _add_relationships(
     ns: Namespace,
     rooms: Dict[str, URIRef],
     structural: Dict[str, URIRef],
+    structural_entries: Dict[str, Dict],
     relations: Dict,
 ) -> None:
     def _order_pair(a: URIRef, b: URIRef):
@@ -352,6 +355,12 @@ def _add_relationships(
             for wall_id in shared_walls:
                 wall_uri = structural.get(wall_id) or ns[wall_id]
                 graph.add((adj_uri, RESPLAN.sharedWall, wall_uri))
+            # Borrow geometry from one of the shared walls so adjacency edges are drawable.
+            for wall_id in shared_walls:
+                wall_entry = structural_entries.get(wall_id)
+                if wall_entry and wall_entry.get("geom"):
+                    _add_geom_literals(graph, adj_uri, wall_entry)
+                    break
         else:
             LOGGER.warning("Skipping adjacency edge with unknown ids: %s", entry)
 
