@@ -3,32 +3,74 @@ PREFIX ifc:     <http://ifcowl.openbimstandards.org/IFC2X3_Final#>
 PREFIX bot:     <https://w3id.org/bot#>
 PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
 
+# Create ONE inferred window only for rooms that are flagged missing:
+# - expectedWindow = true (W1), or
+# - hasRoomType Bathroom and has no window (W2).
+# If the room already has any window, skip.
+# Host wall: prefer exterior wall that bounds the room, else interior wall.
+
 CONSTRUCT {
-  # new window
-  ?win a resplan:Window ;
-       resplan:sourceId ?newId .
+  ?win a resplan:Window, ifc:Window ;
+       resplan:isInferred true ;
+       resplan:sourceId ?newId ;
+       resplan:derivedFrom ?derivedRef .
 
   ?room resplan:hasWindow ?win .
+  ?wall resplan:hostsOpening ?win .
 }
 WHERE {
   {
-    ?room resplan:windowOpening ?expected .
-    FILTER NOT EXISTS { ?room resplan:hasWindow ?expected . }
-    BIND(?expected AS ?candidate)
-  }
-  UNION
-  {
-    ?room resplan:hasRoomType resplan:Bathroom .
-    FILTER NOT EXISTS { ?room resplan:hasWindow ?anyWin . }
-    BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID())) AS ?candidate)
+    SELECT ?room ?candidate ?derivedRef ?wall WHERE {
+      # target rooms per validation
+      ?room a bot:Space .
+      FILTER (
+        EXISTS { ?room resplan:expectedWindow true }
+        || EXISTS { ?room resplan:hasRoomType resplan:Bathroom }
+      )
+      # skip if already has any window
+      FILTER NOT EXISTS {
+        ?room resplan:hasWindow ?wAny .
+        ?wAny a resplan:Window .
+      }
+
+      # derive candidate/derivedRef
+      OPTIONAL { ?room resplan:windowOpening ?expected . }
+      BIND( COALESCE(?expected, IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID()))) AS ?candidate)
+      BIND( COALESCE(?expected, ?room) AS ?derivedRef)
+
+      # exclude balcony/veranda/parking
+      FILTER NOT EXISTS {
+        ?room resplan:hasRoomType ?t .
+        FILTER (?t IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
+      }
+
+      # pick host wall: prefer exterior, else interior
+      OPTIONAL {
+        SELECT ?room (SAMPLE(?we) AS ?wallExt)
+        WHERE {
+          ?room resplan:boundedBy ?we .
+          ?we a resplan:ExteriorWall .
+        }
+        GROUP BY ?room
+      }
+      OPTIONAL {
+        SELECT ?room (SAMPLE(?wi) AS ?wallInt)
+        WHERE {
+          ?room resplan:boundedBy ?wi .
+          ?wi a resplan:InteriorWall .
+        }
+        GROUP BY ?room
+      }
+      BIND(COALESCE(?wallExt, ?wallInt) AS ?wall)
+    }
   }
 
-  # exclude balcony/veranda/parking
+  # avoid duplicating inferred windows for the same room
   FILTER NOT EXISTS {
-    ?room resplan:hasRoomType ?t .
-    FILTER (?t IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
+    ?room resplan:hasWindow ?wInf .
+    ?wInf resplan:isInferred true .
   }
 
-  BIND(COALESCE(?candidate, IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID()))) AS ?win)
+  BIND(?candidate AS ?win)
   BIND(CONCAT("WI-INF-", STRUUID()) AS ?newId)
 }

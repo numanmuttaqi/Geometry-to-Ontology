@@ -225,6 +225,59 @@ def infer_door_geom_from_walls_or_adjacency(
     door_poly = line.buffer(_wall_thickness(wall_poly) / 2, cap_style=2, join_style=2)
     return mapping(door_poly)
 
+
+def infer_window_geom_from_wall_or_adjacency(
+    graph,
+    window,
+    adj_geom_index,
+    geom_index,
+    window_width=1.2,
+):
+    def _wall_thickness(poly) -> float:
+        minx, miny, maxx, maxy = poly.bounds
+        return max(1e-6, min(maxx - minx, maxy - miny))
+
+    host_walls = list(graph.subjects(RESPLAN.hostsOpening, window))
+    if not host_walls:
+        return None
+
+    wall_geom_lit = geom_index.get(host_walls[0])
+    if wall_geom_lit is None:
+        return None
+
+    wall_poly = shape(json.loads(str(wall_geom_lit)))
+
+    # panduan posisi: adjacency centroid jika ada
+    adj_point = None
+    adj = graph.value(window, RESPLAN.derivedFrom)
+    if adj is not None:
+        adj_geom_lit = adj_geom_index.get(adj)
+        if adj_geom_lit is not None:
+            adj_point = shape(json.loads(str(adj_geom_lit))).centroid
+
+    if adj_point is None:
+        adj_point = wall_poly.centroid
+
+    # proyeksi ke sisi wall
+    projected = wall_poly.exterior.interpolate(
+        wall_poly.exterior.project(adj_point)
+    )
+
+    thickness = _wall_thickness(wall_poly)
+    minx, miny, maxx, maxy = wall_poly.bounds
+    horiz = (maxx - minx) >= (maxy - miny)
+
+    if horiz:
+        p1 = (projected.x - window_width / 2, projected.y)
+        p2 = (projected.x + window_width / 2, projected.y)
+    else:
+        p1 = (projected.x, projected.y - window_width / 2)
+        p2 = (projected.x, projected.y + window_width / 2)
+
+    line = LineString([p1, p2])
+    win_poly = line.buffer(thickness / 2, cap_style=2, join_style=2)
+    return mapping(win_poly)
+
 # ======================================================
 # Core conversion
 # ======================================================
@@ -325,6 +378,18 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
 
         if struct_key == "door" and own_geom_lit is None:
             geom_lit = infer_door_geom_from_walls_or_adjacency(
+                graph,
+                struct_subj,
+                adj_geom_index,
+                geom_index,
+            )
+
+        # --------------------------------------------------
+        # Infer Window Geometry
+        # --------------------------------------------------
+
+        if struct_key == "window" and own_geom_lit is None:
+            geom_lit = infer_window_geom_from_wall_or_adjacency(
                 graph,
                 struct_subj,
                 adj_geom_index,
