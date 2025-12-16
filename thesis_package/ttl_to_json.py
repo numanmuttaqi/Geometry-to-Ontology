@@ -42,8 +42,8 @@ ROOM_CLASS_TO_KEY = {
 STRUCT_CLASS_TO_KEY = {
     RESPLAN.InteriorWall: "interior_wall",
     RESPLAN.ExteriorWall: "exterior_wall",
-    RESPLAN.Door: "door",
     RESPLAN.FrontDoor: "front_door",
+    RESPLAN.Door: "door",
     RESPLAN.Window: "window",
 }
 
@@ -116,6 +116,114 @@ def _struct_type(graph: Graph, subj) -> Optional[str]:
             return STRUCT_CLASS_TO_KEY[cls]
     return None
 
+# ======================================================
+# Calculate (approx) Inferred Door GeomJSON
+# ======================================================
+
+from shapely.geometry import LineString, shape, mapping
+from shapely.ops import nearest_points
+
+def infer_door_geom_from_walls_or_adjacency(
+    graph,
+    door,
+    adj_geom_index,
+    geom_index,
+    door_width=0.9,
+):
+    def _wall_thickness(poly) -> float:
+        minx, miny, maxx, maxy = poly.bounds
+        return max(1e-6, min(maxx - minx, maxy - miny))
+
+    # 1. ambil wall host
+    host_walls = list(graph.subjects(RESPLAN.hostsOpening, door))
+    if not host_walls:
+        return None
+
+    wall_shapes = []
+    for w in host_walls[:2]:  # pakai dua wall utama
+        geom_lit = geom_index.get(w)
+        if geom_lit is None:
+            continue
+        wall_shapes.append(shape(json.loads(str(geom_lit))))
+
+    if len(wall_shapes) >= 2:
+        w1, w2 = wall_shapes[0], wall_shapes[1]
+        minx1, miny1, maxx1, maxy1 = w1.bounds
+        minx2, miny2, maxx2, maxy2 = w2.bounds
+
+        overlap_x = min(maxx1, maxx2) - max(minx1, minx2)
+        overlap_y = min(maxy1, maxy2) - max(miny1, miny2)
+
+        thickness = min(_wall_thickness(w1), _wall_thickness(w2))
+
+        if overlap_x > 0 and (miny1 > maxy2 or miny2 > maxy1):
+            # Walls stacked vertically: make vertical door at mid-overlap X, spanning the gap
+            x_mid = (max(minx1, minx2) + min(maxx1, maxx2)) / 2
+            if miny1 > maxy2:  # w1 above w2
+                y1, y2 = maxy2, miny1
+            else:  # w2 above w1
+                y1, y2 = maxy1, miny2
+            line = LineString([(x_mid, y1), (x_mid, y2)])
+            return mapping(line.buffer(thickness / 2, cap_style=2, join_style=2))
+
+        if overlap_y > 0 and (minx1 > maxx2 or minx2 > maxx1):
+            # Walls side by side horizontally: make horizontal door at mid-overlap Y
+            y_mid = (max(miny1, miny2) + min(maxy1, maxy2)) / 2
+            if minx1 > maxx2:  # w1 right of w2
+                x1, x2 = maxx2, minx1
+            else:  # w2 right of w1
+                x1, x2 = maxx1, minx2
+            line = LineString([(x1, y_mid), (x2, y_mid)])
+            return mapping(line.buffer(thickness / 2, cap_style=2, join_style=2))
+
+        # Fallback: shortest segment between wall polygons
+        p1, p2 = nearest_points(w1, w2)
+        door_line = LineString([[p1.x, p1.y], [p2.x, p2.y]])
+        door_poly = door_line.buffer(thickness / 2, cap_style=2, join_style=2)
+        return mapping(door_poly)
+
+    # --- single-wall fallback menggunakan adjacency guidance ---
+    chosen_wall = host_walls[0]
+
+    # 2. cari adjacency (jika ada) untuk memandu posisi pintu
+    adj_point = None
+    adj = graph.value(door, RESPLAN.derivedFrom)
+    if adj is not None:
+        adj_geom_lit = adj_geom_index.get(adj)
+        if adj_geom_lit is not None:
+            adj_point = shape(json.loads(str(adj_geom_lit))).centroid
+
+    wall_geom_lit = geom_index.get(chosen_wall)
+    if wall_geom_lit is None:
+        return None
+
+    wall_poly = shape(json.loads(str(wall_geom_lit)))
+
+    # fallback: pakai centroid wall bila adjacency tidak tersedia
+    if adj_point is None:
+        adj_point = wall_poly.centroid
+
+    # 3. project titik ke boundary wall
+    projected = wall_poly.exterior.interpolate(
+        wall_poly.exterior.project(adj_point)
+    )
+
+    # 4. tentukan orientasi door (sejajar wall)
+    x, y = projected.x, projected.y
+    minx, miny, maxx, maxy = wall_poly.bounds
+
+    if (maxx - minx) > (maxy - miny):
+        # wall horizontal
+        p1 = (x - door_width / 2, y)
+        p2 = (x + door_width / 2, y)
+    else:
+        # wall vertical
+        p1 = (x, y - door_width / 2)
+        p2 = (x, y + door_width / 2)
+
+    line = LineString([p1, p2])
+    door_poly = line.buffer(_wall_thickness(wall_poly) / 2, cap_style=2, join_style=2)
+    return mapping(door_poly)
 
 # ======================================================
 # Core conversion
@@ -196,7 +304,8 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
             continue
 
         # --- geometry resolution ---
-        geom_lit = graph.value(struct_subj, RESPLAN.geomJSON)
+        own_geom_lit = graph.value(struct_subj, RESPLAN.geomJSON)
+        geom_lit = own_geom_lit
 
         # fallback 1: replacesWall
         if geom_lit is None:
@@ -210,6 +319,20 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
             if derived:
                 geom_lit = adj_geom_index.get(derived)
 
+        # --------------------------------------------------
+        # Infer Door Geometry
+        # --------------------------------------------------
+
+        if struct_key == "door" and own_geom_lit is None:
+            geom_lit = infer_door_geom_from_walls_or_adjacency(
+                graph,
+                struct_subj,
+                adj_geom_index,
+                geom_index,
+            )
+
+        # --------------------------------------------------
+
         if geom_lit is None:
             continue  # cannot visualize
 
@@ -220,16 +343,26 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
 
         is_inferred_lit = graph.value(struct_subj, RESPLAN.isInferred)
 
+        # geom_lit can be a JSON literal from the TTL or a dict returned by
+        # infer_door_geom_from_walls_or_adjacency; support both.
+        geom = (
+            geom_lit
+            if isinstance(geom_lit, dict)
+            else json.loads(str(geom_lit))
+        )
+
+        inferred_flag = (
+            is_inferred_lit.toPython()
+            if is_inferred_lit is not None
+            else ("infer#" in str(struct_subj))
+        )
+
         record = {
             "id": str(record_id),
             "type": struct_key,
-            "geom": json.loads(str(geom_lit)),
+            "geom": geom,
             "props": _geom_props(graph, struct_subj),
-            "inferred": (
-                is_inferred_lit.toPython()
-                if is_inferred_lit is not None
-                else False
-             ),
+            "inferred": inferred_flag,
         }
 
         plan_dict["instances"]["structural"].setdefault(

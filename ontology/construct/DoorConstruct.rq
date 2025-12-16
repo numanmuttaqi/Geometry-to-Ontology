@@ -5,9 +5,13 @@ PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
   # new door
-  ?door a resplan:Door ;
+  ?door a resplan:Door, ifc:Door ;
+        resplan:isInferred true ;
         resplan:sourceId ?newId ;
         resplan:connectsSpace ?a , ?b .
+
+  # link back to adjacency that triggered this inference (when available)
+  ?door resplan:derivedFrom ?adj .
 
   ?wall resplan:hostsOpening ?door .
 }
@@ -36,6 +40,19 @@ WHERE {
   ?a    resplan:boundedBy ?wall .
   ?b    resplan:boundedBy ?wall .
   ?wall a resplan:InteriorWall .
+
+  # 2b) try to grab the corresponding adjacency edge between the two spaces
+  OPTIONAL {
+    {
+      ?adj resplan:spaceA ?a ;
+           resplan:spaceB ?b .
+    }
+    UNION
+    {
+      ?adj resplan:spaceA ?b ;
+           resplan:spaceB ?a .
+    }
+  }
 
   # 3) create instance door
   BIND( IRI(CONCAT("http://resplan.org/resplan/infer#",
