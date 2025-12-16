@@ -9,7 +9,7 @@ import logging
 from itertools import combinations
 from pathlib import Path
 from typing import Dict, Iterable, Tuple
-from rdflib import Graph, Literal, Namespace, RDF, URIRef
+from rdflib import BNode, Graph, Literal, Namespace, RDF, URIRef
 from rdflib.namespace import RDFS, XSD
 
 # Namespaces shared with the ontology/rules
@@ -430,14 +430,30 @@ def _add_window_memberships(
         expected_rooms.add(room_id)
 
         present = bool(entry.get("present"))
-        window_uri = structural.get(window_id)
+        # Jangan hidupkan kembali instance yang sudah di-drop; untuk window yang hilang,
+        # pakai bnode supaya hostsOpening tetap bisa dicatat tanpa membuat URI WI-xx lagi.
+        window_uri = structural.get(window_id) if present else None
 
-        # jika window hilang, buat stub inferred supaya hostsOpening bisa dicatat
+        primary_wall_id = entry.get("primary_wall")
+        primary_wall_uri = structural.get(primary_wall_id) if primary_wall_id else None
+        if primary_wall_uri is None and primary_wall_id:
+            primary_wall_uri = ns[primary_wall_id]
+
         if window_uri is None:
-            window_uri = ns[window_id]
+            if present:
+                window_uri = ns[window_id]
+                graph.add((window_uri, RDF.type, RESPLAN.Window))
+                graph.add((window_uri, RESPLAN.sourceId, Literal(window_id)))
+            else:
+                # Placeholder bnode only to keep windowOpening/hostsOpening topology.
+                window_uri = BNode()
+        else:
+            # Pastikan tipe dan source id tercatat untuk window yang memang ada.
             graph.add((window_uri, RDF.type, RESPLAN.Window))
-            graph.add((window_uri, RESPLAN.isInferred, Literal(True)))
             graph.add((window_uri, RESPLAN.sourceId, Literal(window_id)))
+
+        if primary_wall_uri is not None:
+            graph.add((window_uri, RESPLAN.primaryWall, primary_wall_uri))
 
         # expected slot selalu dicatat
         graph.add((room_uri, RESPLAN.windowOpening, window_uri))

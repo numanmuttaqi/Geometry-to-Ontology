@@ -3,40 +3,48 @@ PREFIX ifc:     <http://ifcowl.openbimstandards.org/IFC2X3_Final#>
 PREFIX bot:     <https://w3id.org/bot#>
 PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
 
-# Create one inferred window for rooms missing a window (expectedWindow=true or bathroom with no window).
-# Attach hostsOpening to all exterior walls bounding the room; if no exterior walls, attach to interior walls.
+# Create inferred window instances (infer#) for rooms that need windows.
+# Targets: expectedWindow=true or Bathroom with no real window.
+# If room already has a non-inferred window, skip.
+# derivedFrom prefers existing windowOpening, else the room.
+# hostsOpening attached to exterior walls; if none, fallback to interior walls.
 
 CONSTRUCT {
   ?win a resplan:Window, ifc:Window ;
        resplan:isInferred true ;
-       resplan:sourceId ?newId ;
-       resplan:derivedFrom ?derivedRef .
+       resplan:sourceId ?srcId ;
+       resplan:derivedFrom ?derivedRef ;
+       resplan:primaryWall ?primary .
 
-  ?room resplan:hasWindow ?win .
+  ?room resplan:hasWindow ?win ;
+        resplan:windowOpening ?win .
+
   ?wall resplan:hostsOpening ?win .
 }
 WHERE {
-  # target rooms
   ?room a bot:Space .
   FILTER (
     EXISTS { ?room resplan:expectedWindow true }
     || EXISTS { ?room resplan:hasRoomType resplan:Bathroom }
   )
-  # skip if already has any window
+
+  # skip if already has a non-inferred window
   FILTER NOT EXISTS {
-    ?room resplan:hasWindow ?wAny .
-    ?wAny a resplan:Window .
-  }
-  # exclude balcony/veranda/parking
-  FILTER NOT EXISTS {
-    ?room resplan:hasRoomType ?t .
-    FILTER (?t IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
+    ?room resplan:hasWindow ?wReal .
+    ?wReal a resplan:Window .
+    FILTER NOT EXISTS { ?wReal resplan:isInferred true }
   }
 
   OPTIONAL { ?room resplan:windowOpening ?expected . }
-  BIND( COALESCE(?expected, IRI(CONCAT("http://resplan.org/resplan/infer#", STRUUID()))) AS ?win)
-  BIND( COALESCE(?expected, ?room) AS ?derivedRef)
-  BIND(CONCAT("WI-INF-", STRUUID()) AS ?newId)
+  # Jika windowOpening bnode (missing window), pakai room sebagai derivedRef supaya tidak merujuk ke bnode.
+  BIND( IF(isIRI(?expected), ?expected, ?room) AS ?derivedRef)
+  OPTIONAL { ?expected resplan:primaryWall ?primary . }
+
+  # generate infer URI and sourceId
+  BIND(CONCAT("WI-INF-", SHA256(STR(?derivedRef))) AS ?newId)
+  BIND( IRI(CONCAT("http://resplan.org/resplan/infer#", ?newId)) AS ?win)
+  # sourceId literal: pakai local id kalau expected IRI, else newId
+  BIND( IF(isIRI(?expected), STRAFTER(STR(?expected), "#"), ?newId) AS ?srcId)
 
   {
     # exterior walls
