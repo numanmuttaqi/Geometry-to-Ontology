@@ -13,6 +13,8 @@ from typing import Any, Dict, Optional
 
 from rdflib import Graph, Namespace, RDF
 from rdflib.namespace import RDFS
+from shapely.geometry import LineString, shape, mapping
+from shapely.ops import nearest_points
 
 from .constants import ROOM_KEYS, STRUCT_KEYS
 
@@ -120,9 +122,6 @@ def _struct_type(graph: Graph, subj) -> Optional[str]:
 # Calculate (approx) Inferred Door GeomJSON
 # ======================================================
 
-from shapely.geometry import LineString, shape, mapping
-from shapely.ops import nearest_points
-
 def infer_door_geom_from_walls_or_adjacency(
     graph,
     door,
@@ -200,8 +199,10 @@ def infer_door_geom_from_walls_or_adjacency(
     wall_poly = shape(json.loads(str(wall_geom_lit)))
 
     # fallback: pakai centroid wall bila adjacency tidak tersedia
-    if adj_point is None:
-        adj_point = wall_poly.centroid
+    if adj_point is None and room_geom is not None:
+        adj_point = room_geom.centroid
+    elif adj_point is None:
+        return None  # jangan asal tempatkan window
 
     # 3. project titik ke boundary wall
     projected = wall_poly.exterior.interpolate(
@@ -225,6 +226,9 @@ def infer_door_geom_from_walls_or_adjacency(
     door_poly = line.buffer(_wall_thickness(wall_poly) / 2, cap_style=2, join_style=2)
     return mapping(door_poly)
 
+# ======================================================
+# Calculate (approx) Inferred Window GeomJSON
+# ======================================================
 
 def infer_window_geom_from_wall_or_adjacency(
     graph,
@@ -233,37 +237,211 @@ def infer_window_geom_from_wall_or_adjacency(
     geom_index,
     window_width=1.2,
 ):
+    """
+    Infer window geometry using hostsOpening/room contacts.
+    Priority: contact segment on primary/exterior wall; fallback to multi-wall gap; then projection.
+    """
+
     def _wall_thickness(poly) -> float:
         minx, miny, maxx, maxy = poly.bounds
         return max(1e-6, min(maxx - minx, maxy - miny))
 
+    def _as_shape(geom_lit):
+        if geom_lit is None:
+            return None
+        try:
+            return shape(json.loads(str(geom_lit)))
+        except Exception:
+            return None
+
+    def _place_on_wall(wall_poly, room_geom, desired_len=None):
+        thickness = _wall_thickness(wall_poly)
+        seg_len = None
+        target_point = None
+        if room_geom is not None:
+            contact = wall_poly.boundary.intersection(room_geom.boundary)
+            segments = []
+            if contact.geom_type == "LineString":
+                segments = [contact]
+            elif contact.geom_type == "MultiLineString":
+                segments = list(contact.geoms)
+            if segments:
+                seg = max(segments, key=lambda s: s.length)
+                seg_len = seg.length
+                target_point = seg.interpolate(0.5, normalized=True)
+
+        base_geom = room_geom if room_geom is not None else wall_poly
+        if target_point is None:
+            adj_point = base_geom.centroid
+            target_point = wall_poly.exterior.interpolate(
+                wall_poly.exterior.project(adj_point)
+            )
+
+        minx, miny, maxx, maxy = wall_poly.bounds
+        horiz = (maxx - minx) >= (maxy - miny)
+        ux, uy = (1, 0) if horiz else (0, 1)
+        target_width = desired_len or window_width
+        half = min(target_width / 2, (seg_len or target_width) / 2)
+        p1 = (target_point.x - ux * half, target_point.y - uy * half)
+        p2 = (target_point.x + ux * half, target_point.y + uy * half)
+        line = LineString([p1, p2])
+        return mapping(line.buffer(thickness / 2, cap_style=2, join_style=2))
+
+    def _width_from_hosts(primary_poly, host_wall_ids):
+        """Estimate window span using projections of other host walls onto the primary wall."""
+        distances = []
+        for w in host_wall_ids:
+            if w == primary_wall_uri:
+                continue
+            other_poly = _as_shape(geom_index.get(w))
+            if other_poly is None:
+                continue
+            p_primary, p_other = nearest_points(primary_poly, other_poly)
+            distances.append(primary_poly.exterior.project(p_primary))
+        if not distances:
+            return None
+        return max(distances) - min(distances)
+
     host_walls = list(graph.subjects(RESPLAN.hostsOpening, window))
+
+    # Fallback: jika tidak ada hostsOpening, pakai wall boundedBy ruang (prioritas exterior)
+    if not host_walls:
+        room = graph.value(window, RESPLAN.derivedFrom)
+        if room is not None:
+            wall_candidates = [
+                w
+                for w in graph.objects(room, RESPLAN.boundedBy)
+                if (w, RDF.type, RESPLAN.ExteriorWall) in graph
+                or (w, RDF.type, RESPLAN.InteriorWall) in graph
+            ]
+            ext_walls = [
+                w for w in wall_candidates if (w, RDF.type, RESPLAN.ExteriorWall) in graph
+            ]
+            host_walls = ext_walls or wall_candidates
+
     if not host_walls:
         return None
 
-    wall_geom_lit = geom_index.get(host_walls[0])
-    if wall_geom_lit is None:
+    derived = graph.value(window, RESPLAN.derivedFrom)
+    room_geom = _as_shape(geom_index.get(derived)) if derived is not None else None
+    primary_wall_uri = graph.value(window, RESPLAN.primaryWall)
+
+    # Jika primary wall ada, pakai geometri itu dahulu supaya orientasi window sejajar primary.
+    if primary_wall_uri is not None:
+        primary_wall_poly = _as_shape(geom_index.get(primary_wall_uri))
+        if primary_wall_poly is not None:
+            desired = _width_from_hosts(primary_wall_poly, host_walls)
+            placed = _place_on_wall(primary_wall_poly, room_geom, desired_len=desired)
+            if placed is not None:
+                return placed
+
+    wall_shapes = []
+    for w in host_walls:
+        poly = _as_shape(geom_index.get(w))
+        if poly is not None:
+            is_ext = (w, RDF.type, RESPLAN.ExteriorWall) in graph
+            is_primary = primary_wall_uri is not None and w == primary_wall_uri
+            wall_shapes.append((w, poly, is_ext, is_primary))
+
+    if not wall_shapes:
         return None
 
-    wall_poly = shape(json.loads(str(wall_geom_lit)))
+    # Prioritas: segmen kontak wall-room (room dibuffer setengah ketebalan wall)
+    best_seg = None
+    best_thick = None
+    best_is_ext = False
+    best_is_primary = False
+    best_wall_poly = None
+    if room_geom is not None:
+        for _, wall_poly, is_ext, is_primary in wall_shapes:
+            thickness = _wall_thickness(wall_poly)
+            buffered = room_geom.buffer(thickness / 2, join_style=2, cap_style=2)
+            inter = wall_poly.boundary.intersection(buffered.boundary)
+            segments = []
+            if inter.geom_type == "LineString":
+                segments = [inter]
+            elif inter.geom_type == "MultiLineString":
+                segments = list(inter.geoms)
+            for seg in segments:
+                if seg.length <= 1e-6:
+                    continue
+                better = False
+                if best_seg is None:
+                    better = True
+                else:
+                    if is_primary and not best_is_primary:
+                        better = True
+                    elif is_primary == best_is_primary:
+                        if is_ext and not best_is_ext:
+                            better = True
+                        elif is_ext == best_is_ext and seg.length > best_seg.length:
+                            better = True
+                if better:
+                    best_seg = seg
+                    best_thick = thickness
+                    best_is_ext = is_ext
+                    best_is_primary = is_primary
+                    best_wall_poly = wall_poly
 
-    # panduan posisi: adjacency centroid jika ada
+    if best_seg is not None:
+        start, end = best_seg.coords[0], best_seg.coords[-1]
+        midx = (start[0] + end[0]) / 2
+        midy = (start[1] + end[1]) / 2
+        # Gunakan orientasi wall utama agar window sejajar wall,
+        # bahkan bila segmen intersection tegak lurus.
+        if best_wall_poly is not None:
+            minx, miny, maxx, maxy = best_wall_poly.bounds
+            horiz = (maxx - minx) >= (maxy - miny)
+        else:
+            dx, dy = end[0] - start[0], end[1] - start[1]
+            horiz = abs(dx) >= abs(dy)
+        ux, uy = (1, 0) if horiz else (0, 1)
+        half = min(window_width / 2, best_seg.length / 2)
+        p1 = (midx - ux * half, midy - uy * half)
+        p2 = (midx + ux * half, midy + uy * half)
+        line = LineString([p1, p2])
+        win_poly = line.buffer(best_thick / 2, cap_style=2, join_style=2)
+        return mapping(win_poly)
+
+    # Jika ada >=2 wall host: posisikan di celah antar wall
+    if len(wall_shapes) >= 2:
+        best_pair = None
+        best_dist = None
+        for i in range(len(wall_shapes)):
+            for j in range(i + 1, len(wall_shapes)):
+                p1, p2 = nearest_points(wall_shapes[i][1], wall_shapes[j][1])
+                dist = p1.distance(p2)
+                if best_dist is None or dist < best_dist:
+                    best_dist = dist
+                    best_pair = (p1, p2, wall_shapes[i][1], wall_shapes[j][1])
+        if best_pair is not None and best_dist is not None and best_dist > 1e-6:
+            p1, p2, ws1, ws2 = best_pair
+            thickness = min(_wall_thickness(ws1), _wall_thickness(ws2))
+            line = LineString([[p1.x, p1.y], [p2.x, p2.y]])
+            win_poly = line.buffer(thickness / 2, cap_style=2, join_style=2)
+            return mapping(win_poly)
+
+    # Single wall host: proyeksi centroid adjacency/room ke wall
+    wall_poly = wall_shapes[0][1]
+    thickness = _wall_thickness(wall_poly)
+
     adj_point = None
     adj = graph.value(window, RESPLAN.derivedFrom)
     if adj is not None:
         adj_geom_lit = adj_geom_index.get(adj)
-        if adj_geom_lit is not None:
-            adj_point = shape(json.loads(str(adj_geom_lit))).centroid
+        if adj_geom_lit is None:
+            adj_geom_lit = geom_index.get(adj)
+        adj_geom = _as_shape(adj_geom_lit)
+        if adj_geom is not None:
+            adj_point = adj_geom.centroid
 
     if adj_point is None:
-        adj_point = wall_poly.centroid
+        adj_point = wall_poly.centroid if room_geom is None else room_geom.centroid
 
-    # proyeksi ke sisi wall
     projected = wall_poly.exterior.interpolate(
         wall_poly.exterior.project(adj_point)
     )
 
-    thickness = _wall_thickness(wall_poly)
     minx, miny, maxx, maxy = wall_poly.bounds
     horiz = (maxx - minx) >= (maxy - miny)
 
@@ -274,8 +452,9 @@ def infer_window_geom_from_wall_or_adjacency(
         p1 = (projected.x, projected.y - window_width / 2)
         p2 = (projected.x, projected.y + window_width / 2)
 
-    line = LineString([p1, p2])
-    win_poly = line.buffer(thickness / 2, cap_style=2, join_style=2)
+    win_poly = LineString([p1, p2]).buffer(
+        thickness / 2, cap_style=2, join_style=2
+    )
     return mapping(win_poly)
 
 # ======================================================
@@ -459,194 +638,3 @@ def save_ttl_as_json(
 
 
 __all__ = ["ttl_to_plan_dict", "save_ttl_as_json"]
-
-# import json
-# from pathlib import Path
-# from rdflib import Graph, Namespace, RDF
-# from decimal import Decimal
-
-# # =========================
-# # NAMESPACES
-# # =========================
-# RESPLAN = Namespace("http://resplan.org/resplan#")
-# BOT     = Namespace("https://w3id.org/bot#")
-# IFC     = Namespace("https://w3id.org/ifc/IFC4_ADD2#")
-
-# # =========================
-# # HELPERS
-# # =========================
-# def short(uri):
-#     s = str(uri)
-#     if "#" in s:
-#         return s.split("#")[-1]
-#     return s.rstrip("/").split("/")[-1]
-
-# def lit(v):
-#     if v is None:
-#         return None
-#     try:
-#         return v.toPython()
-#     except Exception:
-#         return str(v)
-
-# def json_default(o):
-#     if isinstance(o, Decimal):
-#         return float(o)
-#     raise TypeError(f"Object of type {type(o)} is not JSON serializable")
-
-# # =========================
-# # MAIN FUNCTION
-# # =========================
-# def ttl_to_json(ttl_input, json_output):
-#     ttl_input = Path(ttl_input)
-#     json_output = Path(json_output)
-
-#     g = Graph()
-#     g.parse(ttl_input, format="turtle")
-#     print("Loaded triples:", len(g))
-
-#     # --------------------------------------------------
-#     # ROOMS (GROUPED BY ROOM TYPE)
-#     # --------------------------------------------------
-#     rooms_by_type = {}
-
-#     for r in g.subjects(RDF.type, RESPLAN.Room):
-#         geom_lit = g.value(r, RESPLAN.geomJSON)
-#         rtype = g.value(r, RESPLAN.hasRoomType)
-
-#         if not geom_lit or not rtype:
-#             continue
-
-#         try:
-#             geom_json = json.loads(str(geom_lit))
-#         except Exception:
-#             continue
-
-#         room_obj = {
-#             "id": short(r),
-#             "geom": geom_json,
-#             "area": lit(g.value(r, RESPLAN.area)),
-#         }
-
-#         subtype = short(rtype)
-#         rooms_by_type.setdefault(subtype, []).append(room_obj)
-
-#     print("Rooms exported:", sum(len(v) for v in rooms_by_type.values()))
-
-#     # --------------------------------------------------
-#     # WALLS (INTERIOR + EXTERIOR + INFERRED)
-#     # --------------------------------------------------
-#     walls = []
-
-#     for w in g.subjects(RDF.type, IFC.Wall):
-#         geom_lit = g.value(w, RESPLAN.geomJSON)
-#         if not geom_lit:
-#             continue
-
-#         try:
-#             geom_json = json.loads(str(geom_lit))
-#         except Exception:
-#             continue
-
-#         wall_obj = {
-#             "id": short(w),
-#             "geom": geom_json,
-#             "inferred": bool(lit(g.value(w, RESPLAN.isInferred))),
-#             "spaces": sorted({
-#                 short(s)
-#                 for s in g.objects(w, RESPLAN.separatesSpace)
-#             }),
-#         }
-
-#         # optional metadata (keep round-trip info)
-#         for p, k in [
-#             (RESPLAN.wallDepth, "depth"),
-#             (RESPLAN.length, "length"),
-#             (RESPLAN.area, "area"),
-#             (RESPLAN.sourceId, "sourceId"),
-#         ]:
-#             val = g.value(w, p)
-#             if val is not None:
-#                 wall_obj[k] = lit(val)
-
-#         walls.append(wall_obj)
-
-#     print("Walls exported:", len(walls))
-
-#     # --------------------------------------------------
-#     # DOORS
-#     # --------------------------------------------------
-#     doors = []
-
-#     for d in g.subjects(RDF.type, RESPLAN.Door):
-#         geom_lit = g.value(d, RESPLAN.geomJSON)
-#         if not geom_lit:
-#             continue
-
-#         try:
-#             geom_json = json.loads(str(geom_lit))
-#         except Exception:
-#             continue
-
-#         doors.append({
-#             "id": short(d),
-#             "geom": geom_json,
-#             "spaces": sorted({
-#                 short(s)
-#                 for s in g.objects(d, RESPLAN.connectsSpace)
-#             })
-#         })
-
-#     print("Doors exported:", len(doors))
-
-#     # --------------------------------------------------
-#     # WINDOWS
-#     # --------------------------------------------------
-#     windows = []
-
-#     for w in g.subjects(RDF.type, RESPLAN.Window):
-#         geom_lit = g.value(w, RESPLAN.geomJSON)
-#         if not geom_lit:
-#             continue
-
-#         try:
-#             geom_json = json.loads(str(geom_lit))
-#         except Exception:
-#             continue
-
-#         windows.append({
-#             "id": short(w),
-#             "geom": geom_json
-#         })
-
-#     print("Windows exported:", len(windows))
-
-#     # --------------------------------------------------
-#     # FINAL JSON (⚠️ SAME CONTRACT AS OLD plan_00000.json)
-#     # --------------------------------------------------
-#     output = {
-#         "instances": {
-#             "room": rooms_by_type,
-#             "structural": {
-#                 "wall": walls,
-#                 "door": doors,
-#                 "window": windows
-#             }
-#         }
-#     }
-
-#     json_output.parent.mkdir(parents=True, exist_ok=True)
-#     with open(json_output, "w", encoding="utf-8") as f:
-#         json.dump(output, f, indent=2, default=json_default)
-
-#     print("Saved JSON to:", json_output)
-
-
-# # =========================
-# # CLI ENTRY POINT
-# # =========================
-# if __name__ == "__main__":
-#     ttl_to_json(
-#         "../output/inferred_resplan_ttl/plan_00000_walls_back.ttl",
-#         "../output/inferred_resplan_json/plan_00000_walls_back.json"
-#     )

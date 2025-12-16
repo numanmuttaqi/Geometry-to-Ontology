@@ -432,11 +432,25 @@ def _add_window_memberships(
         present = bool(entry.get("present"))
         window_uri = structural.get(window_id)
 
-        if present and window_uri:
-            # Window instance exists; record both expected slot and presence.
-            graph.add((room_uri, RESPLAN.windowOpening, window_uri))
-            if entry.get("is_exterior"):
-                graph.add((room_uri, RESPLAN.hasWindow, window_uri))
+        # jika window hilang, buat stub inferred supaya hostsOpening bisa dicatat
+        if window_uri is None:
+            window_uri = ns[window_id]
+            graph.add((window_uri, RDF.type, RESPLAN.Window))
+            graph.add((window_uri, RESPLAN.isInferred, Literal(True)))
+            graph.add((window_uri, RESPLAN.sourceId, Literal(window_id)))
+
+        # expected slot selalu dicatat
+        graph.add((room_uri, RESPLAN.windowOpening, window_uri))
+
+        if present:
+            # Window instance ada; record presence.
+            graph.add((room_uri, RESPLAN.hasWindow, window_uri))
+
+        # hostsOpening dari host_walls (jika tersedia)
+        host_walls = entry.get("host_walls") or []
+        for wall_id in host_walls:
+            wall_uri = structural.get(wall_id) or ns[wall_id]
+            graph.add((wall_uri, RESPLAN.hostsOpening, window_uri))
 
     for room_id in expected_rooms:
         room_uri = _resolve_room(room_id, graph, ns, rooms)
