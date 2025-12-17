@@ -1,13 +1,6 @@
 PREFIX resplan: <http://resplan.org/resplan#>
 PREFIX ifc:     <http://ifcowl.openbimstandards.org/IFC2X3_Final#>
 PREFIX bot:     <https://w3id.org/bot#>
-PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
-
-# Create inferred window instances (infer#) for rooms that need windows.
-# Targets: expectedWindow=true or Bathroom with no real window.
-# If room already has a non-inferred window, skip.
-# derivedFrom prefers existing windowOpening, else the room.
-# hostsOpening attached to exterior walls; if none, fallback to interior walls.
 
 CONSTRUCT {
   ?win a resplan:Window, ifc:Window ;
@@ -19,7 +12,8 @@ CONSTRUCT {
   ?room resplan:hasWindow ?win ;
         resplan:windowOpening ?win .
 
-  ?wall resplan:hostsOpening ?win .
+  ?primary   resplan:hostsOpening ?win .
+  ?secondary resplan:hostsOpening ?win .
 }
 WHERE {
   ?room a bot:Space .
@@ -28,37 +22,64 @@ WHERE {
     || EXISTS { ?room resplan:hasRoomType resplan:Bathroom }
   )
 
-  # skip if already has a non-inferred window
+  # Jangan duplikasi window nyata
   FILTER NOT EXISTS {
     ?room resplan:hasWindow ?wReal .
     ?wReal a resplan:Window .
     FILTER NOT EXISTS { ?wReal resplan:isInferred true }
   }
 
-  OPTIONAL { ?room resplan:windowOpening ?expected . }
-  # Jika windowOpening bnode (missing window), pakai room sebagai derivedRef supaya tidak merujuk ke bnode.
-  BIND( IF(isIRI(?expected), ?expected, ?room) AS ?derivedRef)
-  OPTIONAL { ?expected resplan:primaryWall ?primary . }
-
-  # generate infer URI and sourceId
-  BIND(CONCAT("WI-INF-", SHA256(STR(?derivedRef))) AS ?newId)
-  BIND( IRI(CONCAT("http://resplan.org/resplan/infer#", ?newId)) AS ?win)
-  # sourceId literal: pakai local id kalau expected IRI, else newId
-  BIND( IF(isIRI(?expected), STRAFTER(STR(?expected), "#"), ?newId) AS ?srcId)
-
+  # Prefer topology dari JSON import:
+  # - room punya placeholder `windowOpening` (bnode/IRI)
+  # - host wall yang benar tercatat via `hostsOpening` untuk placeholder tsb
   {
-    # exterior walls
-    ?room resplan:boundedBy ?wall .
-    ?wall a resplan:ExteriorWall .
+    ?room resplan:windowOpening ?expected .
+    BIND(?expected AS ?derivedRef)
+
+    ?expected resplan:primaryWall ?primary .
+    ?primary a resplan:ExteriorWall .
+
+    OPTIONAL {
+      ?secondary resplan:hostsOpening ?expected .
+      ?secondary a resplan:ExteriorWall .
+      FILTER(?secondary != ?primary)
+    }
   }
   UNION
   {
-    # interior walls only if no exterior walls
-    ?room resplan:boundedBy ?wall .
-    ?wall a resplan:InteriorWall .
-    FILTER NOT EXISTS {
-      ?room resplan:boundedBy ?wExt .
-      ?wExt a resplan:ExteriorWall .
+    # fallback kalau tidak ada placeholder opening: pilih dari boundedBy (deterministic)
+    FILTER NOT EXISTS { ?room resplan:windowOpening ?anyOpening . }
+    BIND(?room AS ?derivedRef)
+
+    {
+      SELECT ?room (MIN(STR(?wall)) AS ?primaryStr)
+      WHERE {
+        ?room resplan:boundedBy ?wall .
+        ?wall a resplan:ExteriorWall .
+      }
+      GROUP BY ?room
+    }
+    BIND(IRI(?primaryStr) AS ?primary)
+
+    OPTIONAL {
+      {
+        SELECT ?room ?primary (MIN(STR(?wall2)) AS ?secondaryStr)
+        WHERE {
+          ?room resplan:boundedBy ?primary .
+          ?primary a resplan:ExteriorWall .
+          ?room resplan:boundedBy ?wall2 .
+          ?wall2 a resplan:ExteriorWall .
+          FILTER(?wall2 != ?primary)
+        }
+        GROUP BY ?room ?primary
+      }
+      BIND(IRI(?secondaryStr) AS ?secondary)
     }
   }
+
+  # --- GENERATE WINDOW ---
+  # Stabil: pakai (room + primary wall), bukan blank node id
+  BIND(CONCAT("WI-INF-", SHA256(CONCAT(STR(?room), "|", STR(?primary)))) AS ?id)
+  BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", ?id)) AS ?win)
+  BIND(?id AS ?srcId)
 }

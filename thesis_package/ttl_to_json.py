@@ -230,265 +230,73 @@ def infer_door_geom_from_walls_or_adjacency(
 # Calculate (approx) Inferred Window GeomJSON
 # ======================================================
 
-def infer_window_geom_from_wall_or_adjacency(
+from shapely.geometry import LineString, shape, mapping, Point
+import json
+
+
+def infer_window_geom_from_primary_and_hosts(
     graph,
     window,
-    adj_geom_index,
     geom_index,
-    window_width=1.2,
 ):
-    """
-    Infer window geometry using hostsOpening/room contacts.
-    Priority: contact segment on primary/exterior wall; fallback to multi-wall gap; then projection.
-    """
-    
-    def _wall_thickness(poly) -> float:
-        minx, miny, maxx, maxy = poly.bounds
-        return max(1e-6, min(maxx - minx, maxy - miny))
-    
-    def _as_shape(geom_lit):
-        if geom_lit is None:
-            return None
-        try:
-            return shape(json.loads(str(geom_lit)))
-        except Exception:
-            return None
-    
-    def _place_on_wall(wall_poly, room_geom, desired_len=None):
-        thickness = _wall_thickness(wall_poly)
-        seg_len = None
-        target_point = None
-        if room_geom is not None:
-            contact = wall_poly.boundary.intersection(room_geom.boundary)
-            segments = []
-            if contact.geom_type == "LineString":
-                segments = [contact]
-            elif contact.geom_type == "MultiLineString":
-                segments = list(contact.geoms)
-            if segments:
-                seg = max(segments, key=lambda s: s.length)
-                seg_len = seg.length
-                target_point = seg.interpolate(0.5, normalized=True)
-        
-        base_geom = room_geom if room_geom is not None else wall_poly
-        if target_point is None:
-            adj_point = base_geom.centroid
-            target_point = wall_poly.exterior.interpolate(
-                wall_poly.exterior.project(adj_point)
-            )
-        
-        minx, miny, maxx, maxy = wall_poly.bounds
-        horiz = (maxx - minx) >= (maxy - miny)
-        ux, uy = (1, 0) if horiz else (0, 1)
-        target_width = desired_len or window_width
-        half = min(target_width / 2, (seg_len or target_width) / 2)
-        p1 = (target_point.x - ux * half, target_point.y - uy * half)
-        p2 = (target_point.x + ux * half, target_point.y + uy * half)
-        line = LineString([p1, p2])
-        return mapping(line.buffer(thickness / 2, cap_style=2, join_style=2))
-    
-    def _width_from_hosts(primary_poly, host_wall_ids):
-        """Estimate window span using projections of other host walls onto the primary wall."""
-        distances = []
-        for w in host_wall_ids:
-            if w == primary_wall_uri:
-                continue
-            other_poly = _as_shape(geom_index.get(w))
-            if other_poly is None:
-                continue
-            p_primary, p_other = nearest_points(primary_poly, other_poly)
-            distances.append(primary_poly.exterior.project(p_primary))
-        if not distances:
-            return None
-        return max(distances) - min(distances)
-    
-    host_walls = list(graph.subjects(RESPLAN.hostsOpening, window))
-    
-    # Fallback: jika tidak ada hostsOpening, pakai wall boundedBy ruang (prioritas exterior)
-    if not host_walls:
-        room = graph.value(window, RESPLAN.derivedFrom)
-        if room is not None:
-            wall_candidates = [
-                w
-                for w in graph.objects(room, RESPLAN.boundedBy)
-                if (w, RDF.type, RESPLAN.ExteriorWall) in graph
-                or (w, RDF.type, RESPLAN.InteriorWall) in graph
-            ]
-            ext_walls = [
-                w for w in wall_candidates if (w, RDF.type, RESPLAN.ExteriorWall) in graph
-            ]
-            host_walls = ext_walls or wall_candidates
-    
-    if not host_walls:
+    import json
+    from shapely.geometry import LineString, Point, shape
+    from shapely.ops import nearest_points
+
+    # --- primary wall ---
+    primary = graph.value(window, RESPLAN.primaryWall)
+    if primary is None:
         return None
-    
-    derived = graph.value(window, RESPLAN.derivedFrom)
-    room_geom = _as_shape(geom_index.get(derived)) if derived is not None else None
-    primary_wall_uri = graph.value(window, RESPLAN.primaryWall)
-    
-    # === PERBAIKAN UTAMA: Handle primary wall tanpa kontak langsung ===
-    if primary_wall_uri is not None:
-        primary_wall_poly = _as_shape(geom_index.get(primary_wall_uri))
-        if primary_wall_poly is not None:
-            # Cek apakah room kontak langsung dengan primary wall
-            has_direct_contact = False
-            if room_geom is not None:
-                contact = room_geom.boundary.intersection(primary_wall_poly.boundary)
-                has_direct_contact = (
-                    (contact.geom_type == "LineString" and contact.length > 1e-6) or
-                    (contact.geom_type == "MultiLineString" and any(s.length > 1e-6 for s in contact.geoms))
-                )
-            
-            if not has_direct_contact:
-                # Tidak ada kontak langsung - gunakan proyeksi centroid room ke wall
-                thickness = _wall_thickness(primary_wall_poly)
-                
-                if room_geom is not None:
-                    adj_point = room_geom.centroid
-                else:
-                    adj_point = primary_wall_poly.centroid
-                
-                projected = primary_wall_poly.exterior.interpolate(
-                    primary_wall_poly.exterior.project(adj_point)
-                )
-                
-                minx, miny, maxx, maxy = primary_wall_poly.bounds
-                horiz = (maxx - minx) >= (maxy - miny)
-                
-                ux, uy = (1, 0) if horiz else (0, 1)
-                half = window_width / 2
-                p1 = (projected.x - ux * half, projected.y - uy * half)
-                p2 = (projected.x + ux * half, projected.y + uy * half)
-                line = LineString([p1, p2])
-                return mapping(line.buffer(thickness / 2, cap_style=2, join_style=2))
-            
-            # Ada kontak langsung - pakai logic existing
-            desired = _width_from_hosts(primary_wall_poly, host_walls)
-            placed = _place_on_wall(primary_wall_poly, room_geom, desired_len=desired)
-            if placed is not None:
-                return placed
-    
-    wall_shapes = []
-    for w in host_walls:
-        poly = _as_shape(geom_index.get(w))
-        if poly is not None:
-            is_ext = (w, RDF.type, RESPLAN.ExteriorWall) in graph
-            is_primary = primary_wall_uri is not None and w == primary_wall_uri
-            wall_shapes.append((w, poly, is_ext, is_primary))
-    
-    if not wall_shapes:
+
+    P = shape(json.loads(str(geom_index.get(primary))))
+
+    # --- secondary wall (HARUS 1) ---
+    hosts = [
+        w for w in graph.subjects(RESPLAN.hostsOpening, window)
+        if w != primary
+    ]
+    if len(hosts) != 1:
         return None
-    
-    # Prioritas: segmen kontak wall-room
-    best_seg = None
-    best_thick = None
-    best_is_ext = False
-    best_is_primary = False
-    best_wall_poly = None
-    if room_geom is not None:
-        for _, wall_poly, is_ext, is_primary in wall_shapes:
-            thickness = _wall_thickness(wall_poly)
-            contact = room_geom.boundary.intersection(wall_poly.boundary)
-            
-            segments = []
-            if contact.geom_type == "LineString":
-                segments = [contact]
-            elif contact.geom_type == "MultiLineString":
-                segments = list(contact.geoms)
-            
-            for seg in segments:
-                if seg.length <= 1e-6:
-                    continue
-                better = False
-                if best_seg is None:
-                    better = True
-                else:
-                    if is_primary and not best_is_primary:
-                        better = True
-                    elif is_primary == best_is_primary:
-                        if is_ext and not best_is_ext:
-                            better = True
-                        elif is_ext == best_is_ext and seg.length > best_seg.length:
-                            better = True
-                if better:
-                    best_seg = seg
-                    best_thick = thickness
-                    best_is_ext = is_ext
-                    best_is_primary = is_primary
-                    best_wall_poly = wall_poly
-    
-    if best_seg is not None:
-        coords = list(best_seg.coords)
-        mid_idx = len(coords) // 2
-        if len(coords) % 2 == 0:
-            midx = (coords[mid_idx-1][0] + coords[mid_idx][0]) / 2
-            midy = (coords[mid_idx-1][1] + coords[mid_idx][1]) / 2
-        else:
-            midx, midy = coords[mid_idx]
-        
-        minx, miny, maxx, maxy = best_wall_poly.bounds
-        horiz = (maxx - minx) >= (maxy - miny)
-        
-        ux, uy = (1, 0) if horiz else (0, 1)
-        half = min(window_width / 2, best_seg.length / 2)
-        p1 = (midx - ux * half, midy - uy * half)
-        p2 = (midx + ux * half, midy + uy * half)
-        line = LineString([p1, p2])
-        return mapping(line.buffer(best_thick / 2, cap_style=2, join_style=2))
-    
-    # Jika ada >=2 wall host: posisikan di celah antar wall
-    if len(wall_shapes) >= 2:
-        best_pair = None
-        best_dist = None
-        for i in range(len(wall_shapes)):
-            for j in range(i + 1, len(wall_shapes)):
-                p1, p2 = nearest_points(wall_shapes[i][1], wall_shapes[j][1])
-                dist = p1.distance(p2)
-                if best_dist is None or dist < best_dist:
-                    best_dist = dist
-                    best_pair = (p1, p2, wall_shapes[i][1], wall_shapes[j][1])
-        if best_pair is not None and best_dist is not None and best_dist > 1e-6:
-            p1, p2, ws1, ws2 = best_pair
-            thickness = min(_wall_thickness(ws1), _wall_thickness(ws2))
-            line = LineString([[p1.x, p1.y], [p2.x, p2.y]])
-            win_poly = line.buffer(thickness / 2, cap_style=2, join_style=2)
-            return mapping(win_poly)
-    
-    # Single wall host: proyeksi centroid adjacency/room ke wall
-    wall_poly = wall_shapes[0][1]
-    thickness = _wall_thickness(wall_poly)
-    
-    adj_point = None
-    adj = graph.value(window, RESPLAN.derivedFrom)
-    if adj is not None:
-        adj_geom_lit = adj_geom_index.get(adj)
-        if adj_geom_lit is None:
-            adj_geom_lit = geom_index.get(adj)
-        adj_geom = _as_shape(adj_geom_lit)
-        if adj_geom is not None:
-            adj_point = adj_geom.centroid
-    
-    if adj_point is None:
-        adj_point = wall_poly.centroid if room_geom is None else room_geom.centroid
-    
-    projected = wall_poly.exterior.interpolate(
-        wall_poly.exterior.project(adj_point)
-    )
-    
-    minx, miny, maxx, maxy = wall_poly.bounds
-    horiz = (maxx - minx) >= (maxy - miny)
-    
-    if horiz:
-        p1 = (projected.x - window_width / 2, projected.y)
-        p2 = (projected.x + window_width / 2, projected.y)
+
+    S = shape(json.loads(str(geom_index.get(hosts[0]))))
+
+    # --- orientation ---
+    minx, miny, maxx, maxy = P.bounds
+    width, height = maxx - minx, maxy - miny
+    is_horizontal = width >= height
+    thickness = min(width, height)
+
+    # --- primary axis ---
+    if is_horizontal:
+        midy = (miny + maxy) / 2
+        axis = LineString([(minx, midy), (maxx, midy)])
     else:
-        p1 = (projected.x, projected.y - window_width / 2)
-        p2 = (projected.x, projected.y + window_width / 2)
-    
-    win_poly = LineString([p1, p2]).buffer(
-        thickness / 2, cap_style=2, join_style=2
+        midx = (minx + maxx) / 2
+        axis = LineString([(midx, miny), (midx, maxy)])
+
+    # --- anchor = ujung axis terdekat ke secondary ---
+    a0 = Point(axis.coords[0])
+    a1 = Point(axis.coords[-1])
+    anchor = a0 if a0.distance(S) < a1.distance(S) else a1
+
+    # --- length = jarak ke secondary ---
+    p_anchor, p_sec = nearest_points(anchor, S)
+    length = max(0.6, min(anchor.distance(p_sec), 2.4))
+
+    # --- build window ---
+    if is_horizontal:
+        direction = 1 if p_sec.x > anchor.x else -1
+        p1 = (anchor.x, anchor.y)
+        p2 = (anchor.x + direction * length, anchor.y)
+    else:
+        direction = 1 if p_sec.y > anchor.y else -1
+        p1 = (anchor.x, anchor.y)
+        p2 = (anchor.x, anchor.y + direction * length)
+
+    line = LineString([p1, p2])
+    return mapping(
+        line.buffer(thickness / 2, cap_style=2, join_style=2)
     )
-    return mapping(win_poly)
 
 # ======================================================
 # Core conversion
@@ -601,10 +409,9 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
         # --------------------------------------------------
 
         if struct_key == "window" and own_geom_lit is None:
-            geom_lit = infer_window_geom_from_wall_or_adjacency(
+            geom_lit = infer_window_geom_from_primary_and_hosts(
                 graph,
                 struct_subj,
-                adj_geom_index,
                 geom_index,
             )
 
