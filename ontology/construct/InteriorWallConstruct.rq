@@ -25,32 +25,32 @@ PREFIX ifc:     <https://w3id.org/ifc/IFC4_ADD2#>
 
 CONSTRUCT {
 
-  ?newWall
-      a resplan:InteriorWall , ifc:Wall ;
-      resplan:isInferred true ;
-      resplan:derivedFrom ?adj ;
-      resplan:separatesSpace ?s1 , ?s2 .
+  ?newWall a resplan:InteriorWall , ifc:Wall ;
+            resplan:isInferred true ;
+            resplan:derivedFrom ?adj ;
+            resplan:replacesWall ?w ;
+            resplan:sourceId ?srcId ;
+            resplan:separatesSpace ?s1 , ?s2 .
 
   ?s1 resplan:boundedBy ?newWall .
   ?s2 resplan:boundedBy ?newWall .
+
+  ?w a resplan:InteriorWall ;
+    resplan:isInferred true ;
+    resplan:derivedFrom ?adj ;
+    resplan:sourceId ?srcId .
 
 }
 WHERE {
 
   ?adj a resplan:AdjacencyEdge ;
-       resplan:missingInteriorWall true ;
+       resplan:sharedWall ?w ;
        resplan:spaceA ?s1 ;
        resplan:spaceB ?s2 .
 
-  FILTER NOT EXISTS {
-    ?existingWall a resplan:InteriorWall ;
-                  resplan:derivedFrom ?adj .
-  }
+  FILTER (CONTAINS(STR(?w), "#IN-"))
+  FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
-  BIND(
-    IRI(CONCAT(
-      "http://resplan.org/resplan/infer#InteriorWall_",
-      STRAFTER(STR(?adj), "#")
-    )) AS ?newWall
-  )
+  BIND( IRI(CONCAT("http://resplan.org/resplan/infer#IW-INF-", STRUUID())) AS ?newWall )
+  BIND( STRAFTER(STR(?w), "#") AS ?srcId )
 }
