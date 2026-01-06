@@ -10,14 +10,13 @@ CONSTRUCT {
         resplan:sourceId ?newId ;
         resplan:connectsSpace ?a , ?b .
 
-  # link back to adjacency that triggered this inference (when available)
   ?door resplan:derivedFrom ?adj .
 
   ?wall resplan:hostsOpening ?door .
 }
 WHERE {
   {
-    # select space with connectedviadoor relationship
+   
     SELECT DISTINCT ?a ?b
     WHERE {
       { ?a resplan:connectedViaDoor ?b }
@@ -27,7 +26,6 @@ WHERE {
       FILTER(?a != ?b)
       FILTER(STR(?a) < STR(?b))
 
-      # filter selection without door
       FILTER NOT EXISTS {
         ?d a resplan:Door ;
            resplan:connectsSpace ?a ;
@@ -36,12 +34,10 @@ WHERE {
     }
   }
 
-  # 2) out of subselect, take all host wall
   ?a    resplan:boundedBy ?wall .
   ?b    resplan:boundedBy ?wall .
   ?wall a resplan:InteriorWall .
 
-  # 2b) try to grab the corresponding adjacency edge between the two spaces
   OPTIONAL {
     {
       ?adj resplan:spaceA ?a ;

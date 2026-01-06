@@ -119,6 +119,58 @@ def _struct_type(graph: Graph, subj) -> Optional[str]:
     return None
 
 # ======================================================
+# Calculate (approx) Inferred Interior Wall GeomJSON
+# ======================================================
+
+
+def infer_interior_wall_geom(
+    graph,
+    wall,
+    adj_geom_index,
+    geom_index,
+    default_thickness=0.12,
+):
+    """
+    Infer an interior wall polygon when explicit geomJSON is absent.
+
+    Strategy:
+    - Use the derived adjacency geometry if available.
+    - Fall back to any referenced wall geometry from geom_index.
+    - Convert LineString/MultiLineString to a buffered polygon with a
+      reasonable default thickness.
+    """
+    # Try adjacency-derived geometry first
+    derived = graph.value(wall, RESPLAN.derivedFrom)
+    geom_lit = adj_geom_index.get(derived) if derived else None
+
+    # Fallback: any cached geometry for the wall identifier
+    if geom_lit is None:
+        geom_lit = geom_index.get(wall)
+
+    if geom_lit is None:
+        return None
+
+    geom = geom_lit if isinstance(geom_lit, dict) else json.loads(str(geom_lit))
+    shp = shape(geom)
+    if shp.is_empty:
+        return None
+
+    # If already a polygon/multipolygon, return as-is
+    if shp.geom_type in {"Polygon", "MultiPolygon"}:
+        return mapping(shp)
+
+    # If line-based, buffer to get wall thickness
+    if shp.geom_type in {"LineString", "MultiLineString"}:
+        lines = [shp] if shp.geom_type == "LineString" else list(shp.geoms)
+        if not lines:
+            return None
+        longest = max(lines, key=lambda g: g.length)
+        return mapping(longest.buffer(default_thickness / 2, cap_style=2, join_style=2))
+
+    # Unsupported geometry type
+    return None
+
+# ======================================================
 # Calculate (approx) Inferred Door GeomJSON
 # ======================================================
 
@@ -129,6 +181,7 @@ def infer_door_geom_from_walls_or_adjacency(
     geom_index,
     door_width=0.9,
 ):
+    """Infer a door polygon when explicit geomJSON is absent."""
     def _wall_thickness(poly) -> float:
         minx, miny, maxx, maxy = poly.bounds
         return max(1e-6, min(maxx - minx, maxy - miny))
@@ -199,10 +252,8 @@ def infer_door_geom_from_walls_or_adjacency(
     wall_poly = shape(json.loads(str(wall_geom_lit)))
 
     # fallback: pakai centroid wall bila adjacency tidak tersedia
-    if adj_point is None and room_geom is not None:
-        adj_point = room_geom.centroid
-    elif adj_point is None:
-        return None  # jangan asal tempatkan window
+    if adj_point is None:
+        adj_point = wall_poly.centroid
 
     # 3. project titik ke boundary wall
     projected = wall_poly.exterior.interpolate(
@@ -230,19 +281,13 @@ def infer_door_geom_from_walls_or_adjacency(
 # Calculate (approx) Inferred Window GeomJSON
 # ======================================================
 
-from shapely.geometry import LineString, shape, mapping, Point
-import json
-
 
 def infer_window_geom_from_primary_and_hosts(
     graph,
     window,
     geom_index,
 ):
-    import json
-    from shapely.geometry import LineString, Point, shape
-    from shapely.ops import nearest_points
-
+    """Infer a window polygon based on primary and secondary walls."""
     # --- primary wall ---
     primary = graph.value(window, RESPLAN.primaryWall)
     if primary is None:
@@ -412,6 +457,17 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
             geom_lit = infer_window_geom_from_primary_and_hosts(
                 graph,
                 struct_subj,
+                geom_index,
+            )
+
+        # --------------------------------------------------
+        # Infer Interior Wall Geometry
+        # --------------------------------------------------
+        if struct_key == "interior_wall" and own_geom_lit is None and geom_lit is None:
+            geom_lit = infer_interior_wall_geom(
+                graph,
+                struct_subj,
+                adj_geom_index,
                 geom_index,
             )
 

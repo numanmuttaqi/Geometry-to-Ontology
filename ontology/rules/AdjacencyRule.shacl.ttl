@@ -83,28 +83,27 @@
 # #################################################################
 # # GENERAL QUERY
 # #################################################################
-# resplan:AMissingInteriorWallSegmentsShape
-#     a sh:NodeShape ;
-#     rdfs:label "Adjacency has missing interior wall segment(s)" ;
-#     sh:targetClass resplan:AdjacencyEdge ;
-#     sh:sparql [
-#         a sh:SPARQLConstraint ;
-#         sh:message "Adjacency has missing interior wall instance(s)" ;
-#         sh:select """
-#             PREFIX resplan: <http://resplan.org/resplan#>
-
-#             SELECT DISTINCT ?this WHERE {
-#               ?this a resplan:AdjacencyEdge ;
-#                     resplan:sharedWall ?w .
-
-#               # check only Interior Wall
-#               FILTER (CONTAINS(STR(?w), "#IN-"))
-
-#               # raised violation if not exist
-#               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
-#             }
-#         """ ;
-#     ] .
+# resplan:AMissingInteriorWallShape
+#    a sh:NodeShape ;
+#    rdfs:label "Adjacency edge missing interior wall" ;
+#    sh:targetClass resplan:AdjacencyEdge ;
+#    sh:sparql [
+#        a sh:SPARQLConstraint ;
+#        sh:message "Interior wall { ?w } is missing for adjacency edge." ;
+#        sh:severity sh:violation ;
+#        sh:select """
+#            PREFIX resplan: <http://resplan.org/resplan#>
+#            SELECT DISTINCT ?this ?w WHERE {
+#              ?this a resplan:AdjacencyEdge ;
+#                    resplan:sharedWall ?w ;
+#                    resplan:spaceA ?s1 ;
+#                    resplan:spaceB ?s2 .
+#
+#              FILTER (CONTAINS(STR(?w), "#IN-"))
+#              FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+#            }
+#        """ ;
+#    ] .
 
 
 ##################################################################
@@ -122,7 +121,7 @@ resplan:A11_BedroomKitchenAdjacency
         sh:select """
                 PREFIX resplan: <http://resplan.org/resplan#>
 
-                SELECT DISTINCT ?this WHERE {
+                SELECT DISTINCT ?this ?w WHERE {
                 ?this a resplan:AdjacencyEdge ;
                         resplan:sharedWall ?w ;
                         resplan:spaceA ?s1 ;
@@ -135,7 +134,6 @@ resplan:A11_BedroomKitchenAdjacency
                   ?s2 resplan:hasRoomType resplan:Kitchen . }
 
                 FILTER (CONTAINS(STR(?w), "#IN-"))
-
                 FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
               }
@@ -154,7 +152,7 @@ resplan:A12_BedroomLivingWallShape
         sh:select """
                 PREFIX resplan: <http://resplan.org/resplan#>
 
-                SELECT DISTINCT ?this WHERE {
+                SELECT DISTINCT ?this ?w WHERE {
                 ?this a resplan:AdjacencyEdge ;
                         resplan:sharedWall ?w ;
                         resplan:spaceA ?s1 ;
@@ -167,7 +165,6 @@ resplan:A12_BedroomLivingWallShape
                   ?s2 resplan:hasRoomType resplan:Bedroom . }
 
                 FILTER (CONTAINS(STR(?w), "#IN-"))
-
                 FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
               }
@@ -185,7 +182,7 @@ resplan:A13_BedroomBathroomWallShape
     sh:select """
       PREFIX resplan: <http://resplan.org/resplan#>
 
-        SELECT DISTINCT ?this WHERE {
+        SELECT DISTINCT ?this ?w WHERE {
           ?this a resplan:AdjacencyEdge ;
                 resplan:sharedWall ?w ;
                 resplan:spaceA ?s1 ;
@@ -197,13 +194,8 @@ resplan:A13_BedroomBathroomWallShape
           { ?s1 resplan:hasRoomType resplan:Bathroom . 
             ?s2 resplan:hasRoomType resplan:Bedroom . }
           
-          # FILTER (CONTAINS(STR(?w), "#IN-"))
-          # FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
-          FILTER NOT EXISTS {
-                              ?wall a resplan:InteriorWall ;
-                                    resplan:derivedFrom ?this .
-                            }
-
+          FILTER (CONTAINS(STR(?w), "#IN-"))
+          FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
         }
     """ ;
   ] .
@@ -224,7 +216,7 @@ resplan:A21_BathroomKitchenDoorShape
       sh:select """
               PREFIX resplan: <http://resplan.org/resplan#>
 
-              SELECT DISTINCT ?this WHERE {
+              SELECT DISTINCT ?this ?w WHERE {
               ?this a resplan:AdjacencyEdge ;
                       resplan:sharedWall ?w ;
                       resplan:spaceA ?s1 ;
@@ -237,7 +229,6 @@ resplan:A21_BathroomKitchenDoorShape
                 ?s2 resplan:hasRoomType resplan:Bathroom . }
 
               FILTER (CONTAINS(STR(?w), "#IN-"))
-
               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
             }
@@ -256,7 +247,7 @@ resplan:A22_BathroomLivingWallShape
       sh:select """
               PREFIX resplan: <http://resplan.org/resplan#>
 
-              SELECT DISTINCT ?this WHERE {
+              SELECT DISTINCT ?this ?w WHERE {
               ?this a resplan:AdjacencyEdge ;
                       resplan:sharedWall ?w ;
                       resplan:spaceA ?s1 ;
@@ -269,7 +260,6 @@ resplan:A22_BathroomLivingWallShape
                 ?s2 resplan:hasRoomType resplan:Bathroom . }
 
               FILTER (CONTAINS(STR(?w), "#IN-"))
-
               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
             }
@@ -291,7 +281,7 @@ resplan:A31_KitchenStorageAdjacency
       sh:select """
               PREFIX resplan: <http://resplan.org/resplan#>
 
-              SELECT DISTINCT ?this WHERE {
+              SELECT DISTINCT ?this ?w WHERE {
               ?this a resplan:AdjacencyEdge ;
                       resplan:sharedWall ?w ;
                       resplan:spaceA ?s1 ;
@@ -304,10 +294,8 @@ resplan:A31_KitchenStorageAdjacency
                 ?s2 resplan:hasRoomType resplan:Kitchen . }
 
               FILTER (CONTAINS(STR(?w), "#IN-"))
-
               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
             }
       """ ;
   ] .
-

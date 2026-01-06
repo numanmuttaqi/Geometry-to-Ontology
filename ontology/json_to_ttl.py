@@ -339,28 +339,36 @@ def _add_relationships(
                 graph.add((a, RESPLAN.boundedBy, wall_uri))
                 graph.add((b, RESPLAN.boundedBy, wall_uri))
 
-            # Materialize an adjacency edge node so we can store meta (e.g., shared walls count)
             oa, ob = _order_pair(a, b)
-            adj_id = f"adj-{Path(_shorten_uri(oa)).name}-{Path(_shorten_uri(ob)).name}"
-            if adj_id not in seen_adj_edges:
-                seen_adj_edges.add(adj_id)
-                adj_uri = ns[adj_id]
-                graph.add((adj_uri, RDF.type, RESPLAN.AdjacencyEdge))
-                graph.add((adj_uri, RESPLAN.spaceA, oa))
-                graph.add((adj_uri, RESPLAN.spaceB, ob))
-            else:
-                adj_uri = ns[adj_id]
 
-            graph.add((adj_uri, RESPLAN.sharedWallCount, Literal(len(shared_walls), datatype=XSD.integer)))
-            for wall_id in shared_walls:
-                wall_uri = structural.get(wall_id) or ns[wall_id]
-                graph.add((adj_uri, RESPLAN.sharedWall, wall_uri))
-            # Borrow geometry from one of the shared walls so adjacency edges are drawable.
-            for wall_id in shared_walls:
-                wall_entry = structural_entries.get(wall_id)
-                if wall_entry and wall_entry.get("geom"):
-                    _add_geom_literals(graph, adj_uri, wall_entry)
-                    break
+            # Materialize one adjacency edge per shared wall so missing walls are counted per ID.
+            if shared_walls:
+                for idx, wall_id in enumerate(shared_walls):
+                    wall_uri = structural.get(wall_id) or ns[wall_id]
+                    adj_id = f"adj-{Path(_shorten_uri(oa)).name}-{Path(_shorten_uri(ob)).name}-{Path(_shorten_uri(wall_uri)).name}"
+                    # Keep unique even if same wall appears twice
+                    if adj_id in seen_adj_edges:
+                        continue
+                    seen_adj_edges.add(adj_id)
+                    adj_uri = ns[adj_id]
+                    graph.add((adj_uri, RDF.type, RESPLAN.AdjacencyEdge))
+                    graph.add((adj_uri, RESPLAN.spaceA, oa))
+                    graph.add((adj_uri, RESPLAN.spaceB, ob))
+                    graph.add((adj_uri, RESPLAN.sharedWallCount, Literal(1, datatype=XSD.integer)))
+                    graph.add((adj_uri, RESPLAN.sharedWall, wall_uri))
+                    wall_entry = structural_entries.get(wall_id)
+                    if wall_entry and wall_entry.get("geom"):
+                        _add_geom_literals(graph, adj_uri, wall_entry)
+            else:
+                # No shared wall data; keep single adjacency edge for topology only
+                adj_id = f"adj-{Path(_shorten_uri(oa)).name}-{Path(_shorten_uri(ob)).name}"
+                if adj_id not in seen_adj_edges:
+                    seen_adj_edges.add(adj_id)
+                    adj_uri = ns[adj_id]
+                    graph.add((adj_uri, RDF.type, RESPLAN.AdjacencyEdge))
+                    graph.add((adj_uri, RESPLAN.spaceA, oa))
+                    graph.add((adj_uri, RESPLAN.spaceB, ob))
+                    graph.add((adj_uri, RESPLAN.sharedWallCount, Literal(0, datatype=XSD.integer)))
         else:
             LOGGER.warning("Skipping adjacency edge with unknown ids: %s", entry)
 
