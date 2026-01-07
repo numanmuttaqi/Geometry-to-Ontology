@@ -35,11 +35,6 @@ CONSTRUCT {
   ?s1 resplan:boundedBy ?newWall .
   ?s2 resplan:boundedBy ?newWall .
 
-  ?w a resplan:InteriorWall ;
-    resplan:isInferred true ;
-    resplan:derivedFrom ?adj ;
-    resplan:sourceId ?srcId .
-
 }
 WHERE {
 

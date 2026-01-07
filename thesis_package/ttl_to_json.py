@@ -15,6 +15,7 @@ from rdflib import Graph, Namespace, RDF
 from rdflib.namespace import RDFS
 from shapely.geometry import LineString, shape, mapping, Point
 from shapely.ops import nearest_points
+from shapely import box
 
 from .constants import ROOM_KEYS, STRUCT_KEYS
 
@@ -122,52 +123,153 @@ def _struct_type(graph: Graph, subj) -> Optional[str]:
 # Calculate (approx) Inferred Interior Wall GeomJSON
 # ======================================================
 
+import json
+from shapely.geometry import shape, mapping, LineString, MultiLineString, GeometryCollection
+from shapely.ops import linemerge, unary_union
 
 def infer_interior_wall_geom(
     graph,
     wall,
     adj_geom_index,
     geom_index,
-    default_thickness=0.12,
+    default_thickness=0.19,
+    min_seg_len=0.05,
+    exterior_overlap_thresh=0.90,
+    tol=1e-6,
 ):
     """
-    Infer an interior wall polygon when explicit geomJSON is absent.
+    Infer interior wall polygon when explicit geomJSON is absent.
 
-    Strategy:
-    - Use the derived adjacency geometry if available.
-    - Fall back to any referenced wall geometry from geom_index.
-    - Convert LineString/MultiLineString to a buffered polygon with a
-      reasonable default thickness.
+    Key fixes:
+    - If adjacency/shared boundary ends up being *exterior boundary*, skip (avoid duplicating exterior walls).
+    - Robust extraction of shared boundary segments (handles GeometryCollection).
+    - Merge + pick longest segment, then buffer with square caps for clean wall rectangles.
     """
-    # Try adjacency-derived geometry first
-    derived = graph.value(wall, RESPLAN.derivedFrom)
-    geom_lit = adj_geom_index.get(derived) if derived else None
 
-    # Fallback: any cached geometry for the wall identifier
-    if geom_lit is None:
-        geom_lit = geom_index.get(wall)
-
-    if geom_lit is None:
-        return None
-
-    geom = geom_lit if isinstance(geom_lit, dict) else json.loads(str(geom_lit))
-    shp = shape(geom)
-    if shp.is_empty:
-        return None
-
-    # If already a polygon/multipolygon, return as-is
-    if shp.geom_type in {"Polygon", "MultiPolygon"}:
-        return mapping(shp)
-
-    # If line-based, buffer to get wall thickness
-    if shp.geom_type in {"LineString", "MultiLineString"}:
-        lines = [shp] if shp.geom_type == "LineString" else list(shp.geoms)
-        if not lines:
+    # -------------------------
+    # Helpers
+    # -------------------------
+    def _load_shape(val):
+        """val can be rdflib Literal containing GeoJSON str, or a dict (already geojson)."""
+        if val is None:
             return None
-        longest = max(lines, key=lambda g: g.length)
-        return mapping(longest.buffer(default_thickness / 2, cap_style=2, join_style=2))
+        if isinstance(val, dict):
+            try:
+                return shape(val)
+            except Exception:
+                return None
+        try:
+            return shape(json.loads(str(val)))
+        except Exception:
+            return None
 
-    # Unsupported geometry type
+    def _as_lines(geom):
+        if geom is None or geom.is_empty:
+            return []
+        if isinstance(geom, LineString):
+            return [geom]
+        if isinstance(geom, MultiLineString):
+            return list(geom.geoms)
+        if isinstance(geom, GeometryCollection):
+            out = []
+            for g in geom.geoms:
+                out.extend(_as_lines(g))
+            return out
+        return []
+
+    def _overlap_ratio(a, b):
+        """Area overlap ratio relative to smaller polygon."""
+        if a is None or b is None or a.is_empty or b.is_empty:
+            return 0.0
+        inter = a.intersection(b)
+        if inter.is_empty:
+            return 0.0
+        denom = min(a.area, b.area)
+        if denom <= tol:
+            return 0.0
+        return inter.area / denom
+
+    # -------------------------
+    # Strategy 0: already has geom
+    # -------------------------
+    existing = _load_shape(geom_index.get(wall))
+    if existing is not None and (not existing.is_empty) and existing.geom_type in {"Polygon", "MultiPolygon"}:
+        return mapping(existing)
+
+    # Pre-collect exterior wall polygons (to prevent accidental duplication)
+    # (string-based fallback if rdf:type not available in your graph for some reason)
+    exterior_polys = []
+    try:
+        for w_ex in graph.subjects(RDF.type, RESPLAN.ExteriorWall):
+            shp = _load_shape(geom_index.get(w_ex))
+            if shp is not None and (not shp.is_empty) and shp.geom_type in {"Polygon", "MultiPolygon"}:
+                exterior_polys.append(shp)
+    except Exception:
+        # If RDF/RESPLAN not in scope here, keep list empty; function still works.
+        pass
+
+    # -------------------------
+    # Strategy 1: adjacency-derived geometry (BUT guard against exterior duplication)
+    # -------------------------
+    derived = graph.value(wall, RESPLAN.derivedFrom)
+    if derived:
+        adj_shp = _load_shape(adj_geom_index.get(derived))
+        if adj_shp is not None and (not adj_shp.is_empty) and adj_shp.geom_type in {"Polygon", "MultiPolygon"}:
+            # Reject if it basically duplicates an exterior wall polygon
+            for ex_poly in exterior_polys:
+                if _overlap_ratio(adj_shp, ex_poly) >= exterior_overlap_thresh:
+                    adj_shp = None
+                    break
+            if adj_shp is not None:
+                return mapping(adj_shp)
+
+    # -------------------------
+    # Strategy 2: derive from shared boundary between two spaces
+    # -------------------------
+    if derived is not None:
+        s1 = graph.value(derived, RESPLAN.spaceA)
+        s2 = graph.value(derived, RESPLAN.spaceB)
+
+        g1 = _load_shape(geom_index.get(s1))
+        g2 = _load_shape(geom_index.get(s2))
+
+        if g1 is not None and g2 is not None and (not g1.is_empty) and (not g2.is_empty):
+            shared = g1.boundary.intersection(g2.boundary)
+            lines = [l for l in _as_lines(shared) if l.length >= min_seg_len]
+
+            if lines:
+                # merge fragments, then take longest
+                merged = linemerge(unary_union(lines))
+                merged_lines = _as_lines(merged)
+                if not merged_lines:
+                    merged_lines = lines
+
+                longest = max(merged_lines, key=lambda x: x.length)
+
+                # IMPORTANT GUARD:
+                # If the "shared" segment lies on the exterior boundary of (g1 ∪ g2),
+                # it is not an interior separator -> skip.
+                u = g1.union(g2)
+                inter_len = longest.intersection(u.boundary).length
+                if longest.length > tol and (inter_len / longest.length) > 0.8:
+                    return None
+
+                wall_poly = longest.buffer(
+                    default_thickness / 2.0,
+                    cap_style=3,   # square caps
+                    join_style=2,  # mitre joins
+                )
+
+                if wall_poly.is_empty or wall_poly.area <= tol:
+                    return None
+
+                # Reject if it duplicates an exterior wall polygon
+                for ex_poly in exterior_polys:
+                    if _overlap_ratio(wall_poly, ex_poly) >= exterior_overlap_thresh:
+                        return None
+
+                return mapping(wall_poly)
+
     return None
 
 # ======================================================
@@ -476,11 +578,6 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
         if geom_lit is None:
             continue  # cannot visualize
 
-        record_id = (
-            graph.value(struct_subj, RESPLAN.sourceId)
-            or _local_id(struct_subj)
-        )
-
         is_inferred_lit = graph.value(struct_subj, RESPLAN.isInferred)
 
         # geom_lit can be a JSON literal from the TTL or a dict returned by
@@ -491,10 +588,26 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
             else json.loads(str(geom_lit))
         )
 
+        # Normalize wall geometries: buffer lines into polygons for visibility
+        if struct_key in {"interior_wall", "exterior_wall"}:
+            try:
+                shp = shape(geom)
+                if shp.geom_type in {"LineString", "MultiLineString"}:
+                    shp = shp.buffer(0.12 / 2, cap_style=2, join_style=2)
+                geom = mapping(shp)
+            except Exception:
+                pass
+
         inferred_flag = (
             is_inferred_lit.toPython()
             if is_inferred_lit is not None
             else ("infer#" in str(struct_subj))
+        )
+
+        record_id = (
+            _local_id(struct_subj)
+            if inferred_flag
+            else (graph.value(struct_subj, RESPLAN.sourceId) or _local_id(struct_subj))
         )
 
         record = {

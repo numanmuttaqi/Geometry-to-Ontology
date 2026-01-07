@@ -135,6 +135,10 @@ resplan:A11_BedroomKitchenAdjacency
 
                 FILTER (CONTAINS(STR(?w), "#IN-"))
                 FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+                FILTER NOT EXISTS {
+                  ?rep a resplan:InteriorWall ;
+                       resplan:replacesWall ?w .
+                }
 
               }
         """ ;
@@ -166,6 +170,10 @@ resplan:A12_BedroomLivingWallShape
 
                 FILTER (CONTAINS(STR(?w), "#IN-"))
                 FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+                                FILTER NOT EXISTS {
+                  ?rep a resplan:InteriorWall ;
+                       resplan:replacesWall ?w .
+                }
 
               }
         """ ;
@@ -196,6 +204,10 @@ resplan:A13_BedroomBathroomWallShape
           
           FILTER (CONTAINS(STR(?w), "#IN-"))
           FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
+          FILTER NOT EXISTS {
+                  ?rep a resplan:InteriorWall ;
+                       resplan:replacesWall ?w .
+                }
         }
     """ ;
   ] .
@@ -230,7 +242,10 @@ resplan:A21_BathroomKitchenDoorShape
 
               FILTER (CONTAINS(STR(?w), "#IN-"))
               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
-
+              FILTER NOT EXISTS {
+                  ?rep a resplan:InteriorWall ;
+                       resplan:replacesWall ?w .
+                }
             }
       """ ;
   ] .
@@ -261,7 +276,10 @@ resplan:A22_BathroomLivingWallShape
 
               FILTER (CONTAINS(STR(?w), "#IN-"))
               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
-
+              FILTER NOT EXISTS {
+                  ?rep a resplan:InteriorWall ;
+                       resplan:replacesWall ?w .
+            }
             }
       """ ;
   ] .
@@ -295,7 +313,10 @@ resplan:A31_KitchenStorageAdjacency
 
               FILTER (CONTAINS(STR(?w), "#IN-"))
               FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
-
+              FILTER NOT EXISTS {
+                  ?rep a resplan:InteriorWall ;
+                       resplan:replacesWall ?w .
+            }
             }
       """ ;
   ] .

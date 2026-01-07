@@ -1,8 +1,7 @@
 """
 Helpers to reconstruct the original plan JSON structure from a Turtle file.
 
-This is the reverse of ``ontology/json_to_ttl.py`` for quick visualization.
-Only geometry + basic metadata are restored (enough for ``plot_plan_json``).
+FIXED VERSION: Improved infer_interior_wall_geom with fallback strategies
 """
 
 from __future__ import annotations
@@ -13,8 +12,9 @@ from typing import Any, Dict, Optional
 
 from rdflib import Graph, Namespace, RDF
 from rdflib.namespace import RDFS
-from shapely.geometry import LineString, shape, mapping
-from shapely.ops import nearest_points
+from shapely.geometry import LineString, shape, mapping, Point, MultiLineString, GeometryCollection
+from shapely.ops import nearest_points, linemerge, unary_union
+from shapely import box
 
 from .constants import ROOM_KEYS, STRUCT_KEYS
 
@@ -118,6 +118,178 @@ def _struct_type(graph: Graph, subj) -> Optional[str]:
             return STRUCT_CLASS_TO_KEY[cls]
     return None
 
+def _is_empty_geom(geom_lit):
+    """Check if geometry literal is None or has empty coordinates"""
+    if geom_lit is None:
+        return True
+    
+    # If it's already a dict (from adjacency)
+    if isinstance(geom_lit, dict):
+        coords = geom_lit.get('coordinates', [])
+        return not coords or coords == []
+    
+    # If it's a string literal
+    try:
+        geom_dict = json.loads(str(geom_lit))
+        coords = geom_dict.get('coordinates', [])
+        return not coords or coords == []
+    except:
+        return True
+
+# ======================================================
+# Calculate (approx) Inferred Interior Wall GeomJSON
+# ======================================================
+
+def infer_interior_wall_geom(
+    graph,
+    wall,
+    adj_geom_index,
+    geom_index,
+    default_thickness=0.19,
+    min_seg_len=0.05,
+    exterior_overlap_thresh=0.90,
+    tol=1e-6,
+):
+    """
+    Infer interior wall polygon when explicit geomJSON is absent.
+    
+    FIXED VERSION with improved fallback strategies:
+    - Uses nearest points when shared boundary is empty
+    - Better handling of non-touching spaces
+    - More robust exterior wall detection
+    """
+
+    # -------------------------
+    # Helpers
+    # -------------------------
+    def _load_shape(val):
+        """val can be rdflib Literal containing GeoJSON str, or a dict (already geojson)."""
+        if val is None:
+            return None
+        if isinstance(val, dict):
+            try:
+                return shape(val)
+            except Exception:
+                return None
+        try:
+            return shape(json.loads(str(val)))
+        except Exception:
+            return None
+
+    def _as_lines(geom):
+        if geom is None or geom.is_empty:
+            return []
+        if isinstance(geom, LineString):
+            return [geom]
+        if isinstance(geom, MultiLineString):
+            return list(geom.geoms)
+        if isinstance(geom, GeometryCollection):
+            out = []
+            for g in geom.geoms:
+                out.extend(_as_lines(g))
+            return out
+        return []
+
+    def _overlap_ratio(a, b):
+        """Area overlap ratio relative to smaller polygon."""
+        if a is None or b is None or a.is_empty or b.is_empty:
+            return 0.0
+        inter = a.intersection(b)
+        if inter.is_empty:
+            return 0.0
+        denom = min(a.area, b.area)
+        if denom <= tol:
+            return 0.0
+        return inter.area / denom
+
+    # -------------------------
+    # Strategy 0: already has geom
+    # -------------------------
+    existing = _load_shape(geom_index.get(wall))
+    if existing is not None and (not existing.is_empty) and existing.geom_type in {"Polygon", "MultiPolygon"}:
+        return mapping(existing)
+
+    # Pre-collect exterior wall polygons (to prevent accidental duplication)
+    exterior_polys = []
+    try:
+        for w_ex in graph.subjects(RDF.type, RESPLAN.ExteriorWall):
+            shp = _load_shape(geom_index.get(w_ex))
+            if shp is not None and (not shp.is_empty) and shp.geom_type in {"Polygon", "MultiPolygon"}:
+                exterior_polys.append(shp)
+    except Exception:
+        pass
+
+    # -------------------------
+    # Strategy 1: adjacency-derived geometry (BUT guard against exterior duplication)
+    # -------------------------
+    derived = graph.value(wall, RESPLAN.derivedFrom)
+    if derived:
+        adj_shp = _load_shape(adj_geom_index.get(derived))
+        if adj_shp is not None and (not adj_shp.is_empty) and adj_shp.geom_type in {"Polygon", "MultiPolygon"}:
+            # Reject if it basically duplicates an exterior wall polygon
+            for ex_poly in exterior_polys:
+                if _overlap_ratio(adj_shp, ex_poly) >= exterior_overlap_thresh:
+                    adj_shp = None
+                    break
+            if adj_shp is not None:
+                return mapping(adj_shp)
+
+    # -------------------------
+    # Strategy 2: derive from shared boundary between two spaces
+    # -------------------------
+    if derived is not None:
+        s1 = graph.value(derived, RESPLAN.spaceA)
+        s2 = graph.value(derived, RESPLAN.spaceB)
+
+        g1 = _load_shape(geom_index.get(s1))
+        g2 = _load_shape(geom_index.get(s2))
+
+        if g1 is not None and g2 is not None and (not g1.is_empty) and (not g2.is_empty):
+            shared = g1.boundary.intersection(g2.boundary)
+            lines = [l for l in _as_lines(shared) if l.length >= min_seg_len]
+
+            # *** FIXED: Fallback to nearest points if no shared boundary ***
+            if not lines:
+                # Spaces don't touch - use nearest points as fallback
+                p1, p2 = nearest_points(g1, g2)
+                if p1.distance(p2) < 0.5:  # Only if reasonably close (< 0.5m)
+                    longest = LineString([p1, p2])
+                else:
+                    return None  # Too far apart
+            else:
+                # merge fragments, then take longest
+                merged = linemerge(unary_union(lines))
+                merged_lines = _as_lines(merged)
+                if not merged_lines:
+                    merged_lines = lines
+                longest = max(merged_lines, key=lambda x: x.length)
+
+            # IMPORTANT GUARD:
+            # If the "shared" segment lies on the exterior boundary of (g1 ∪ g2),
+            # it is not an interior separator -> skip.
+            u = g1.union(g2)
+            inter_len = longest.intersection(u.boundary).length
+            if longest.length > tol and (inter_len / longest.length) > 0.8:
+                return None
+
+            wall_poly = longest.buffer(
+                default_thickness / 2.0,
+                cap_style=3,   # square caps
+                join_style=2,  # mitre joins
+            )
+
+            if wall_poly.is_empty or wall_poly.area <= tol:
+                return None
+
+            # Reject if it duplicates an exterior wall polygon
+            for ex_poly in exterior_polys:
+                if _overlap_ratio(wall_poly, ex_poly) >= exterior_overlap_thresh:
+                    return None
+
+            return mapping(wall_poly)
+
+    return None
+
 # ======================================================
 # Calculate (approx) Inferred Door GeomJSON
 # ======================================================
@@ -129,6 +301,7 @@ def infer_door_geom_from_walls_or_adjacency(
     geom_index,
     door_width=0.9,
 ):
+    """Infer a door polygon when explicit geomJSON is absent."""
     def _wall_thickness(poly) -> float:
         minx, miny, maxx, maxy = poly.bounds
         return max(1e-6, min(maxx - minx, maxy - miny))
@@ -228,200 +401,66 @@ def infer_door_geom_from_walls_or_adjacency(
 # Calculate (approx) Inferred Window GeomJSON
 # ======================================================
 
-def infer_window_geom_from_wall_or_adjacency(
+def infer_window_geom_from_primary_and_hosts(
     graph,
     window,
-    adj_geom_index,
     geom_index,
-    window_width=1.2,
 ):
-    """
-    Infer window geometry using the wall-room boundary overlap when possible.
-    Falls back to rough projection or multi-wall placement if overlap is missing.
-    """
-
-    def _wall_thickness(poly) -> float:
-        minx, miny, maxx, maxy = poly.bounds
-        return max(1e-6, min(maxx - minx, maxy - miny))
-
-    def _as_shape(geom_lit):
-        if geom_lit is None:
-            return None
-        try:
-            return shape(json.loads(str(geom_lit)))
-        except Exception:
-            return None
-
-    host_walls = list(graph.subjects(RESPLAN.hostsOpening, window))
-
-    # Fallback: jika tidak ada hostsOpening, pakai wall boundedBy ruang (prioritas exterior)
-    if not host_walls:
-        room = graph.value(window, RESPLAN.derivedFrom)
-        if room is not None:
-            wall_candidates = [
-                w
-                for w in graph.objects(room, RESPLAN.boundedBy)
-                if (w, RDF.type, RESPLAN.ExteriorWall) in graph
-                or (w, RDF.type, RESPLAN.InteriorWall) in graph
-            ]
-            # prioritas exterior
-            ext_walls = [
-                w for w in wall_candidates if (w, RDF.type, RESPLAN.ExteriorWall) in graph
-            ]
-            host_walls = ext_walls or wall_candidates
-
-    if not host_walls:
+    """Infer a window polygon based on primary and secondary walls."""
+    # --- primary wall ---
+    primary = graph.value(window, RESPLAN.primaryWall)
+    if primary is None:
         return None
 
-    # Room geometry (jika ada) untuk cek overlap dengan wall
-    derived = graph.value(window, RESPLAN.derivedFrom)
-    room_geom = _as_shape(geom_index.get(derived)) if derived is not None else None
+    P = shape(json.loads(str(geom_index.get(primary))))
 
-    wall_shapes = []
-    for w in host_walls:
-        poly = _as_shape(geom_index.get(w))
-        if poly is not None:
-            wall_shapes.append((w, poly))
-
-    if not wall_shapes:
+    # --- secondary wall (HARUS 1) ---
+    hosts = [
+        w for w in graph.subjects(RESPLAN.hostsOpening, window)
+        if w != primary
+    ]
+    if len(hosts) != 1:
         return None
 
-    # --------------------------------------------------
-    # Prioritas: segmen overlap langsung boundary wall-room
-    # --------------------------------------------------
-    best_overlap_seg = None
-    best_overlap_thick = None
-    if room_geom is not None:
-        for _, wall_poly in wall_shapes:
-            overlap = wall_poly.boundary.intersection(room_geom.boundary)
-            segments = []
-            if overlap.geom_type == "LineString":
-                segments = [overlap]
-            elif overlap.geom_type == "MultiLineString":
-                segments = list(overlap.geoms)
-            for seg in segments:
-                if seg.length <= 1e-6:
-                    continue
-                if best_overlap_seg is None or seg.length > best_overlap_seg.length:
-                    best_overlap_seg = seg
-                    best_overlap_thick = _wall_thickness(wall_poly)
+    S = shape(json.loads(str(geom_index.get(hosts[0]))))
 
-    if best_overlap_seg is not None:
-        start, end = best_overlap_seg.coords[0], best_overlap_seg.coords[-1]
-        midx = (start[0] + end[0]) / 2
-        midy = (start[1] + end[1]) / 2
-        dx, dy = end[0] - start[0], end[1] - start[1]
-        seg_len = max(1e-6, (dx**2 + dy**2) ** 0.5)
-        ux, uy = dx / seg_len, dy / seg_len
-        half = min(window_width / 2, best_overlap_seg.length / 2)
-        p1 = (midx - ux * half, midy - uy * half)
-        p2 = (midx + ux * half, midy + uy * half)
-        line = LineString([p1, p2])
-        win_poly = line.buffer(best_overlap_thick / 2, cap_style=2, join_style=2)
-        return mapping(win_poly)
+    # --- orientation ---
+    minx, miny, maxx, maxy = P.bounds
+    width, height = maxx - minx, maxy - miny
+    is_horizontal = width >= height
+    thickness = min(width, height)
 
-    # --------------------------------------------------
-    # Backup: gunakan overlap dengan room yang dibuffer (lebih toleran)
-    # --------------------------------------------------
-    def _best_overlap_buffered(wall_poly):
-        if room_geom is None:
-            return None
-        thickness = _wall_thickness(wall_poly)
-        buffered = room_geom.buffer(thickness / 2, join_style=2, cap_style=2)
-        inter = wall_poly.boundary.intersection(buffered.boundary)
-        lines = []
-        if inter.geom_type == "LineString":
-            lines = [inter]
-        elif inter.geom_type == "MultiLineString":
-            lines = list(inter.geoms)
-        lines = [ln for ln in lines if ln.length > 1e-6]
-        if not lines:
-            return None
-        return max(lines, key=lambda ln: ln.length)
-
-    best_seg = None
-    best_thick = None
-    best_len = 0.0
-    if room_geom is not None:
-        for _, poly in wall_shapes:
-            seg = _best_overlap_buffered(poly)
-            if seg is not None and seg.length > best_len:
-                best_seg = seg
-                best_thick = _wall_thickness(poly)
-                best_len = seg.length
-    if best_seg is not None:
-        start, end = best_seg.coords[0], best_seg.coords[-1]
-        midx = (start[0] + end[0]) / 2
-        midy = (start[1] + end[1]) / 2
-        dx = end[0] - start[0]
-        dy = end[1] - start[1]
-        seg_len = max(1e-6, (dx**2 + dy**2) ** 0.5)
-        ux, uy = dx / seg_len, dy / seg_len
-        width_use = min(window_width, best_seg.length)
-        half = width_use / 2
-        p1 = (midx - ux * half, midy - uy * half)
-        p2 = (midx + ux * half, midy + uy * half)
-        line = LineString([p1, p2])
-        win_poly = line.buffer(best_thick / 2, cap_style=2, join_style=2)
-        return mapping(win_poly)
-
-    # --------------------------------------------------
-    # Jika ada >=2 wall host, posisikan window di antara keduanya
-    # --------------------------------------------------
-    if len(wall_shapes) >= 2:
-        best_pair = None
-        best_dist = None
-        for i in range(len(wall_shapes)):
-            for j in range(i + 1, len(wall_shapes)):
-                p1, p2 = nearest_points(wall_shapes[i][1], wall_shapes[j][1])
-                dist = p1.distance(p2)
-                if best_dist is None or dist < best_dist:
-                    best_dist = dist
-                    best_pair = (p1, p2, wall_shapes[i][1], wall_shapes[j][1])
-        if best_pair is not None and best_dist is not None and best_dist > 1e-6:
-            p1, p2, ws1, ws2 = best_pair
-            thickness = min(_wall_thickness(ws1), _wall_thickness(ws2))
-            line = LineString([[p1.x, p1.y], [p2.x, p2.y]])
-            win_poly = line.buffer(thickness / 2, cap_style=2, join_style=2)
-            return mapping(win_poly)
-
-    # --------------------------------------------------
-    # Single wall host: proyeksi centroid adjacency/room ke wall
-    # --------------------------------------------------
-    wall_poly = wall_shapes[0][1]
-    thickness = _wall_thickness(wall_poly)
-
-    adj_point = None
-    adj = graph.value(window, RESPLAN.derivedFrom)
-    if adj is not None:
-        adj_geom_lit = adj_geom_index.get(adj)
-        if adj_geom_lit is None:
-            adj_geom_lit = geom_index.get(adj)
-        adj_geom = _as_shape(adj_geom_lit)
-        if adj_geom is not None:
-            adj_point = adj_geom.centroid
-
-    if adj_point is None:
-        adj_point = wall_poly.centroid if room_geom is None else room_geom.centroid
-
-    projected = wall_poly.exterior.interpolate(
-        wall_poly.exterior.project(adj_point)
-    )
-
-    minx, miny, maxx, maxy = wall_poly.bounds
-    horiz = (maxx - minx) >= (maxy - miny)
-
-    if horiz:
-        p1 = (projected.x - window_width / 2, projected.y)
-        p2 = (projected.x + window_width / 2, projected.y)
+    # --- primary axis ---
+    if is_horizontal:
+        midy = (miny + maxy) / 2
+        axis = LineString([(minx, midy), (maxx, midy)])
     else:
-        p1 = (projected.x, projected.y - window_width / 2)
-        p2 = (projected.x, projected.y + window_width / 2)
+        midx = (minx + maxx) / 2
+        axis = LineString([(midx, miny), (midx, maxy)])
 
-    win_poly = LineString([p1, p2]).buffer(
-        thickness / 2, cap_style=2, join_style=2
+    # --- anchor = ujung axis terdekat ke secondary ---
+    a0 = Point(axis.coords[0])
+    a1 = Point(axis.coords[-1])
+    anchor = a0 if a0.distance(S) < a1.distance(S) else a1
+
+    # --- length = jarak ke secondary ---
+    p_anchor, p_sec = nearest_points(anchor, S)
+    length = max(0.6, min(anchor.distance(p_sec), 2.4))
+
+    # --- build window ---
+    if is_horizontal:
+        direction = 1 if p_sec.x > anchor.x else -1
+        p1 = (anchor.x, anchor.y)
+        p2 = (anchor.x + direction * length, anchor.y)
+    else:
+        direction = 1 if p_sec.y > anchor.y else -1
+        p1 = (anchor.x, anchor.y)
+        p2 = (anchor.x, anchor.y + direction * length)
+
+    line = LineString([p1, p2])
+    return mapping(
+        line.buffer(thickness / 2, cap_style=2, join_style=2)
     )
-    return mapping(win_poly)
 
 # ======================================================
 # Core conversion
@@ -431,9 +470,6 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
     graph = Graph()
     graph.parse(ttl_path)
 
-    # --------------------------------------------------
-    # Geometry caches (IMPORTANT for inferred elements)
-    # --------------------------------------------------
     geom_index = {
         subj: geom
         for subj, geom in graph.subject_objects(RESPLAN.geomJSON)
@@ -504,15 +540,16 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
         # --- geometry resolution ---
         own_geom_lit = graph.value(struct_subj, RESPLAN.geomJSON)
         geom_lit = own_geom_lit
+        geom_dict = None  # Store inferred geometry as dict
 
         # fallback 1: replacesWall
-        if geom_lit is None:
+        if _is_empty_geom(geom_lit):  # *** FIXED: Use _is_empty_geom ***
             replaced = graph.value(struct_subj, RESPLAN.replacesWall)
             if replaced:
                 geom_lit = geom_index.get(replaced)
 
         # fallback 2: derivedFrom adjacency
-        if geom_lit is None:
+        if _is_empty_geom(geom_lit):  # *** FIXED: Use _is_empty_geom ***
             derived = graph.value(struct_subj, RESPLAN.derivedFrom)
             if derived:
                 geom_lit = adj_geom_index.get(derived)
@@ -520,9 +557,8 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
         # --------------------------------------------------
         # Infer Door Geometry
         # --------------------------------------------------
-
-        if struct_key == "door" and own_geom_lit is None:
-            geom_lit = infer_door_geom_from_walls_or_adjacency(
+        if struct_key == "door" and _is_empty_geom(own_geom_lit):  # *** FIXED ***
+            geom_dict = infer_door_geom_from_walls_or_adjacency(
                 graph,
                 struct_subj,
                 adj_geom_index,
@@ -532,39 +568,66 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
         # --------------------------------------------------
         # Infer Window Geometry
         # --------------------------------------------------
+        if struct_key == "window" and _is_empty_geom(own_geom_lit):  # *** FIXED ***
+            geom_dict = infer_window_geom_from_primary_and_hosts(
+                graph,
+                struct_subj,
+                geom_index,
+            )
 
-        if struct_key == "window" and own_geom_lit is None:
-            geom_lit = infer_window_geom_from_wall_or_adjacency(
+        # --------------------------------------------------
+        # Infer Interior Wall Geometry
+        # *** KEY FIX: Check if geom_lit is empty, not just None ***
+        # --------------------------------------------------
+        if (struct_key == "interior_wall" and 
+            _is_empty_geom(own_geom_lit) and 
+            _is_empty_geom(geom_lit)):  # *** FIXED ***
+            
+            geom_dict = infer_interior_wall_geom(
                 graph,
                 struct_subj,
                 adj_geom_index,
                 geom_index,
             )
+            if geom_dict:
+                print(f"✅ Inferred {_local_id(struct_subj)}: {len(geom_dict['coordinates'][0])} vertices")
 
         # --------------------------------------------------
-
-        if geom_lit is None:
+        # Use geom_dict if available, otherwise parse geom_lit
+        # --------------------------------------------------
+        if geom_dict is not None:
+            geom = geom_dict
+        elif not _is_empty_geom(geom_lit):  # *** FIXED ***
+            geom = (
+                geom_lit
+                if isinstance(geom_lit, dict)
+                else json.loads(str(geom_lit))
+            )
+        else:
             continue  # cannot visualize
-
-        record_id = (
-            graph.value(struct_subj, RESPLAN.sourceId)
-            or _local_id(struct_subj)
-        )
 
         is_inferred_lit = graph.value(struct_subj, RESPLAN.isInferred)
 
-        # geom_lit can be a JSON literal from the TTL or a dict returned by
-        # infer_door_geom_from_walls_or_adjacency; support both.
-        geom = (
-            geom_lit
-            if isinstance(geom_lit, dict)
-            else json.loads(str(geom_lit))
-        )
+        # Normalize wall geometries: buffer lines into polygons for visibility
+        if struct_key in {"interior_wall", "exterior_wall"}:
+            try:
+                shp = shape(geom)
+                if shp.geom_type in {"LineString", "MultiLineString"}:
+                    shp = shp.buffer(0.12 / 2, cap_style=2, join_style=2)
+                geom = mapping(shp)
+            except Exception:
+                pass
 
         inferred_flag = (
             is_inferred_lit.toPython()
             if is_inferred_lit is not None
             else ("infer#" in str(struct_subj))
+        )
+
+        record_id = (
+            _local_id(struct_subj)
+            if inferred_flag
+            else (graph.value(struct_subj, RESPLAN.sourceId) or _local_id(struct_subj))
         )
 
         record = {
@@ -580,7 +643,6 @@ def ttl_to_plan_dict(ttl_path: str | Path) -> Dict[str, Any]:
         ).append(record)
 
     return plan_dict
-
 
 # ======================================================
 # Save helper
@@ -604,194 +666,3 @@ def save_ttl_as_json(
 
 
 __all__ = ["ttl_to_plan_dict", "save_ttl_as_json"]
-
-# import json
-# from pathlib import Path
-# from rdflib import Graph, Namespace, RDF
-# from decimal import Decimal
-
-# # =========================
-# # NAMESPACES
-# # =========================
-# RESPLAN = Namespace("http://resplan.org/resplan#")
-# BOT     = Namespace("https://w3id.org/bot#")
-# IFC     = Namespace("https://w3id.org/ifc/IFC4_ADD2#")
-
-# # =========================
-# # HELPERS
-# # =========================
-# def short(uri):
-#     s = str(uri)
-#     if "#" in s:
-#         return s.split("#")[-1]
-#     return s.rstrip("/").split("/")[-1]
-
-# def lit(v):
-#     if v is None:
-#         return None
-#     try:
-#         return v.toPython()
-#     except Exception:
-#         return str(v)
-
-# def json_default(o):
-#     if isinstance(o, Decimal):
-#         return float(o)
-#     raise TypeError(f"Object of type {type(o)} is not JSON serializable")
-
-# # =========================
-# # MAIN FUNCTION
-# # =========================
-# def ttl_to_json(ttl_input, json_output):
-#     ttl_input = Path(ttl_input)
-#     json_output = Path(json_output)
-
-#     g = Graph()
-#     g.parse(ttl_input, format="turtle")
-#     print("Loaded triples:", len(g))
-
-#     # --------------------------------------------------
-#     # ROOMS (GROUPED BY ROOM TYPE)
-#     # --------------------------------------------------
-#     rooms_by_type = {}
-
-#     for r in g.subjects(RDF.type, RESPLAN.Room):
-#         geom_lit = g.value(r, RESPLAN.geomJSON)
-#         rtype = g.value(r, RESPLAN.hasRoomType)
-
-#         if not geom_lit or not rtype:
-#             continue
-
-#         try:
-#             geom_json = json.loads(str(geom_lit))
-#         except Exception:
-#             continue
-
-#         room_obj = {
-#             "id": short(r),
-#             "geom": geom_json,
-#             "area": lit(g.value(r, RESPLAN.area)),
-#         }
-
-#         subtype = short(rtype)
-#         rooms_by_type.setdefault(subtype, []).append(room_obj)
-
-#     print("Rooms exported:", sum(len(v) for v in rooms_by_type.values()))
-
-#     # --------------------------------------------------
-#     # WALLS (INTERIOR + EXTERIOR + INFERRED)
-#     # --------------------------------------------------
-#     walls = []
-
-#     for w in g.subjects(RDF.type, IFC.Wall):
-#         geom_lit = g.value(w, RESPLAN.geomJSON)
-#         if not geom_lit:
-#             continue
-
-#         try:
-#             geom_json = json.loads(str(geom_lit))
-#         except Exception:
-#             continue
-
-#         wall_obj = {
-#             "id": short(w),
-#             "geom": geom_json,
-#             "inferred": bool(lit(g.value(w, RESPLAN.isInferred))),
-#             "spaces": sorted({
-#                 short(s)
-#                 for s in g.objects(w, RESPLAN.separatesSpace)
-#             }),
-#         }
-
-#         # optional metadata (keep round-trip info)
-#         for p, k in [
-#             (RESPLAN.wallDepth, "depth"),
-#             (RESPLAN.length, "length"),
-#             (RESPLAN.area, "area"),
-#             (RESPLAN.sourceId, "sourceId"),
-#         ]:
-#             val = g.value(w, p)
-#             if val is not None:
-#                 wall_obj[k] = lit(val)
-
-#         walls.append(wall_obj)
-
-#     print("Walls exported:", len(walls))
-
-#     # --------------------------------------------------
-#     # DOORS
-#     # --------------------------------------------------
-#     doors = []
-
-#     for d in g.subjects(RDF.type, RESPLAN.Door):
-#         geom_lit = g.value(d, RESPLAN.geomJSON)
-#         if not geom_lit:
-#             continue
-
-#         try:
-#             geom_json = json.loads(str(geom_lit))
-#         except Exception:
-#             continue
-
-#         doors.append({
-#             "id": short(d),
-#             "geom": geom_json,
-#             "spaces": sorted({
-#                 short(s)
-#                 for s in g.objects(d, RESPLAN.connectsSpace)
-#             })
-#         })
-
-#     print("Doors exported:", len(doors))
-
-#     # --------------------------------------------------
-#     # WINDOWS
-#     # --------------------------------------------------
-#     windows = []
-
-#     for w in g.subjects(RDF.type, RESPLAN.Window):
-#         geom_lit = g.value(w, RESPLAN.geomJSON)
-#         if not geom_lit:
-#             continue
-
-#         try:
-#             geom_json = json.loads(str(geom_lit))
-#         except Exception:
-#             continue
-
-#         windows.append({
-#             "id": short(w),
-#             "geom": geom_json
-#         })
-
-#     print("Windows exported:", len(windows))
-
-#     # --------------------------------------------------
-#     # FINAL JSON (⚠️ SAME CONTRACT AS OLD plan_00000.json)
-#     # --------------------------------------------------
-#     output = {
-#         "instances": {
-#             "room": rooms_by_type,
-#             "structural": {
-#                 "wall": walls,
-#                 "door": doors,
-#                 "window": windows
-#             }
-#         }
-#     }
-
-#     json_output.parent.mkdir(parents=True, exist_ok=True)
-#     with open(json_output, "w", encoding="utf-8") as f:
-#         json.dump(output, f, indent=2, default=json_default)
-
-#     print("Saved JSON to:", json_output)
-
-
-# # =========================
-# # CLI ENTRY POINT
-# # =========================
-# if __name__ == "__main__":
-#     ttl_to_json(
-#         "../output/inferred_resplan_ttl/plan_00000_walls_back.ttl",
-#         "../output/inferred_resplan_json/plan_00000_walls_back.json"
-#     )

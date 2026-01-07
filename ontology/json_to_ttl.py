@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, Iterable, Tuple
 from rdflib import BNode, Graph, Literal, Namespace, RDF, URIRef
 from rdflib.namespace import RDFS, XSD
+from shapely.geometry import shape, mapping
 
 # Namespaces shared with the ontology/rules
 RESPLAN = Namespace("http://resplan.org/resplan#")
@@ -301,6 +302,12 @@ def _add_relationships(
     def _order_pair(a: URIRef, b: URIRef):
         return (a, b) if str(a) <= str(b) else (b, a)
 
+    # cache room geometries from triples (added in _add_rooms)
+    room_geom_index = {
+        room_uri: graph.value(room_uri, RESPLAN.geomJSON)
+        for room_uri in rooms.values()
+    }
+
     bounded = relations.get("bounded_by", {}).get("edges", [])
     for edge in bounded:
         room_uri = _resolve_room(edge.get("room"), graph, ns, rooms)
@@ -356,9 +363,36 @@ def _add_relationships(
                     graph.add((adj_uri, RESPLAN.spaceB, ob))
                     graph.add((adj_uri, RESPLAN.sharedWallCount, Literal(1, datatype=XSD.integer)))
                     graph.add((adj_uri, RESPLAN.sharedWall, wall_uri))
-                    wall_entry = structural_entries.get(wall_id)
-                    if wall_entry and wall_entry.get("geom"):
-                        _add_geom_literals(graph, adj_uri, wall_entry)
+                    # Prefer explicit geom on adjacency entry; fallback to host wall geom.
+                    if entry.get("geom"):
+                        _add_geom_literals(graph, adj_uri, entry)
+                    else:
+                        wall_entry = structural_entries.get(wall_id)
+                        if wall_entry and wall_entry.get("geom"):
+                            _add_geom_literals(graph, adj_uri, wall_entry)
+                        else:
+                            # Derive shared boundary from room geometries if available
+                            g_a = room_geom_index.get(oa)
+                            g_b = room_geom_index.get(ob)
+                            if g_a and g_b:
+                                try:
+                                    sa = shape(json.loads(str(g_a)))
+                                    sb = shape(json.loads(str(g_b)))
+                                    shared = sa.boundary.intersection(sb.boundary)
+                                    lines = []
+                                    if shared.geom_type == "LineString":
+                                        lines = [shared]
+                                    elif shared.geom_type == "MultiLineString":
+                                        lines = list(shared.geoms)
+                                    if lines:
+                                        longest = max(lines, key=lambda g: g.length)
+                                        _add_geom_literals(
+                                            graph,
+                                            adj_uri,
+                                            {"geom": mapping(longest)},
+                                        )
+                                except Exception:
+                                    LOGGER.warning("Failed to derive adjacency geom for %s", adj_uri)
             else:
                 # No shared wall data; keep single adjacency edge for topology only
                 adj_id = f"adj-{Path(_shorten_uri(oa)).name}-{Path(_shorten_uri(ob)).name}"
