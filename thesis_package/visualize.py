@@ -67,40 +67,17 @@ def plot_plan_json(
                 _annotate(ax, geom, record["id"], label_box_alpha)
 
     # Walls
-    # def _draw_walls(key):
-    #     face = STRUCT_COLORS.get(key, "#777777")
-    #     for record in structural.get(key, []):
-    #         geom = shape(record["geom"])
-    #         if geom.is_empty:
-    #             continue
-    #         if hasattr(geom, "exterior"):
-    #             x, y = geom.exterior.xy
-    #             ax.fill(x, y, facecolor=face, edgecolor="black", linewidth=0.7, alpha=wall_alpha)
-    #         else:
-    #             x, y = geom.xy
-    #             ax.plot(x, y, color=face, linewidth=2.0)
-    #         if show_wall_ids:
-    #             _annotate(ax, geom, record["id"], wall_label_box_alpha)
-    # Walls
     def _draw_walls(key):
         face = STRUCT_COLORS.get(key, "#777777")
         for record in structural.get(key, []):
             geom = shape(record["geom"])
             if geom.is_empty:
                 continue
-
-            is_inferred = record.get("inferred", False)
-
-            if is_inferred:
-                edge_color = "red"
-                lw = 3.0
-                ls = "--"
-                alpha = 1.0
-            else:
-                edge_color = "black"
-                lw = 0.7
-                ls = "-"
-                alpha = wall_alpha
+            
+            edge_color = "black"
+            lw = 0.7
+            ls = "-"
+            alpha = wall_alpha
 
             if hasattr(geom, "exterior"):
                 x, y = geom.exterior.xy
