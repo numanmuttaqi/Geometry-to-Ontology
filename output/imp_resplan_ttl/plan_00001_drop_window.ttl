@@ -6,7 +6,17 @@
 
 <http://resplan.org/resplan/plan_00001#EX-32> a resplan:ExteriorWall,
         ifc:Wall ;
-    rdfs:label "EX-32" .
+    rdfs:label "EX-32" ;
+    resplan:area 0.06 ;
+    resplan:bboxMaxX 0.04 ;
+    resplan:bboxMaxY 1.79 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 1.53 ;
+    resplan:centroidX -0.07 ;
+    resplan:centroidY 1.66 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,1.5712804286125772],[0.03719006931627402,1.5340903592963033],[-0.1859503465813701,1.5340903592963033],[-0.1859503465813701,1.7944208445102217],[0.03719006931627402,1.7944208445102217],[0.03719006931627402,1.5712804286125772]]]}" ;
+    resplan:sourceId "EX-32" ;
+    resplan:wallDepth 4.64 .
 
 <http://resplan.org/resplan/plan_00001#Plan_plan_00001> a resplan:ResPlan ;
     rdfs:label "Plan #1" ;
@@ -16,11 +26,1761 @@
     resplan:planArea 130.993 ;
     resplan:plotPath "file:///Users/muhammadnumanmuttaqi/Documents/MScITBE/Thesis/Thesis/Geometry-to-Ontology/output/resplan_plot/plan_00001.png"^^xsd:anyURI ;
     resplan:sourceFile "file:///Users/muhammadnumanmuttaqi/Documents/MScITBE/Thesis/Thesis/Geometry-to-Ontology/data/ResPlan.pkl"^^xsd:anyURI ;
-    resplan:unitType "Apartment" .
+    resplan:unitType "Apartment" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#adj-BAL-01-BED-02-EX-12> a resplan:AdjacencyEdge ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 8.44 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 8.22 ;
+    resplan:bboxMinY 10.74 ;
+    resplan:centroidX 8.33 ;
+    resplan:centroidY 11.37 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.219005318896558,12.00309487182744],[8.442145734794202,12.00309487182744],[8.442145734794202,10.738632515074125],[8.219005318896558,10.738632515074125],[8.219005318896558,11.779954455929795],[8.219005318896558,12.00309487182744]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-12> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BAL-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BED-02> .
+
+<http://resplan.org/resplan/plan_00001#adj-BAL-01-LIV-01-EX-01> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 10.74 ;
+    resplan:bboxMinX 10.82 ;
+    resplan:bboxMinY 10.52 ;
+    resplan:centroidX 11.66 ;
+    resplan:centroidY 10.63 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[10.82231017103574,10.515492099176479],[10.82231017103574,10.738632515074125],[12.272722874370427,10.738632515074125],[12.49586329026807,10.738632515074125],[12.49586329026807,10.515492099176479],[12.272722874370427,10.515492099176479],[10.82231017103574,10.515492099176479]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-01> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BAL-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BAL-01-LIV-01-EX-13> a resplan:AdjacencyEdge ;
+    resplan:area 0.32 ;
+    resplan:bboxMaxX 9.87 ;
+    resplan:bboxMaxY 10.74 ;
+    resplan:bboxMinX 8.44 ;
+    resplan:bboxMinY 10.52 ;
+    resplan:centroidX 9.16 ;
+    resplan:centroidY 10.63 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.442145734794202,10.738632515074125],[9.873963403470754,10.738632515074125],[9.873963403470754,10.515492099176479],[8.442145734794202,10.515492099176479],[8.442145734794202,10.738632515074125]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-13> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BAL-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-01-BTH-03-EX-20> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 0.72 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 0.51 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.233468482015297,0.5299584877569048],[7.233468482015297,0.7159088343382749],[7.4566088979129415,0.7159088343382749],[7.4566088979129415,0.5299584877569048],[7.4566088979129415,0.3068180718592607],[7.233468482015297,0.3068180718592607],[7.233468482015297,0.5299584877569048]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-20> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-01-BTH-03-IN-05> a resplan:AdjacencyEdge ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 3.88 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.233468482015297,3.4679739637425526],[7.233468482015297,4.509295904598225],[7.4566088979129415,4.509295904598225],[7.4566088979129415,3.2448335478449084],[7.233468482015297,3.2448335478449084],[7.233468482015297,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-05> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-01-BTH-03-IN-07> a resplan:AdjacencyEdge ;
+    resplan:area 0.35 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 2.3 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 0.72 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 1.51 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.233468482015297,2.296486780279921],[7.4566088979129415,2.296486780279921],[7.4566088979129415,0.7159088343382749],[7.233468482015297,0.7159088343382749],[7.233468482015297,2.296486780279921]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-07> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-01-LIV-01-EX-08> a resplan:AdjacencyEdge ;
+    resplan:area 0.24 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 11.44 ;
+    resplan:bboxMinY 4.29 ;
+    resplan:centroidX 11.97 ;
+    resplan:centroidY 4.4 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[11.435946314754261,4.286155488700581],[11.435946314754261,4.509295904598225],[12.49586329026807,4.509295904598225],[12.49586329026807,4.286155488700581],[11.659086730651905,4.286155488700581],[11.435946314754261,4.286155488700581]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-08> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-01-LIV-01-EX-09> a resplan:AdjacencyEdge ;
+    resplan:area 0.04 ;
+    resplan:bboxMaxX 11.44 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 11.25 ;
+    resplan:bboxMinY 4.29 ;
+    resplan:centroidX 11.34 ;
+    resplan:centroidY 4.4 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[11.435946314754261,4.286155488700581],[11.249995968172891,4.286155488700581],[11.249995968172891,4.509295904598225],[11.435946314754261,4.509295904598225],[11.435946314754261,4.286155488700581]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-09> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-01-LIV-01-IN-01> a resplan:AdjacencyEdge ;
+    resplan:area 0.65 ;
+    resplan:bboxMaxX 11.25 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 8.35 ;
+    resplan:bboxMinY 4.29 ;
+    resplan:centroidX 9.8 ;
+    resplan:centroidY 4.4 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.349170561503517,4.286155488700581],[8.349170561503517,4.509295904598225],[11.249995968172891,4.509295904598225],[11.249995968172891,4.286155488700581],[8.349170561503517,4.286155488700581]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-01> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-01-LIV-01-IN-05> a resplan:AdjacencyEdge ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 3.88 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.233468482015297,3.4679739637425526],[7.233468482015297,4.509295904598225],[7.4566088979129415,4.509295904598225],[7.4566088979129415,3.2448335478449084],[7.233468482015297,3.2448335478449084],[7.233468482015297,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-05> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-02-BED-03-EX-24> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 11.59 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 11.8 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.369833144662198,12.00309487182744],[4.592973560559842,12.00309487182744],[4.592973560559842,11.779954455929795],[4.592973560559842,11.594004109348425],[4.369833144662198,11.594004109348425],[4.369833144662198,11.779954455929795],[4.369833144662198,12.00309487182744]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-24> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BED-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-02-BED-03-IN-08> a resplan:AdjacencyEdge ;
+    resplan:area 0.77 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 11.59 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 8.15 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 9.87 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.369833144662198,11.594004109348425],[4.592973560559842,11.594004109348425],[4.592973560559842,8.153922697593078],[4.369833144662198,8.153922697593078],[4.369833144662198,11.594004109348425]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-08> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BED-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-02-BED-03-IN-09> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 4.76 ;
+    resplan:bboxMaxY 8.15 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 4.57 ;
+    resplan:centroidY 8.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.592973560559842,8.153922697593078],[4.760328872483075,8.153922697593078],[4.760328872483075,7.930782281695435],[4.592973560559842,7.930782281695435],[4.369833144662198,7.930782281695435],[4.369833144662198,8.153922697593078],[4.592973560559842,8.153922697593078]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-09> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BED-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-02-LIV-01-EX-14> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 8.44 ;
+    resplan:bboxMaxY 10.74 ;
+    resplan:bboxMinX 8.22 ;
+    resplan:bboxMinY 10.33 ;
+    resplan:centroidX 8.33 ;
+    resplan:centroidY 10.53 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.442145734794202,10.515492099176479],[8.442145734794202,10.32954175259511],[8.219005318896558,10.32954175259511],[8.219005318896558,10.738632515074125],[8.442145734794202,10.738632515074125],[8.442145734794202,10.515492099176479]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-14> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-02-LIV-01-IN-02> a resplan:AdjacencyEdge ;
+    resplan:area 0.54 ;
+    resplan:bboxMaxX 8.44 ;
+    resplan:bboxMaxY 10.33 ;
+    resplan:bboxMinX 8.22 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 8.33 ;
+    resplan:centroidY 9.13 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.219005318896558,10.32954175259511],[8.442145734794202,10.32954175259511],[8.442145734794202,7.930782281695435],[8.219005318896558,7.930782281695435],[8.219005318896558,8.153922697593078],[8.219005318896558,10.32954175259511]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-02> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-02-LIV-01-IN-03> a resplan:AdjacencyEdge ;
+    resplan:area 0.56 ;
+    resplan:bboxMaxX 8.22 ;
+    resplan:bboxMaxY 8.15 ;
+    resplan:bboxMinX 5.71 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 6.96 ;
+    resplan:centroidY 8.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.219005318896558,7.930782281695435],[5.708675640048063,7.930782281695435],[5.708675640048063,8.153922697593078],[8.219005318896558,8.153922697593078],[8.219005318896558,7.930782281695435]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-03> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-02-LIV-01-IN-09> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 4.76 ;
+    resplan:bboxMaxY 8.15 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 4.57 ;
+    resplan:centroidY 8.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.592973560559842,8.153922697593078],[4.760328872483075,8.153922697593078],[4.760328872483075,7.930782281695435],[4.592973560559842,7.930782281695435],[4.369833144662198,7.930782281695435],[4.369833144662198,8.153922697593078],[4.592973560559842,8.153922697593078]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-09> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-BTH-04-EX-27> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 0.22 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 6.93 ;
+    resplan:centroidX 0.02 ;
+    resplan:centroidY 7.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,7.14979082605368],[0.2231404158976441,7.14979082605368],[0.2231404158976441,6.926650410156037],[0.03719006931627402,6.926650410156037],[-0.1859503465813701,6.926650410156037],[-0.1859503465813701,7.14979082605368],[0.03719006931627402,7.14979082605368]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-27> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-04> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-BTH-04-IN-11> a resplan:AdjacencyEdge ;
+    resplan:area 0.47 ;
+    resplan:bboxMaxX 3.14 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 5.05 ;
+    resplan:centroidX 3.03 ;
+    resplan:centroidY 6.1 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[2.9194204413275107,5.048551909684198],[2.9194204413275107,6.926650410156037],[2.9194204413275107,7.14979082605368],[3.1425608572251544,7.14979082605368],[3.1425608572251544,5.048551909684198],[2.9194204413275107,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-11> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-04> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-BTH-04-IN-12> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 3.76 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.1425608572251544,5.048551909684198],[4.369833144662198,5.048551909684198],[4.592973560559842,5.048551909684198],[4.592973560559842,4.825411493786554],[2.9194204413275107,4.825411493786554],[2.9194204413275107,5.048551909684198],[3.1425608572251544,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-12> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-04> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-BTH-04-IN-14> a resplan:AdjacencyEdge ;
+    resplan:area 0.02 ;
+    resplan:bboxMaxX 2.92 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX 2.85 ;
+    resplan:bboxMinY 6.93 ;
+    resplan:centroidX 2.88 ;
+    resplan:centroidY 7.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[2.9194204413275107,6.926650410156037],[2.8450403026949624,6.926650410156037],[2.8450403026949624,7.14979082605368],[2.9194204413275107,7.14979082605368],[2.9194204413275107,6.926650410156037]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-14> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-04> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-BTH-04-IN-19> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 1.9 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX 0.22 ;
+    resplan:bboxMinY 6.93 ;
+    resplan:centroidX 1.06 ;
+    resplan:centroidY 7.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[1.896693535129975,7.14979082605368],[1.896693535129975,6.926650410156037],[0.2231404158976441,6.926650410156037],[0.2231404158976441,7.14979082605368],[1.896693535129975,7.14979082605368]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-19> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-04> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-KIT-01-IN-12> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 3.76 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.1425608572251544,5.048551909684198],[4.369833144662198,5.048551909684198],[4.592973560559842,5.048551909684198],[4.592973560559842,4.825411493786554],[2.9194204413275107,4.825411493786554],[2.9194204413275107,5.048551909684198],[3.1425608572251544,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-12> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-LIV-01-IN-09> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 4.76 ;
+    resplan:bboxMaxY 8.15 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 4.57 ;
+    resplan:centroidY 8.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.592973560559842,8.153922697593078],[4.760328872483075,8.153922697593078],[4.760328872483075,7.930782281695435],[4.592973560559842,7.930782281695435],[4.369833144662198,7.930782281695435],[4.369833144662198,8.153922697593078],[4.592973560559842,8.153922697593078]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-09> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-LIV-01-IN-10> a resplan:AdjacencyEdge ;
+    resplan:area 0.4 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 7.93 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 6.13 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 7.03 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.592973560559842,7.930782281695435],[4.592973560559842,6.127063919856145],[4.369833144662198,6.127063919856145],[4.369833144662198,7.930782281695435],[4.592973560559842,7.930782281695435]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-10> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-LIV-01-IN-12> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 3.76 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.1425608572251544,5.048551909684198],[4.369833144662198,5.048551909684198],[4.592973560559842,5.048551909684198],[4.592973560559842,4.825411493786554],[2.9194204413275107,4.825411493786554],[2.9194204413275107,5.048551909684198],[3.1425608572251544,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-12> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BED-03-LIV-01-IN-13> a resplan:AdjacencyEdge ;
+    resplan:area 0.02 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.16 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 5.05 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 5.1 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.369833144662198,5.048551909684198],[4.369833144662198,5.16012211763302],[4.592973560559842,5.16012211763302],[4.592973560559842,5.048551909684198],[4.369833144662198,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-13> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-EX-15> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 0.72 ;
+    resplan:bboxMinX 5.3 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 5.41 ;
+    resplan:centroidY 0.51 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,0.7159088343382749],[5.522725293466692,0.7159088343382749],[5.522725293466692,0.5299584877569048],[5.522725293466692,0.3068180718592607],[5.299584877569048,0.3068180718592607],[5.299584877569048,0.5299584877569048],[5.299584877569048,0.7159088343382749]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-15> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-02> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-EX-16> a resplan:AdjacencyEdge ;
+    resplan:area 0.39 ;
+    resplan:bboxMaxX 5.3 ;
+    resplan:bboxMaxY 0.53 ;
+    resplan:bboxMinX 3.57 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 4.43 ;
+    resplan:centroidY 0.42 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,0.3068180718592607],[3.570246654362306,0.3068180718592607],[3.570246654362306,0.5299584877569048],[5.299584877569048,0.5299584877569048],[5.299584877569048,0.3068180718592607]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-16> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-02> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-EX-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 1.98 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 1.14 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,0.3068180718592607],[3.347106238464662,0.3068180718592607],[3.347106238464662,1.5712804286125772],[3.347106238464662,1.7944208445102217],[3.347106238464662,1.9803711910915918],[3.570246654362306,1.9803711910915918],[3.570246654362306,0.5299584877569048],[3.570246654362306,0.3068180718592607]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-02> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-IN-04> a resplan:AdjacencyEdge ;
+    resplan:area 0.45 ;
+    resplan:bboxMaxX 7.23 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 5.21 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 6.22 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,3.2448335478449084],[5.206609704278363,3.2448335478449084],[5.206609704278363,3.4679739637425526],[7.233468482015297,3.4679739637425526],[7.233468482015297,3.2448335478449084],[5.522725293466692,3.2448335478449084],[5.299584877569048,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-04> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-02> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-IN-06> a resplan:AdjacencyEdge ;
+    resplan:area 0.56 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 5.3 ;
+    resplan:bboxMinY 0.72 ;
+    resplan:centroidX 5.41 ;
+    resplan:centroidY 1.98 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.522725293466692,3.2448335478449084],[5.522725293466692,0.7159088343382749],[5.299584877569048,0.7159088343382749],[5.299584877569048,3.2448335478449084],[5.522725293466692,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-06> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-02> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-IN-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 4.24 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 3.79 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.4679739637425526],[4.239667902055238,3.4679739637425526],[4.239667902055238,3.2448335478449084],[3.570246654362306,3.2448335478449084],[3.347106238464662,3.2448335478449084],[3.347106238464662,3.4679739637425526],[3.570246654362306,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-02> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-IN-18> a resplan:AdjacencyEdge ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 1.98 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 2.61 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.2448335478449084],[3.570246654362306,1.9803711910915918],[3.347106238464662,1.9803711910915918],[3.347106238464662,3.2448335478449084],[3.570246654362306,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-18> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-02> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-03-EX-15> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 0.72 ;
+    resplan:bboxMinX 5.3 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 5.41 ;
+    resplan:centroidY 0.51 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,0.7159088343382749],[5.522725293466692,0.7159088343382749],[5.522725293466692,0.5299584877569048],[5.522725293466692,0.3068180718592607],[5.299584877569048,0.3068180718592607],[5.299584877569048,0.5299584877569048],[5.299584877569048,0.7159088343382749]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-15> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-03-IN-04> a resplan:AdjacencyEdge ;
+    resplan:area 0.45 ;
+    resplan:bboxMaxX 7.23 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 5.21 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 6.22 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,3.2448335478449084],[5.206609704278363,3.2448335478449084],[5.206609704278363,3.4679739637425526],[7.233468482015297,3.4679739637425526],[7.233468482015297,3.2448335478449084],[5.522725293466692,3.2448335478449084],[5.299584877569048,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-04> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-03-IN-06> a resplan:AdjacencyEdge ;
+    resplan:area 0.56 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 5.3 ;
+    resplan:bboxMinY 0.72 ;
+    resplan:centroidX 5.41 ;
+    resplan:centroidY 1.98 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.522725293466692,3.2448335478449084],[5.522725293466692,0.7159088343382749],[5.299584877569048,0.7159088343382749],[5.299584877569048,3.2448335478449084],[5.522725293466692,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-06> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-KIT-01-EX-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 1.98 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 1.14 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,0.3068180718592607],[3.347106238464662,0.3068180718592607],[3.347106238464662,1.5712804286125772],[3.347106238464662,1.7944208445102217],[3.347106238464662,1.9803711910915918],[3.570246654362306,1.9803711910915918],[3.570246654362306,0.5299584877569048],[3.570246654362306,0.3068180718592607]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-KIT-01-IN-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 4.24 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 3.79 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.4679739637425526],[4.239667902055238,3.4679739637425526],[4.239667902055238,3.2448335478449084],[3.570246654362306,3.2448335478449084],[3.347106238464662,3.2448335478449084],[3.347106238464662,3.4679739637425526],[3.570246654362306,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-KIT-01-IN-18> a resplan:AdjacencyEdge ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 1.98 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 2.61 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.2448335478449084],[3.570246654362306,1.9803711910915918],[3.347106238464662,1.9803711910915918],[3.347106238464662,3.2448335478449084],[3.570246654362306,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-18> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-LIV-01-IN-04> a resplan:AdjacencyEdge ;
+    resplan:area 0.45 ;
+    resplan:bboxMaxX 7.23 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 5.21 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 6.22 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,3.2448335478449084],[5.206609704278363,3.2448335478449084],[5.206609704278363,3.4679739637425526],[7.233468482015297,3.4679739637425526],[7.233468482015297,3.2448335478449084],[5.522725293466692,3.2448335478449084],[5.299584877569048,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-04> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-01-LIV-01-IN-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 4.24 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 3.79 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.4679739637425526],[4.239667902055238,3.4679739637425526],[4.239667902055238,3.2448335478449084],[3.570246654362306,3.2448335478449084],[3.347106238464662,3.2448335478449084],[3.347106238464662,3.4679739637425526],[3.570246654362306,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-02-BTH-03-EX-15> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 0.72 ;
+    resplan:bboxMinX 5.3 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 5.41 ;
+    resplan:centroidY 0.51 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,0.7159088343382749],[5.522725293466692,0.7159088343382749],[5.522725293466692,0.5299584877569048],[5.522725293466692,0.3068180718592607],[5.299584877569048,0.3068180718592607],[5.299584877569048,0.5299584877569048],[5.299584877569048,0.7159088343382749]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-15> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-02-BTH-03-IN-04> a resplan:AdjacencyEdge ;
+    resplan:area 0.45 ;
+    resplan:bboxMaxX 7.23 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 5.21 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 6.22 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,3.2448335478449084],[5.206609704278363,3.2448335478449084],[5.206609704278363,3.4679739637425526],[7.233468482015297,3.4679739637425526],[7.233468482015297,3.2448335478449084],[5.522725293466692,3.2448335478449084],[5.299584877569048,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-04> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-02-BTH-03-IN-06> a resplan:AdjacencyEdge ;
+    resplan:area 0.56 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 5.3 ;
+    resplan:bboxMinY 0.72 ;
+    resplan:centroidX 5.41 ;
+    resplan:centroidY 1.98 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.522725293466692,3.2448335478449084],[5.522725293466692,0.7159088343382749],[5.299584877569048,0.7159088343382749],[5.299584877569048,3.2448335478449084],[5.522725293466692,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-06> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#BTH-03> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-02-KIT-01-EX-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 1.98 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 1.14 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,0.3068180718592607],[3.347106238464662,0.3068180718592607],[3.347106238464662,1.5712804286125772],[3.347106238464662,1.7944208445102217],[3.347106238464662,1.9803711910915918],[3.570246654362306,1.9803711910915918],[3.570246654362306,0.5299584877569048],[3.570246654362306,0.3068180718592607]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-02-KIT-01-IN-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 4.24 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 3.79 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.4679739637425526],[4.239667902055238,3.4679739637425526],[4.239667902055238,3.2448335478449084],[3.570246654362306,3.2448335478449084],[3.347106238464662,3.2448335478449084],[3.347106238464662,3.4679739637425526],[3.570246654362306,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-02-KIT-01-IN-18> a resplan:AdjacencyEdge ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 1.98 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 2.61 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.2448335478449084],[3.570246654362306,1.9803711910915918],[3.347106238464662,1.9803711910915918],[3.347106238464662,3.2448335478449084],[3.570246654362306,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-18> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-02-LIV-01-IN-04> a resplan:AdjacencyEdge ;
+    resplan:area 0.45 ;
+    resplan:bboxMaxX 7.23 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 5.21 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 6.22 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,3.2448335478449084],[5.206609704278363,3.2448335478449084],[5.206609704278363,3.4679739637425526],[7.233468482015297,3.4679739637425526],[7.233468482015297,3.2448335478449084],[5.522725293466692,3.2448335478449084],[5.299584877569048,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-04> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-02-LIV-01-IN-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 4.24 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 3.79 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.4679739637425526],[4.239667902055238,3.4679739637425526],[4.239667902055238,3.2448335478449084],[3.570246654362306,3.2448335478449084],[3.347106238464662,3.2448335478449084],[3.347106238464662,3.4679739637425526],[3.570246654362306,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-03-LIV-01-IN-04> a resplan:AdjacencyEdge ;
+    resplan:area 0.45 ;
+    resplan:bboxMaxX 7.23 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 5.21 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 6.22 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,3.2448335478449084],[5.206609704278363,3.2448335478449084],[5.206609704278363,3.4679739637425526],[7.233468482015297,3.4679739637425526],[7.233468482015297,3.2448335478449084],[5.522725293466692,3.2448335478449084],[5.299584877569048,3.2448335478449084]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-04> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-03-LIV-01-IN-05> a resplan:AdjacencyEdge ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 3.88 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.233468482015297,3.4679739637425526],[7.233468482015297,4.509295904598225],[7.4566088979129415,4.509295904598225],[7.4566088979129415,3.2448335478449084],[7.233468482015297,3.2448335478449084],[7.233468482015297,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-05> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-03> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-04-KIT-01-EX-29> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 0.22 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 0.02 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,5.048551909684198],[0.2231404158976441,5.048551909684198],[0.2231404158976441,4.825411493786554],[0.03719006931627402,4.825411493786554],[-0.1859503465813701,4.825411493786554],[-0.1859503465813701,5.048551909684198],[0.03719006931627402,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#EX-29> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-04> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-04-KIT-01-IN-12> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 3.76 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.1425608572251544,5.048551909684198],[4.369833144662198,5.048551909684198],[4.592973560559842,5.048551909684198],[4.592973560559842,4.825411493786554],[2.9194204413275107,4.825411493786554],[2.9194204413275107,5.048551909684198],[3.1425608572251544,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-12> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-04> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-04-KIT-01-IN-15> a resplan:AdjacencyEdge ;
+    resplan:area 0.6 ;
+    resplan:bboxMaxX 2.92 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 0.22 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 1.57 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[2.9194204413275107,4.825411493786554],[0.2231404158976441,4.825411493786554],[0.2231404158976441,5.048551909684198],[2.9194204413275107,5.048551909684198],[2.9194204413275107,4.825411493786554]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-15> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-04> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#KIT-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-BTH-04-LIV-01-IN-12> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 3.76 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.1425608572251544,5.048551909684198],[4.369833144662198,5.048551909684198],[4.592973560559842,5.048551909684198],[4.592973560559842,4.825411493786554],[2.9194204413275107,4.825411493786554],[2.9194204413275107,5.048551909684198],[3.1425608572251544,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-12> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#BTH-04> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-KIT-01-LIV-01-IN-12> a resplan:AdjacencyEdge ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 3.76 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.1425608572251544,5.048551909684198],[4.369833144662198,5.048551909684198],[4.592973560559842,5.048551909684198],[4.592973560559842,4.825411493786554],[2.9194204413275107,4.825411493786554],[2.9194204413275107,5.048551909684198],[3.1425608572251544,5.048551909684198]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-12> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#KIT-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-KIT-01-LIV-01-IN-16> a resplan:AdjacencyEdge ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 3.86 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.47 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 3.66 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.347106238464662,3.85846969156343],[3.570246654362306,3.85846969156343],[3.570246654362306,3.4679739637425526],[3.347106238464662,3.4679739637425526],[3.347106238464662,3.85846969156343]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-16> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#KIT-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#adj-KIT-01-LIV-01-IN-17> a resplan:AdjacencyEdge ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 4.24 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 3.79 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.4679739637425526],[4.239667902055238,3.4679739637425526],[4.239667902055238,3.2448335478449084],[3.570246654362306,3.2448335478449084],[3.347106238464662,3.2448335478449084],[3.347106238464662,3.4679739637425526],[3.570246654362306,3.4679739637425526]]]}" ;
+    resplan:sharedWall <http://resplan.org/resplan/plan_00001#IN-17> ;
+    resplan:sharedWallCount 1 ;
+    resplan:spaceA <http://resplan.org/resplan/plan_00001#KIT-01> ;
+    resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#EX-03> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-03" ;
+    resplan:area 0.01 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 10.78 ;
+    resplan:bboxMinX 12.27 ;
+    resplan:bboxMinY 10.74 ;
+    resplan:centroidX 12.38 ;
+    resplan:centroidY 10.76 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[12.272722874370427,10.738632515074125],[12.272722874370427,10.775822584390397],[12.49586329026807,10.775822584390397],[12.49586329026807,10.738632515074125],[12.272722874370427,10.738632515074125]]]}" ;
+    resplan:sourceId "EX-03" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-04> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-04" ;
+    resplan:area 0.24 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 3.3 ;
+    resplan:bboxMinX 11.44 ;
+    resplan:bboxMinY 3.08 ;
+    resplan:centroidX 11.97 ;
+    resplan:centroidY 3.19 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[11.659086730651905,3.3006186518193195],[12.49586329026807,3.3006186518193195],[12.49586329026807,3.0774782359216752],[12.272722874370427,3.0774782359216752],[11.435946314754261,3.0774782359216752],[11.435946314754261,3.3006186518193195],[11.659086730651905,3.3006186518193195]]]}" ;
+    resplan:sourceId "EX-04" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-05> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-05" ;
+    resplan:area 0.57 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 3.08 ;
+    resplan:bboxMinX 12.27 ;
+    resplan:bboxMinY 0.53 ;
+    resplan:centroidX 12.38 ;
+    resplan:centroidY 1.8 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[12.49586329026807,3.0774782359216752],[12.49586329026807,0.5299584877569048],[12.272722874370427,0.5299584877569048],[12.272722874370427,3.0774782359216752],[12.49586329026807,3.0774782359216752]]]}" ;
+    resplan:sourceId "EX-05" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-07> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-07" ;
+    resplan:area 0.22 ;
+    resplan:bboxMaxX 11.66 ;
+    resplan:bboxMaxY 4.29 ;
+    resplan:bboxMinX 11.44 ;
+    resplan:bboxMinY 3.3 ;
+    resplan:centroidX 11.55 ;
+    resplan:centroidY 3.79 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[11.435946314754261,3.3006186518193195],[11.435946314754261,4.286155488700581],[11.659086730651905,4.286155488700581],[11.659086730651905,3.3006186518193195],[11.435946314754261,3.3006186518193195]]]}" ;
+    resplan:sourceId "EX-07" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-19> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-19" ;
+    resplan:area 0.38 ;
+    resplan:bboxMaxX 7.23 ;
+    resplan:bboxMaxY 0.53 ;
+    resplan:bboxMinX 5.52 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 6.38 ;
+    resplan:centroidY 0.42 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.522725293466692,0.5299584877569048],[7.233468482015297,0.5299584877569048],[7.233468482015297,0.3068180718592607],[5.522725293466692,0.3068180718592607],[5.522725293466692,0.5299584877569048]]]}" ;
+    resplan:sourceId "EX-19" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-21> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-21" ;
+    resplan:area 0.32 ;
+    resplan:bboxMaxX 8.89 ;
+    resplan:bboxMaxY 0.53 ;
+    resplan:bboxMinX 7.46 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 8.17 ;
+    resplan:centroidY 0.42 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.4566088979129415,0.5299584877569048],[8.88842656658949,0.5299584877569048],[8.88842656658949,0.3068180718592607],[7.4566088979129415,0.3068180718592607],[7.4566088979129415,0.5299584877569048]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-02> ;
+    resplan:sourceId "EX-21" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-25> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-25" ;
+    resplan:area 0.21 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 4.59 ;
+    resplan:bboxMinY 11.78 ;
+    resplan:centroidX 5.06 ;
+    resplan:centroidY 11.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.592973560559842,12.00309487182744],[5.522725293466692,12.00309487182744],[5.522725293466692,11.779954455929795],[4.592973560559842,11.779954455929795],[4.592973560559842,12.00309487182744]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-04> ;
+    resplan:sourceId "EX-25" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-26> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-26" ;
+    resplan:area 1.03 ;
+    resplan:bboxMaxX 0.04 ;
+    resplan:bboxMaxY 11.78 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 7.15 ;
+    resplan:centroidX -0.07 ;
+    resplan:centroidY 9.46 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,11.779954455929795],[0.03719006931627402,7.14979082605368],[-0.1859503465813701,7.14979082605368],[-0.1859503465813701,11.779954455929795],[0.03719006931627402,11.779954455929795]]]}" ;
+    resplan:sourceId "EX-26" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-28> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-28" ;
+    resplan:area 0.42 ;
+    resplan:bboxMaxX 0.04 ;
+    resplan:bboxMaxY 6.93 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 5.05 ;
+    resplan:centroidX -0.07 ;
+    resplan:centroidY 5.99 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,6.926650410156037],[0.03719006931627402,5.048551909684198],[-0.1859503465813701,5.048551909684198],[-0.1859503465813701,6.926650410156037],[0.03719006931627402,6.926650410156037]]]}" ;
+    resplan:sourceId "EX-28" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-30> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-30" ;
+    resplan:area 0.68 ;
+    resplan:bboxMaxX 0.04 ;
+    resplan:bboxMaxY 4.83 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 1.79 ;
+    resplan:centroidX -0.07 ;
+    resplan:centroidY 3.31 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,4.825411493786554],[0.03719006931627402,1.7944208445102217],[-0.1859503465813701,1.7944208445102217],[-0.1859503465813701,4.825411493786554],[0.03719006931627402,4.825411493786554]]]}" ;
+    resplan:sourceId "EX-30" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-31> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-31" ;
+    resplan:area 0.14 ;
+    resplan:bboxMaxX 0.67 ;
+    resplan:bboxMaxY 1.79 ;
+    resplan:bboxMinX 0.04 ;
+    resplan:bboxMinY 1.57 ;
+    resplan:centroidX 0.35 ;
+    resplan:centroidY 1.68 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,1.7944208445102217],[0.6694212476929323,1.7944208445102217],[0.6694212476929323,1.5712804286125772],[0.03719006931627402,1.5712804286125772],[0.03719006931627402,1.7944208445102217]]]}" ;
+    resplan:hostsOpening _:N590524ce6e054ffdb7cc629debd575c9 ;
+    resplan:sourceId "EX-31" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-33> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-33" ;
+    resplan:area 0.34 ;
+    resplan:bboxMaxX 1.34 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 11.78 ;
+    resplan:centroidX 0.58 ;
+    resplan:centroidY 11.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[-0.1859503465813701,11.779954455929795],[-0.1859503465813701,12.00309487182744],[1.3388424953858646,12.00309487182744],[1.3388424953858646,11.779954455929795],[0.03719006931627402,11.779954455929795],[-0.1859503465813701,11.779954455929795]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-05> ;
+    resplan:sourceId "EX-33" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#DO-01> a resplan:Door ;
+    rdfs:label "DO-01" ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 8.35 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 7.46 ;
+    resplan:bboxMinY 4.29 ;
+    resplan:centroidX 7.9 ;
+    resplan:centroidY 4.4 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#BED-01>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.4566088979129415,4.286155488700581],[7.4566088979129415,4.509295904598225],[8.349170561503517,4.509295904598225],[8.349170561503517,4.286155488700581],[7.4566088979129415,4.286155488700581]]]}" ;
+    resplan:sourceId "DO-01" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 0.89 .
+
+<http://resplan.org/resplan/plan_00001#DO-02> a resplan:Door ;
+    rdfs:label "DO-02" ;
+    resplan:area 0.21 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 2.3 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 2.77 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#BED-01>,
+        <http://resplan.org/resplan/plan_00001#BTH-03> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.4566088979129415,2.296486780279921],[7.233468482015297,2.296486780279921],[7.233468482015297,3.2448335478449084],[7.4566088979129415,3.2448335478449084],[7.4566088979129415,2.296486780279921]]]}" ;
+    resplan:sourceId "DO-02" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 0.94 .
+
+<http://resplan.org/resplan/plan_00001#DO-03> a resplan:Door ;
+    rdfs:label "DO-03" ;
+    resplan:area 0.21 ;
+    resplan:bboxMaxX 5.71 ;
+    resplan:bboxMaxY 8.15 ;
+    resplan:bboxMinX 4.76 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 5.23 ;
+    resplan:centroidY 8.04 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#BED-02>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.760328872483075,7.930782281695435],[4.760328872483075,8.153922697593078],[5.708675640048063,8.153922697593078],[5.708675640048063,7.930782281695435],[4.760328872483075,7.930782281695435]]]}" ;
+    resplan:sourceId "DO-03" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 0.95 .
+
+<http://resplan.org/resplan/plan_00001#DO-04> a resplan:Door ;
+    rdfs:label "DO-04" ;
+    resplan:area 0.22 ;
+    resplan:bboxMaxX 5.21 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 4.24 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 4.72 ;
+    resplan:centroidY 3.36 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#BTH-02>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.239667902055238,3.2448335478449084],[4.239667902055238,3.4679739637425526],[5.206609704278363,3.4679739637425526],[5.206609704278363,3.2448335478449084],[4.239667902055238,3.2448335478449084]]]}" ;
+    resplan:sourceId "DO-04" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 0.97 .
+
+<http://resplan.org/resplan/plan_00001#DO-05> a resplan:Door ;
+    rdfs:label "DO-05" ;
+    resplan:area 0.22 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 6.13 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 5.16 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 5.64 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#BED-03>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.592973560559842,5.16012211763302],[4.369833144662198,5.16012211763302],[4.369833144662198,6.127063919856145],[4.592973560559842,6.127063919856145],[4.592973560559842,5.16012211763302]]]}" ;
+    resplan:sourceId "DO-05" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 0.97 .
+
+<http://resplan.org/resplan/plan_00001#DO-06> a resplan:Door ;
+    rdfs:label "DO-06" ;
+    resplan:area 0.22 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 4.83 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.86 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 4.34 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#KIT-01>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.85846969156343],[3.347106238464662,3.85846969156343],[3.347106238464662,4.825411493786554],[3.570246654362306,4.825411493786554],[3.570246654362306,3.85846969156343]]]}" ;
+    resplan:sourceId "DO-06" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 0.97 .
+
+<http://resplan.org/resplan/plan_00001#DO-07> a resplan:Door ;
+    rdfs:label "DO-07" ;
+    resplan:area 0.21 ;
+    resplan:bboxMaxX 2.85 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX 1.9 ;
+    resplan:bboxMinY 6.93 ;
+    resplan:centroidX 2.37 ;
+    resplan:centroidY 7.04 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#BED-03>,
+        <http://resplan.org/resplan/plan_00001#BTH-04> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[1.896693535129975,6.926650410156037],[1.896693535129975,7.14979082605368],[2.8450403026949624,7.14979082605368],[2.8450403026949624,6.926650410156037],[1.896693535129975,6.926650410156037]]]}" ;
+    resplan:sourceId "DO-07" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 0.95 .
+
+<http://resplan.org/resplan/plan_00001#DO-08> a resplan:Door ;
+    rdfs:label "DO-08" ;
+    resplan:area 0.21 ;
+    resplan:bboxMaxX 10.82 ;
+    resplan:bboxMaxY 10.74 ;
+    resplan:bboxMinX 9.87 ;
+    resplan:bboxMinY 10.52 ;
+    resplan:centroidX 10.35 ;
+    resplan:centroidY 10.63 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#BAL-01>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[10.82231017103574,10.515492099176479],[9.873963403470754,10.515492099176479],[9.873963403470754,10.738632515074125],[10.82231017103574,10.738632515074125],[10.82231017103574,10.515492099176479]]]}" ;
+    resplan:sourceId "DO-08" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 0.95 .
+
+<http://resplan.org/resplan/plan_00001#EX-02> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-02" ;
+    resplan:area 1.1 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 10.52 ;
+    resplan:bboxMinX 12.27 ;
+    resplan:bboxMinY 5.61 ;
+    resplan:centroidX 12.38 ;
+    resplan:centroidY 8.06 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[12.49586329026807,10.515492099176479],[12.49586329026807,5.6064029494283085],[12.272722874370427,5.6064029494283085],[12.272722874370427,10.515492099176479],[12.49586329026807,10.515492099176479]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#FR-01> ;
+    resplan:sourceId "EX-02" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-06> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-06" ;
+    resplan:area 0.38 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 0.53 ;
+    resplan:bboxMinX 10.79 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 11.64 ;
+    resplan:centroidY 0.42 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[12.49586329026807,0.5299584877569048],[12.49586329026807,0.3068180718592607],[10.785120101719466,0.3068180718592607],[10.785120101719466,0.5299584877569048],[12.272722874370427,0.5299584877569048],[12.49586329026807,0.5299584877569048]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-01> ;
+    resplan:sourceId "EX-06" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-10> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-10" ;
+    resplan:area 0.07 ;
+    resplan:bboxMaxX 9.93 ;
+    resplan:bboxMaxY 0.53 ;
+    resplan:bboxMinX 9.6 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 9.76 ;
+    resplan:centroidY 0.42 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[9.929748507445163,0.3068180718592607],[9.595037883598696,0.3068180718592607],[9.595037883598696,0.5299584877569048],[9.929748507445163,0.5299584877569048],[9.929748507445163,0.3068180718592607]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-01>,
+        <http://resplan.org/resplan/plan_00001#WI-02> ;
+    resplan:sourceId "EX-10" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-11> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-11" ;
+    resplan:area 0.17 ;
+    resplan:bboxMaxX 8.22 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 7.48 ;
+    resplan:bboxMinY 11.78 ;
+    resplan:centroidX 7.85 ;
+    resplan:centroidY 11.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.219005318896558,11.779954455929795],[7.475203932571079,11.779954455929795],[7.475203932571079,12.00309487182744],[8.219005318896558,12.00309487182744],[8.219005318896558,11.779954455929795]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-03> ;
+    resplan:sourceId "EX-11" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-18> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-18" ;
+    resplan:area 0.31 ;
+    resplan:bboxMaxX 3.35 ;
+    resplan:bboxMaxY 1.79 ;
+    resplan:bboxMinX 1.97 ;
+    resplan:bboxMinY 1.57 ;
+    resplan:centroidX 2.66 ;
+    resplan:centroidY 1.68 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.347106238464662,1.5712804286125772],[1.9710736737625232,1.5712804286125772],[1.9710736737625232,1.7944208445102217],[3.347106238464662,1.7944208445102217],[3.347106238464662,1.5712804286125772]]]}" ;
+    resplan:hostsOpening _:N590524ce6e054ffdb7cc629debd575c9 ;
+    resplan:sourceId "EX-18" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-22> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-22" ;
+    resplan:area 0.07 ;
+    resplan:bboxMaxX 6.6 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 6.3 ;
+    resplan:bboxMinY 11.78 ;
+    resplan:centroidX 6.45 ;
+    resplan:centroidY 11.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[6.601237303638639,11.779954455929795],[6.303716749108447,11.779954455929795],[6.303716749108447,12.00309487182744],[6.601237303638639,12.00309487182744],[6.601237303638639,11.779954455929795]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-03>,
+        <http://resplan.org/resplan/plan_00001#WI-04> ;
+    resplan:sourceId "EX-22" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-23> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-23" ;
+    resplan:area 0.25 ;
+    resplan:bboxMaxX 4.37 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 3.25 ;
+    resplan:bboxMinY 11.78 ;
+    resplan:centroidX 3.81 ;
+    resplan:centroidY 11.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.369833144662198,11.779954455929795],[3.254131065173977,11.779954455929795],[3.254131065173977,12.00309487182744],[4.369833144662198,12.00309487182744],[4.369833144662198,11.779954455929795]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-05> ;
+    resplan:sourceId "EX-23" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#FR-01> a resplan:Door,
+        resplan:FrontDoor ;
+    rdfs:label "FR-01" ;
+    resplan:area 0.24 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 5.61 ;
+    resplan:bboxMinX 12.27 ;
+    resplan:bboxMinY 4.51 ;
+    resplan:centroidX 12.38 ;
+    resplan:centroidY 5.06 ;
+    resplan:connectsSpace <http://resplan.org/resplan/plan_00001#LIV-01>,
+        <http://resplan.org/resplan/plan_00001#OUT-0000> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[12.49586329026807,4.509295904598225],[12.272722874370427,4.509295904598225],[12.272722874370427,5.6064029494283085],[12.49586329026807,5.6064029494283085],[12.49586329026807,4.509295904598225]]]}" ;
+    resplan:sourceId "FR-01" ;
+    resplan:wallDepth 4.64 ;
+    resplan:width 1.1 .
+
+<http://resplan.org/resplan/plan_00001#OUT-0000> a resplan:EntryNode,
+        resplan:Room,
+        bot:Space ;
+    rdfs:label "Outside" ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-02> ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#LIV-01> .
+
+<http://resplan.org/resplan/plan_00001#EX-01> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-01" ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 10.74 ;
+    resplan:bboxMinX 10.82 ;
+    resplan:bboxMinY 10.52 ;
+    resplan:centroidX 11.66 ;
+    resplan:centroidY 10.63 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[10.82231017103574,10.515492099176479],[10.82231017103574,10.738632515074125],[12.272722874370427,10.738632515074125],[12.49586329026807,10.738632515074125],[12.49586329026807,10.515492099176479],[12.272722874370427,10.515492099176479],[10.82231017103574,10.515492099176479]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-08> ;
+    resplan:sourceId "EX-01" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-08> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-08" ;
+    resplan:area 0.24 ;
+    resplan:bboxMaxX 12.5 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 11.44 ;
+    resplan:bboxMinY 4.29 ;
+    resplan:centroidX 11.97 ;
+    resplan:centroidY 4.4 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[11.435946314754261,4.286155488700581],[11.435946314754261,4.509295904598225],[12.49586329026807,4.509295904598225],[12.49586329026807,4.286155488700581],[11.659086730651905,4.286155488700581],[11.435946314754261,4.286155488700581]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#FR-01> ;
+    resplan:sourceId "EX-08" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-09> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-09" ;
+    resplan:area 0.04 ;
+    resplan:bboxMaxX 11.44 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 11.25 ;
+    resplan:bboxMinY 4.29 ;
+    resplan:centroidX 11.34 ;
+    resplan:centroidY 4.4 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[11.435946314754261,4.286155488700581],[11.249995968172891,4.286155488700581],[11.249995968172891,4.509295904598225],[11.435946314754261,4.509295904598225],[11.435946314754261,4.286155488700581]]]}" ;
+    resplan:sourceId "EX-09" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-12> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-12" ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 8.44 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 8.22 ;
+    resplan:bboxMinY 10.74 ;
+    resplan:centroidX 8.33 ;
+    resplan:centroidY 11.37 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.219005318896558,12.00309487182744],[8.442145734794202,12.00309487182744],[8.442145734794202,10.738632515074125],[8.219005318896558,10.738632515074125],[8.219005318896558,11.779954455929795],[8.219005318896558,12.00309487182744]]]}" ;
+    resplan:sourceId "EX-12" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-13> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-13" ;
+    resplan:area 0.32 ;
+    resplan:bboxMaxX 9.87 ;
+    resplan:bboxMaxY 10.74 ;
+    resplan:bboxMinX 8.44 ;
+    resplan:bboxMinY 10.52 ;
+    resplan:centroidX 9.16 ;
+    resplan:centroidY 10.63 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.442145734794202,10.738632515074125],[9.873963403470754,10.738632515074125],[9.873963403470754,10.515492099176479],[8.442145734794202,10.515492099176479],[8.442145734794202,10.738632515074125]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-08> ;
+    resplan:sourceId "EX-13" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-14> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-14" ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 8.44 ;
+    resplan:bboxMaxY 10.74 ;
+    resplan:bboxMinX 8.22 ;
+    resplan:bboxMinY 10.33 ;
+    resplan:centroidX 8.33 ;
+    resplan:centroidY 10.53 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.442145734794202,10.515492099176479],[8.442145734794202,10.32954175259511],[8.219005318896558,10.32954175259511],[8.219005318896558,10.738632515074125],[8.442145734794202,10.738632515074125],[8.442145734794202,10.515492099176479]]]}" ;
+    resplan:sourceId "EX-14" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-16> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-16" ;
+    resplan:area 0.39 ;
+    resplan:bboxMaxX 5.3 ;
+    resplan:bboxMaxY 0.53 ;
+    resplan:bboxMinX 3.57 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 4.43 ;
+    resplan:centroidY 0.42 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,0.3068180718592607],[3.570246654362306,0.3068180718592607],[3.570246654362306,0.5299584877569048],[5.299584877569048,0.5299584877569048],[5.299584877569048,0.3068180718592607]]]}" ;
+    resplan:sourceId "EX-16" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-20> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-20" ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 0.72 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 0.51 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.233468482015297,0.5299584877569048],[7.233468482015297,0.7159088343382749],[7.4566088979129415,0.7159088343382749],[7.4566088979129415,0.5299584877569048],[7.4566088979129415,0.3068180718592607],[7.233468482015297,0.3068180718592607],[7.233468482015297,0.5299584877569048]]]}" ;
+    resplan:sourceId "EX-20" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-24> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-24" ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 11.59 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 11.8 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.369833144662198,12.00309487182744],[4.592973560559842,12.00309487182744],[4.592973560559842,11.779954455929795],[4.592973560559842,11.594004109348425],[4.369833144662198,11.594004109348425],[4.369833144662198,11.779954455929795],[4.369833144662198,12.00309487182744]]]}" ;
+    resplan:sourceId "EX-24" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-27> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-27" ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 0.22 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 6.93 ;
+    resplan:centroidX 0.02 ;
+    resplan:centroidY 7.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,7.14979082605368],[0.2231404158976441,7.14979082605368],[0.2231404158976441,6.926650410156037],[0.03719006931627402,6.926650410156037],[-0.1859503465813701,6.926650410156037],[-0.1859503465813701,7.14979082605368],[0.03719006931627402,7.14979082605368]]]}" ;
+    resplan:sourceId "EX-27" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-29> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-29" ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 0.22 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX -0.19 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 0.02 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.03719006931627402,5.048551909684198],[0.2231404158976441,5.048551909684198],[0.2231404158976441,4.825411493786554],[0.03719006931627402,4.825411493786554],[-0.1859503465813701,4.825411493786554],[-0.1859503465813701,5.048551909684198],[0.03719006931627402,5.048551909684198]]]}" ;
+    resplan:sourceId "EX-29" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-01> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-01" ;
+    resplan:area 0.65 ;
+    resplan:bboxMaxX 11.25 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 8.35 ;
+    resplan:bboxMinY 4.29 ;
+    resplan:centroidX 9.8 ;
+    resplan:centroidY 4.4 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.349170561503517,4.286155488700581],[8.349170561503517,4.509295904598225],[11.249995968172891,4.509295904598225],[11.249995968172891,4.286155488700581],[8.349170561503517,4.286155488700581]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-01> ;
+    resplan:sourceId "IN-01" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-02> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-02" ;
+    resplan:area 0.54 ;
+    resplan:bboxMaxX 8.44 ;
+    resplan:bboxMaxY 10.33 ;
+    resplan:bboxMinX 8.22 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 8.33 ;
+    resplan:centroidY 9.13 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.219005318896558,10.32954175259511],[8.442145734794202,10.32954175259511],[8.442145734794202,7.930782281695435],[8.219005318896558,7.930782281695435],[8.219005318896558,8.153922697593078],[8.219005318896558,10.32954175259511]]]}" ;
+    resplan:sourceId "IN-02" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-03> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-03" ;
+    resplan:area 0.56 ;
+    resplan:bboxMaxX 8.22 ;
+    resplan:bboxMaxY 8.15 ;
+    resplan:bboxMinX 5.71 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 6.96 ;
+    resplan:centroidY 8.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.219005318896558,7.930782281695435],[5.708675640048063,7.930782281695435],[5.708675640048063,8.153922697593078],[8.219005318896558,8.153922697593078],[8.219005318896558,7.930782281695435]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-03> ;
+    resplan:sourceId "IN-03" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-07> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-07" ;
+    resplan:area 0.35 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 2.3 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 0.72 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 1.51 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.233468482015297,2.296486780279921],[7.4566088979129415,2.296486780279921],[7.4566088979129415,0.7159088343382749],[7.233468482015297,0.7159088343382749],[7.233468482015297,2.296486780279921]]]}" ;
+    resplan:sourceId "IN-07" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-08> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-08" ;
+    resplan:area 0.77 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 11.59 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 8.15 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 9.87 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.369833144662198,11.594004109348425],[4.592973560559842,11.594004109348425],[4.592973560559842,8.153922697593078],[4.369833144662198,8.153922697593078],[4.369833144662198,11.594004109348425]]]}" ;
+    resplan:sourceId "IN-08" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-10> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-10" ;
+    resplan:area 0.4 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 7.93 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 6.13 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 7.03 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.592973560559842,7.930782281695435],[4.592973560559842,6.127063919856145],[4.369833144662198,6.127063919856145],[4.369833144662198,7.930782281695435],[4.592973560559842,7.930782281695435]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-05> ;
+    resplan:sourceId "IN-10" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-11> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-11" ;
+    resplan:area 0.47 ;
+    resplan:bboxMaxX 3.14 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 5.05 ;
+    resplan:centroidX 3.03 ;
+    resplan:centroidY 6.1 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[2.9194204413275107,5.048551909684198],[2.9194204413275107,6.926650410156037],[2.9194204413275107,7.14979082605368],[3.1425608572251544,7.14979082605368],[3.1425608572251544,5.048551909684198],[2.9194204413275107,5.048551909684198]]]}" ;
+    resplan:sourceId "IN-11" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-13> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-13" ;
+    resplan:area 0.02 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.16 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 5.05 ;
+    resplan:centroidX 4.48 ;
+    resplan:centroidY 5.1 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.369833144662198,5.048551909684198],[4.369833144662198,5.16012211763302],[4.592973560559842,5.16012211763302],[4.592973560559842,5.048551909684198],[4.369833144662198,5.048551909684198]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-05> ;
+    resplan:sourceId "IN-13" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-14> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-14" ;
+    resplan:area 0.02 ;
+    resplan:bboxMaxX 2.92 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX 2.85 ;
+    resplan:bboxMinY 6.93 ;
+    resplan:centroidX 2.88 ;
+    resplan:centroidY 7.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[2.9194204413275107,6.926650410156037],[2.8450403026949624,6.926650410156037],[2.8450403026949624,7.14979082605368],[2.9194204413275107,7.14979082605368],[2.9194204413275107,6.926650410156037]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-07> ;
+    resplan:sourceId "IN-14" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-15> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-15" ;
+    resplan:area 0.6 ;
+    resplan:bboxMaxX 2.92 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 0.22 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 1.57 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[2.9194204413275107,4.825411493786554],[0.2231404158976441,4.825411493786554],[0.2231404158976441,5.048551909684198],[2.9194204413275107,5.048551909684198],[2.9194204413275107,4.825411493786554]]]}" ;
+    resplan:sourceId "IN-15" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-16> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-16" ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 3.86 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.47 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 3.66 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.347106238464662,3.85846969156343],[3.570246654362306,3.85846969156343],[3.570246654362306,3.4679739637425526],[3.347106238464662,3.4679739637425526],[3.347106238464662,3.85846969156343]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-06> ;
+    resplan:sourceId "IN-16" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-19> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-19" ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 1.9 ;
+    resplan:bboxMaxY 7.15 ;
+    resplan:bboxMinX 0.22 ;
+    resplan:bboxMinY 6.93 ;
+    resplan:centroidX 1.06 ;
+    resplan:centroidY 7.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[1.896693535129975,7.14979082605368],[1.896693535129975,6.926650410156037],[0.2231404158976441,6.926650410156037],[0.2231404158976441,7.14979082605368],[1.896693535129975,7.14979082605368]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-07> ;
+    resplan:sourceId "IN-19" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#WI-01> a resplan:Window ;
+    rdfs:label "WI-01" ;
+    resplan:area 0.19 ;
+    resplan:bboxMaxX 10.79 ;
+    resplan:bboxMaxY 0.53 ;
+    resplan:bboxMinX 9.93 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 10.36 ;
+    resplan:centroidY 0.42 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[9.929748507445163,0.3068180718592607],[9.929748507445163,0.5299584877569048],[10.785120101719466,0.5299584877569048],[10.785120101719466,0.3068180718592607],[9.929748507445163,0.3068180718592607]]]}" ;
+    resplan:primaryWall <http://resplan.org/resplan/plan_00001#EX-06> ;
+    resplan:sourceId "WI-01" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#WI-02> a resplan:Window ;
+    rdfs:label "WI-02" ;
+    resplan:area 0.16 ;
+    resplan:bboxMaxX 9.6 ;
+    resplan:bboxMaxY 0.53 ;
+    resplan:bboxMinX 8.89 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 9.24 ;
+    resplan:centroidY 0.42 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.88842656658949,0.3068180718592607],[8.88842656658949,0.5299584877569048],[9.595037883598696,0.5299584877569048],[9.595037883598696,0.3068180718592607],[8.88842656658949,0.3068180718592607]]]}" ;
+    resplan:primaryWall <http://resplan.org/resplan/plan_00001#EX-10> ;
+    resplan:sourceId "WI-02" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#WI-03> a resplan:Window ;
+    rdfs:label "WI-03" ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 7.48 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 6.6 ;
+    resplan:bboxMinY 11.78 ;
+    resplan:centroidX 7.04 ;
+    resplan:centroidY 11.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[6.601237303638639,11.779954455929795],[6.601237303638639,12.00309487182744],[7.475203932571079,12.00309487182744],[7.475203932571079,11.779954455929795],[6.601237303638639,11.779954455929795]]]}" ;
+    resplan:primaryWall <http://resplan.org/resplan/plan_00001#EX-11> ;
+    resplan:sourceId "WI-03" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#WI-04> a resplan:Window ;
+    rdfs:label "WI-04" ;
+    resplan:area 0.17 ;
+    resplan:bboxMaxX 6.3 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 5.52 ;
+    resplan:bboxMinY 11.78 ;
+    resplan:centroidX 5.91 ;
+    resplan:centroidY 11.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.522725293466692,11.779954455929795],[5.522725293466692,12.00309487182744],[6.303716749108447,12.00309487182744],[6.303716749108447,11.779954455929795],[5.522725293466692,11.779954455929795]]]}" ;
+    resplan:primaryWall <http://resplan.org/resplan/plan_00001#EX-22> ;
+    resplan:sourceId "WI-04" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#WI-05> a resplan:Window ;
+    rdfs:label "WI-05" ;
+    resplan:area 0.43 ;
+    resplan:bboxMaxX 3.25 ;
+    resplan:bboxMaxY 12.0 ;
+    resplan:bboxMinX 1.34 ;
+    resplan:bboxMinY 11.78 ;
+    resplan:centroidX 2.3 ;
+    resplan:centroidY 11.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[1.3388424953858646,11.779954455929795],[1.3388424953858646,12.00309487182744],[3.254131065173977,12.00309487182744],[3.254131065173977,11.779954455929795],[1.3388424953858646,11.779954455929795]]]}" ;
+    resplan:primaryWall <http://resplan.org/resplan/plan_00001#EX-23> ;
+    resplan:sourceId "WI-05" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-15> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-15" ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 0.72 ;
+    resplan:bboxMinX 5.3 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 5.41 ;
+    resplan:centroidY 0.51 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,0.7159088343382749],[5.522725293466692,0.7159088343382749],[5.522725293466692,0.5299584877569048],[5.522725293466692,0.3068180718592607],[5.299584877569048,0.3068180718592607],[5.299584877569048,0.5299584877569048],[5.299584877569048,0.7159088343382749]]]}" ;
+    resplan:sourceId "EX-15" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#EX-17> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-17" ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 1.98 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 0.31 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 1.14 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,0.3068180718592607],[3.347106238464662,0.3068180718592607],[3.347106238464662,1.5712804286125772],[3.347106238464662,1.7944208445102217],[3.347106238464662,1.9803711910915918],[3.570246654362306,1.9803711910915918],[3.570246654362306,0.5299584877569048],[3.570246654362306,0.3068180718592607]]]}" ;
+    resplan:sourceId "EX-17" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-05> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-05" ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 7.46 ;
+    resplan:bboxMaxY 4.51 ;
+    resplan:bboxMinX 7.23 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 7.35 ;
+    resplan:centroidY 3.88 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.233468482015297,3.4679739637425526],[7.233468482015297,4.509295904598225],[7.4566088979129415,4.509295904598225],[7.4566088979129415,3.2448335478449084],[7.233468482015297,3.2448335478449084],[7.233468482015297,3.4679739637425526]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-01>,
+        <http://resplan.org/resplan/plan_00001#DO-02> ;
+    resplan:sourceId "IN-05" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-06> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-06" ;
+    resplan:area 0.56 ;
+    resplan:bboxMaxX 5.52 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 5.3 ;
+    resplan:bboxMinY 0.72 ;
+    resplan:centroidX 5.41 ;
+    resplan:centroidY 1.98 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.522725293466692,3.2448335478449084],[5.522725293466692,0.7159088343382749],[5.299584877569048,0.7159088343382749],[5.299584877569048,3.2448335478449084],[5.522725293466692,3.2448335478449084]]]}" ;
+    resplan:sourceId "IN-06" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-09> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-09" ;
+    resplan:area 0.09 ;
+    resplan:bboxMaxX 4.76 ;
+    resplan:bboxMaxY 8.15 ;
+    resplan:bboxMinX 4.37 ;
+    resplan:bboxMinY 7.93 ;
+    resplan:centroidX 4.57 ;
+    resplan:centroidY 8.04 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[4.592973560559842,8.153922697593078],[4.760328872483075,8.153922697593078],[4.760328872483075,7.930782281695435],[4.592973560559842,7.930782281695435],[4.369833144662198,7.930782281695435],[4.369833144662198,8.153922697593078],[4.592973560559842,8.153922697593078]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-03> ;
+    resplan:sourceId "IN-09" ;
+    resplan:wallDepth 4.64 .
+
+<http://resplan.org/resplan/plan_00001#IN-18> a resplan:InteriorWall,
+        ifc:Wall ;
+    rdfs:label "IN-18" ;
+    resplan:area 0.28 ;
+    resplan:bboxMaxX 3.57 ;
+    resplan:bboxMaxY 3.24 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 1.98 ;
+    resplan:centroidX 3.46 ;
+    resplan:centroidY 2.61 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.2448335478449084],[3.570246654362306,1.9803711910915918],[3.347106238464662,1.9803711910915918],[3.347106238464662,3.2448335478449084],[3.570246654362306,3.2448335478449084]]]}" ;
+    resplan:sourceId "IN-18" ;
+    resplan:wallDepth 4.64 .
 
 <http://resplan.org/resplan/plan_00001#BAL-01> a resplan:Room,
         bot:Space ;
     rdfs:label "balcony" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BED-02>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 4.77 ;
     resplan:bboxMaxX 12.27 ;
     resplan:bboxMaxY 11.98 ;
     resplan:bboxMinX 8.44 ;
@@ -32,211 +1792,63 @@
     resplan:centroidX 10.36 ;
     resplan:centroidY 11.36 ;
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.442145734794202,10.738632515074125],[8.442145734794202,11.984499837169304],[12.272722874370427,11.984499837169304],[12.272722874370427,10.775822584390397],[12.272722874370427,10.738632515074125],[11.733466869284454,10.738632515074125],[10.82231017103574,10.738632515074125],[9.873963403470754,10.738632515074125],[8.96280670522204,10.738632515074125],[8.442145734794202,10.738632515074125]]]}" ;
     resplan:hasRoomType resplan:Balcony ;
-    resplan:roomArea 4.77 .
+    resplan:roomArea 4.77 ;
+    resplan:sourceId "BAL-01" .
 
-<http://resplan.org/resplan/plan_00001#BED-02> a resplan:Room,
-        bot:Space ;
-    rdfs:label "bedroom" ;
-    resplan:bboxMaxX 8.26 ;
-    resplan:bboxMaxY 11.82 ;
-    resplan:bboxMinX 4.56 ;
-    resplan:bboxMinY 8.12 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-11>,
-        <http://resplan.org/resplan/plan_00001#EX-12>,
-        <http://resplan.org/resplan/plan_00001#EX-14>,
-        <http://resplan.org/resplan/plan_00001#EX-22>,
-        <http://resplan.org/resplan/plan_00001#EX-24>,
-        <http://resplan.org/resplan/plan_00001#EX-25>,
-        <http://resplan.org/resplan/plan_00001#IN-02>,
-        <http://resplan.org/resplan/plan_00001#IN-03>,
-        <http://resplan.org/resplan/plan_00001#IN-08>,
-        <http://resplan.org/resplan/plan_00001#IN-09> ;
-    resplan:centroidX 6.41 ;
-    resplan:centroidY 9.97 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#LIV-01> ;
-    resplan:hasRoomType resplan:Bedroom ;
-    resplan:roomArea 13.69 .
-
-<http://resplan.org/resplan/plan_00001#BTH-02> a resplan:Room,
-        bot:Space ;
-    rdfs:label "bathroom" ;
-    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BTH-01> ;
-    resplan:bboxMaxX 5.34 ;
-    resplan:bboxMaxY 3.28 ;
-    resplan:bboxMinX 3.53 ;
-    resplan:bboxMinY 0.49 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-15>,
-        <http://resplan.org/resplan/plan_00001#EX-16>,
-        <http://resplan.org/resplan/plan_00001#EX-17>,
-        <http://resplan.org/resplan/plan_00001#IN-04>,
-        <http://resplan.org/resplan/plan_00001#IN-06>,
-        <http://resplan.org/resplan/plan_00001#IN-17>,
-        <http://resplan.org/resplan/plan_00001#IN-18> ;
-    resplan:centroidX 4.43 ;
-    resplan:centroidY 1.89 ;
-    resplan:hasRoomType resplan:Bathroom ;
-    resplan:roomArea 5.03 .
-
-<http://resplan.org/resplan/plan_00001#BTH-03> a resplan:Room,
-        bot:Space ;
-    rdfs:label "bathroom" ;
-    resplan:bboxMaxX 7.27 ;
-    resplan:bboxMaxY 3.28 ;
-    resplan:bboxMinX 5.49 ;
-    resplan:bboxMinY 0.49 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-15>,
-        <http://resplan.org/resplan/plan_00001#EX-19>,
-        <http://resplan.org/resplan/plan_00001#EX-20>,
-        <http://resplan.org/resplan/plan_00001#IN-04>,
-        <http://resplan.org/resplan/plan_00001#IN-05>,
-        <http://resplan.org/resplan/plan_00001#IN-06>,
-        <http://resplan.org/resplan/plan_00001#IN-07> ;
-    resplan:centroidX 6.38 ;
-    resplan:centroidY 1.89 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#BED-01> ;
-    resplan:hasRoomType resplan:Bathroom ;
-    resplan:roomArea 4.98 .
-
-<http://resplan.org/resplan/plan_00001#BTH-04> a resplan:Room,
-        bot:Space ;
-    rdfs:label "bathroom" ;
-    resplan:bboxMaxX 2.96 ;
-    resplan:bboxMaxY 6.96 ;
-    resplan:bboxMinX 0.0 ;
-    resplan:bboxMinY 5.01 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-27>,
-        <http://resplan.org/resplan/plan_00001#EX-28>,
-        <http://resplan.org/resplan/plan_00001#EX-29>,
-        <http://resplan.org/resplan/plan_00001#IN-11>,
-        <http://resplan.org/resplan/plan_00001#IN-12>,
-        <http://resplan.org/resplan/plan_00001#IN-14>,
-        <http://resplan.org/resplan/plan_00001#IN-15>,
-        <http://resplan.org/resplan/plan_00001#IN-19> ;
-    resplan:centroidX 1.48 ;
-    resplan:centroidY 5.99 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#BED-03> ;
-    resplan:hasRoomType resplan:Bathroom ;
-    resplan:roomArea 5.77 .
-
-<http://resplan.org/resplan/plan_00001#EX-02> a resplan:ExteriorWall,
+<http://resplan.org/resplan/plan_00001#IN-04> a resplan:InteriorWall,
         ifc:Wall ;
-    rdfs:label "EX-02" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#FR-01> .
+    rdfs:label "IN-04" ;
+    resplan:area 0.45 ;
+    resplan:bboxMaxX 7.23 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 5.21 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 6.22 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.299584877569048,3.2448335478449084],[5.206609704278363,3.2448335478449084],[5.206609704278363,3.4679739637425526],[7.233468482015297,3.4679739637425526],[7.233468482015297,3.2448335478449084],[5.522725293466692,3.2448335478449084],[5.299584877569048,3.2448335478449084]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-02>,
+        <http://resplan.org/resplan/plan_00001#DO-04> ;
+    resplan:sourceId "IN-04" ;
+    resplan:wallDepth 4.64 .
 
-<http://resplan.org/resplan/plan_00001#EX-03> a resplan:ExteriorWall,
+<http://resplan.org/resplan/plan_00001#IN-12> a resplan:InteriorWall,
         ifc:Wall ;
-    rdfs:label "EX-03" .
+    rdfs:label "IN-12" ;
+    resplan:area 0.37 ;
+    resplan:bboxMaxX 4.59 ;
+    resplan:bboxMaxY 5.05 ;
+    resplan:bboxMinX 2.92 ;
+    resplan:bboxMinY 4.83 ;
+    resplan:centroidX 3.76 ;
+    resplan:centroidY 4.94 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.1425608572251544,5.048551909684198],[4.369833144662198,5.048551909684198],[4.592973560559842,5.048551909684198],[4.592973560559842,4.825411493786554],[2.9194204413275107,4.825411493786554],[2.9194204413275107,5.048551909684198],[3.1425608572251544,5.048551909684198]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-06> ;
+    resplan:sourceId "IN-12" ;
+    resplan:wallDepth 4.64 .
 
-<http://resplan.org/resplan/plan_00001#EX-04> a resplan:ExteriorWall,
+<http://resplan.org/resplan/plan_00001#IN-17> a resplan:InteriorWall,
         ifc:Wall ;
-    rdfs:label "EX-04" .
-
-<http://resplan.org/resplan/plan_00001#EX-05> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-05" .
-
-<http://resplan.org/resplan/plan_00001#EX-06> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-06" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-01> .
-
-<http://resplan.org/resplan/plan_00001#EX-07> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-07" .
-
-<http://resplan.org/resplan/plan_00001#EX-10> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-10" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-01>,
-        <http://resplan.org/resplan/plan_00001#WI-02> .
-
-<http://resplan.org/resplan/plan_00001#EX-11> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-11" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-03> .
-
-<http://resplan.org/resplan/plan_00001#EX-18> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-18" .
-
-<http://resplan.org/resplan/plan_00001#EX-19> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-19" .
-
-<http://resplan.org/resplan/plan_00001#EX-21> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-21" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-02> .
-
-<http://resplan.org/resplan/plan_00001#EX-22> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-22" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-03>,
-        <http://resplan.org/resplan/plan_00001#WI-04> .
-
-<http://resplan.org/resplan/plan_00001#EX-23> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-23" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-05> .
-
-<http://resplan.org/resplan/plan_00001#EX-25> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-25" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-04> .
-
-<http://resplan.org/resplan/plan_00001#EX-26> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-26" .
-
-<http://resplan.org/resplan/plan_00001#EX-28> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-28" .
-
-<http://resplan.org/resplan/plan_00001#EX-30> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-30" .
-
-<http://resplan.org/resplan/plan_00001#EX-31> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-31" .
-
-<http://resplan.org/resplan/plan_00001#EX-33> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-33" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#WI-05> .
-
-<http://resplan.org/resplan/plan_00001#KIT-01> a resplan:Room,
-        bot:Space ;
-    rdfs:label "kitchen" ;
-    resplan:bboxMaxX 3.38 ;
-    resplan:bboxMaxY 4.83 ;
-    resplan:bboxMinX 0.04 ;
-    resplan:bboxMinY 1.76 ;
-    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-17>,
-        <http://resplan.org/resplan/plan_00001#EX-18>,
-        <http://resplan.org/resplan/plan_00001#EX-29>,
-        <http://resplan.org/resplan/plan_00001#EX-30>,
-        <http://resplan.org/resplan/plan_00001#EX-31>,
-        <http://resplan.org/resplan/plan_00001#IN-12>,
-        <http://resplan.org/resplan/plan_00001#IN-15>,
-        <http://resplan.org/resplan/plan_00001#IN-16>,
-        <http://resplan.org/resplan/plan_00001#IN-17>,
-        <http://resplan.org/resplan/plan_00001#IN-18> ;
-    resplan:centroidX 1.7 ;
-    resplan:centroidY 3.31 ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#LIV-01> ;
-    resplan:hasRoomType resplan:Kitchen ;
-    resplan:roomArea 10.12 .
-
-<http://resplan.org/resplan/plan_00001#OUT-0000> a resplan:Room,
-        bot:Space ;
-    rdfs:label "Outside" ;
-    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#LIV-01> .
+    rdfs:label "IN-17" ;
+    resplan:area 0.2 ;
+    resplan:bboxMaxX 4.24 ;
+    resplan:bboxMaxY 3.47 ;
+    resplan:bboxMinX 3.35 ;
+    resplan:bboxMinY 3.24 ;
+    resplan:centroidX 3.79 ;
+    resplan:centroidY 3.36 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[3.570246654362306,3.4679739637425526],[4.239667902055238,3.4679739637425526],[4.239667902055238,3.2448335478449084],[3.570246654362306,3.2448335478449084],[3.347106238464662,3.2448335478449084],[3.347106238464662,3.4679739637425526],[3.570246654362306,3.4679739637425526]]]}" ;
+    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-04> ;
+    resplan:sourceId "IN-17" ;
+    resplan:wallDepth 4.64 .
 
 <http://resplan.org/resplan/plan_00001#BED-01> a resplan:Room,
         bot:Space ;
     rdfs:label "bedroom" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BTH-03>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 17.72 ;
     resplan:bboxMaxX 12.31 ;
     resplan:bboxMaxY 4.32 ;
     resplan:bboxMinX 7.42 ;
@@ -257,12 +1869,171 @@
     resplan:centroidY 2.33 ;
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#BTH-03>,
         <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:expectedWindow true ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[7.419418828596668,4.323345558016855],[11.473136384070536,4.323345558016855],[11.473136384070536,3.114668305237949],[12.309912943686701,3.114668305237949],[12.309912943686701,0.4927684184406308],[7.419418828596668,0.4927684184406308],[7.419418828596668,4.323345558016855]]]}" ;
     resplan:hasRoomType resplan:Bedroom ;
-    resplan:roomArea 17.72 .
+    resplan:hasWindow <http://resplan.org/resplan/plan_00001#WI-01>,
+        <http://resplan.org/resplan/plan_00001#WI-02> ;
+    resplan:roomArea 17.72 ;
+    resplan:sourceId "BED-01" ;
+    resplan:windowOpening <http://resplan.org/resplan/plan_00001#WI-01>,
+        <http://resplan.org/resplan/plan_00001#WI-02> .
+
+<http://resplan.org/resplan/plan_00001#BED-02> a resplan:Room,
+        bot:Space ;
+    rdfs:label "bedroom" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BAL-01>,
+        <http://resplan.org/resplan/plan_00001#BED-03>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 13.69 ;
+    resplan:bboxMaxX 8.26 ;
+    resplan:bboxMaxY 11.82 ;
+    resplan:bboxMinX 4.56 ;
+    resplan:bboxMinY 8.12 ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-11>,
+        <http://resplan.org/resplan/plan_00001#EX-12>,
+        <http://resplan.org/resplan/plan_00001#EX-14>,
+        <http://resplan.org/resplan/plan_00001#EX-22>,
+        <http://resplan.org/resplan/plan_00001#EX-24>,
+        <http://resplan.org/resplan/plan_00001#EX-25>,
+        <http://resplan.org/resplan/plan_00001#IN-02>,
+        <http://resplan.org/resplan/plan_00001#IN-03>,
+        <http://resplan.org/resplan/plan_00001#IN-08>,
+        <http://resplan.org/resplan/plan_00001#IN-09> ;
+    resplan:centroidX 6.41 ;
+    resplan:centroidY 9.97 ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:expectedWindow true ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.256195388212832,11.81714452524607],[8.256195388212832,8.116732628276806],[4.5557834912435675,8.116732628276806],[4.5557834912435675,11.81714452524607],[8.256195388212832,11.81714452524607]]]}" ;
+    resplan:hasRoomType resplan:Bedroom ;
+    resplan:hasWindow <http://resplan.org/resplan/plan_00001#WI-03>,
+        <http://resplan.org/resplan/plan_00001#WI-04> ;
+    resplan:roomArea 13.69 ;
+    resplan:sourceId "BED-02" ;
+    resplan:windowOpening <http://resplan.org/resplan/plan_00001#WI-03>,
+        <http://resplan.org/resplan/plan_00001#WI-04> .
+
+<http://resplan.org/resplan/plan_00001#BTH-04> a resplan:Room,
+        bot:Space ;
+    rdfs:label "bathroom" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BED-03>,
+        <http://resplan.org/resplan/plan_00001#KIT-01>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 5.77 ;
+    resplan:bboxMaxX 2.96 ;
+    resplan:bboxMaxY 6.96 ;
+    resplan:bboxMinX 0.0 ;
+    resplan:bboxMinY 5.01 ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-27>,
+        <http://resplan.org/resplan/plan_00001#EX-28>,
+        <http://resplan.org/resplan/plan_00001#EX-29>,
+        <http://resplan.org/resplan/plan_00001#IN-11>,
+        <http://resplan.org/resplan/plan_00001#IN-12>,
+        <http://resplan.org/resplan/plan_00001#IN-14>,
+        <http://resplan.org/resplan/plan_00001#IN-15>,
+        <http://resplan.org/resplan/plan_00001#IN-19> ;
+    resplan:centroidX 1.48 ;
+    resplan:centroidY 5.99 ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#BED-03> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.338573742661021e-18,5.0113618403679245],[5.338573742661021e-18,6.96384047947231],[2.9566105106437846,6.96384047947231],[2.9566105106437846,5.0113618403679245],[5.338573742661021e-18,5.0113618403679245]]]}" ;
+    resplan:hasRoomType resplan:Bathroom ;
+    resplan:roomArea 5.77 ;
+    resplan:sourceId "BTH-04" .
+
+<http://resplan.org/resplan/plan_00001#BTH-03> a resplan:Room,
+        bot:Space ;
+    rdfs:label "bathroom" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BED-01>,
+        <http://resplan.org/resplan/plan_00001#BTH-01>,
+        <http://resplan.org/resplan/plan_00001#BTH-02>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 4.98 ;
+    resplan:bboxMaxX 7.27 ;
+    resplan:bboxMaxY 3.28 ;
+    resplan:bboxMinX 5.49 ;
+    resplan:bboxMinY 0.49 ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-15>,
+        <http://resplan.org/resplan/plan_00001#EX-19>,
+        <http://resplan.org/resplan/plan_00001#EX-20>,
+        <http://resplan.org/resplan/plan_00001#IN-04>,
+        <http://resplan.org/resplan/plan_00001#IN-05>,
+        <http://resplan.org/resplan/plan_00001#IN-06>,
+        <http://resplan.org/resplan/plan_00001#IN-07> ;
+    resplan:centroidX 6.38 ;
+    resplan:centroidY 1.89 ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#BED-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.485535224150418,0.4927684184406308],[5.485535224150418,3.282023617161182],[7.270658551331572,3.282023617161182],[7.270658551331572,0.4927684184406308],[5.485535224150418,0.4927684184406308]]]}" ;
+    resplan:hasRoomType resplan:Bathroom ;
+    resplan:roomArea 4.98 ;
+    resplan:sourceId "BTH-03" .
+
+<http://resplan.org/resplan/plan_00001#BTH-01> a resplan:Room,
+        bot:Space ;
+    rdfs:label "bathroom" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BTH-02>,
+        <http://resplan.org/resplan/plan_00001#BTH-03>,
+        <http://resplan.org/resplan/plan_00001#KIT-01>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 5.03 ;
+    resplan:bboxMaxX 5.34 ;
+    resplan:bboxMaxY 3.28 ;
+    resplan:bboxMinX 3.53 ;
+    resplan:bboxMinY 0.49 ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-15>,
+        <http://resplan.org/resplan/plan_00001#EX-16>,
+        <http://resplan.org/resplan/plan_00001#EX-17>,
+        <http://resplan.org/resplan/plan_00001#IN-04>,
+        <http://resplan.org/resplan/plan_00001#IN-06>,
+        <http://resplan.org/resplan/plan_00001#IN-17>,
+        <http://resplan.org/resplan/plan_00001#IN-18> ;
+    resplan:centroidX 4.43 ;
+    resplan:centroidY 1.89 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.336774946885322,0.4927684184406308],[3.533056585046032,0.4927684184406308],[3.533056585046032,3.282023617161182],[5.336774946885322,3.282023617161182],[5.336774946885322,0.4927684184406308]]]}" ;
+    resplan:hasRoomType resplan:Bathroom ;
+    resplan:roomArea 5.03 ;
+    resplan:sourceId "BTH-01" .
+
+<http://resplan.org/resplan/plan_00001#KIT-01> a resplan:Room,
+        bot:Space ;
+    rdfs:label "kitchen" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BED-03>,
+        <http://resplan.org/resplan/plan_00001#BTH-01>,
+        <http://resplan.org/resplan/plan_00001#BTH-02>,
+        <http://resplan.org/resplan/plan_00001#BTH-04>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 10.12 ;
+    resplan:bboxMaxX 3.38 ;
+    resplan:bboxMaxY 4.83 ;
+    resplan:bboxMinX 0.04 ;
+    resplan:bboxMinY 1.76 ;
+    resplan:boundedBy <http://resplan.org/resplan/plan_00001#EX-17>,
+        <http://resplan.org/resplan/plan_00001#EX-18>,
+        <http://resplan.org/resplan/plan_00001#EX-29>,
+        <http://resplan.org/resplan/plan_00001#EX-30>,
+        <http://resplan.org/resplan/plan_00001#EX-31>,
+        <http://resplan.org/resplan/plan_00001#IN-12>,
+        <http://resplan.org/resplan/plan_00001#IN-15>,
+        <http://resplan.org/resplan/plan_00001#IN-16>,
+        <http://resplan.org/resplan/plan_00001#IN-17>,
+        <http://resplan.org/resplan/plan_00001#IN-18> ;
+    resplan:centroidX 1.7 ;
+    resplan:centroidY 3.31 ;
+    resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:expectedWindow true ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[0.6694164391331886,1.7572259666342038],[0.6694164391331886,1.7944160359504782],[0.03718526075653051,1.7944160359504782],[0.037185260756530364,4.825416302346298],[3.3843011163406795,4.825416302346298],[3.3843011163406795,3.8584648830036863],[3.3471110470244057,3.8584648830036863],[3.3471110470244057,1.7944160359504782],[1.971078482322267,1.7944160359504782],[1.971078482322267,1.7572259666342038],[0.6694164391331886,1.7572259666342038]]]}" ;
+    resplan:hasRoomType resplan:Kitchen ;
+    resplan:roomArea 10.12 ;
+    resplan:sourceId "KIT-01" ;
+    resplan:windowOpening _:N590524ce6e054ffdb7cc629debd575c9 .
 
 <http://resplan.org/resplan/plan_00001#BED-03> a resplan:Room,
         bot:Space ;
     rdfs:label "bedroom" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BED-02>,
+        <http://resplan.org/resplan/plan_00001#BTH-04>,
+        <http://resplan.org/resplan/plan_00001#KIT-01>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 23.47 ;
     resplan:bboxMaxX 4.41 ;
     resplan:bboxMaxY 11.82 ;
     resplan:bboxMinX -0.0 ;
@@ -284,13 +2055,22 @@
     resplan:centroidY 9.07 ;
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#BTH-04>,
         <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:expectedWindow true ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[-5.338573742661021e-18,7.1126007567374065],[0.0,11.81714452524607],[4.407023213978472,11.81714452524607],[4.407023213978472,5.0113618403679245],[3.105370787908881,5.0113618403679245],[3.105370787908881,7.1126007567374065],[-5.338573742661021e-18,7.1126007567374065]]]}" ;
     resplan:hasRoomType resplan:Bedroom ;
-    resplan:roomArea 23.47 .
+    resplan:hasWindow <http://resplan.org/resplan/plan_00001#WI-05> ;
+    resplan:roomArea 23.47 ;
+    resplan:sourceId "BED-03" ;
+    resplan:windowOpening <http://resplan.org/resplan/plan_00001#WI-05> .
 
-<http://resplan.org/resplan/plan_00001#BTH-01> a resplan:Room,
+<http://resplan.org/resplan/plan_00001#BTH-02> a resplan:Room,
         bot:Space ;
     rdfs:label "bathroom" ;
-    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BTH-01>,
+        <http://resplan.org/resplan/plan_00001#BTH-03>,
+        <http://resplan.org/resplan/plan_00001#KIT-01>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:area 5.03 ;
     resplan:bboxMaxX 5.34 ;
     resplan:bboxMaxY 3.28 ;
     resplan:bboxMinX 3.53 ;
@@ -305,210 +2085,24 @@
     resplan:centroidX 4.43 ;
     resplan:centroidY 1.89 ;
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.336774946885322,0.4927684184406308],[3.533056585046032,0.4927684184406308],[3.533056585046032,3.282023617161182],[5.336774946885322,3.282023617161182],[5.336774946885322,0.4927684184406308]]]}" ;
     resplan:hasRoomType resplan:Bathroom ;
-    resplan:roomArea 5.03 .
-
-<http://resplan.org/resplan/plan_00001#DO-01> a resplan:Door ;
-    rdfs:label "DO-01" ;
-    resplan:width 0.89 .
-
-<http://resplan.org/resplan/plan_00001#DO-03> a resplan:Door ;
-    rdfs:label "DO-03" ;
-    resplan:width 0.95 .
-
-<http://resplan.org/resplan/plan_00001#DO-04> a resplan:Door ;
-    rdfs:label "DO-04" ;
-    resplan:width 0.97 .
-
-<http://resplan.org/resplan/plan_00001#DO-05> a resplan:Door ;
-    rdfs:label "DO-05" ;
-    resplan:width 0.97 .
-
-<http://resplan.org/resplan/plan_00001#DO-06> a resplan:Door ;
-    rdfs:label "DO-06" ;
-    resplan:width 0.97 .
-
-<http://resplan.org/resplan/plan_00001#DO-07> a resplan:Door ;
-    rdfs:label "DO-07" ;
-    resplan:width 0.95 .
-
-<http://resplan.org/resplan/plan_00001#DO-08> a resplan:Door ;
-    rdfs:label "DO-08" ;
-    resplan:width 0.95 .
-
-<http://resplan.org/resplan/plan_00001#EX-01> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-01" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-08> .
-
-<http://resplan.org/resplan/plan_00001#EX-08> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-08" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#FR-01> .
-
-<http://resplan.org/resplan/plan_00001#EX-09> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-09" .
-
-<http://resplan.org/resplan/plan_00001#EX-12> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-12" .
-
-<http://resplan.org/resplan/plan_00001#EX-13> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-13" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-08> .
-
-<http://resplan.org/resplan/plan_00001#EX-14> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-14" .
-
-<http://resplan.org/resplan/plan_00001#EX-16> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-16" .
-
-<http://resplan.org/resplan/plan_00001#EX-20> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-20" .
-
-<http://resplan.org/resplan/plan_00001#EX-24> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-24" .
-
-<http://resplan.org/resplan/plan_00001#EX-27> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-27" .
-
-<http://resplan.org/resplan/plan_00001#EX-29> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-29" .
-
-<http://resplan.org/resplan/plan_00001#FR-01> a resplan:Door,
-        resplan:FrontDoor ;
-    rdfs:label "FR-01" ;
-    resplan:width 1.1 .
-
-<http://resplan.org/resplan/plan_00001#IN-01> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-01" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-01> .
-
-<http://resplan.org/resplan/plan_00001#IN-02> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-02" .
-
-<http://resplan.org/resplan/plan_00001#IN-03> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-03" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-03> .
-
-<http://resplan.org/resplan/plan_00001#IN-07> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-07" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-02> .
-
-<http://resplan.org/resplan/plan_00001#IN-08> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-08" .
-
-<http://resplan.org/resplan/plan_00001#IN-10> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-10" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-05> .
-
-<http://resplan.org/resplan/plan_00001#IN-11> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-11" .
-
-<http://resplan.org/resplan/plan_00001#IN-13> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-13" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-05> .
-
-<http://resplan.org/resplan/plan_00001#IN-14> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-14" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-07> .
-
-<http://resplan.org/resplan/plan_00001#IN-15> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-15" .
-
-<http://resplan.org/resplan/plan_00001#IN-16> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-16" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-06> .
-
-<http://resplan.org/resplan/plan_00001#IN-19> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-19" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-07> .
-
-<http://resplan.org/resplan/plan_00001#WI-01> a resplan:Window ;
-    rdfs:label "WI-01" .
-
-<http://resplan.org/resplan/plan_00001#WI-02> a resplan:Window ;
-    rdfs:label "WI-02" .
-
-<http://resplan.org/resplan/plan_00001#WI-03> a resplan:Window ;
-    rdfs:label "WI-03" .
-
-<http://resplan.org/resplan/plan_00001#WI-04> a resplan:Window ;
-    rdfs:label "WI-04" .
-
-<http://resplan.org/resplan/plan_00001#WI-05> a resplan:Window ;
-    rdfs:label "WI-05" .
-
-<http://resplan.org/resplan/plan_00001#DO-02> a resplan:Door ;
-    rdfs:label "DO-02" ;
-    resplan:width 0.94 .
-
-<http://resplan.org/resplan/plan_00001#EX-15> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-15" .
-
-<http://resplan.org/resplan/plan_00001#EX-17> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-17" .
-
-<http://resplan.org/resplan/plan_00001#IN-05> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-05" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-01>,
-        <http://resplan.org/resplan/plan_00001#DO-02> .
-
-<http://resplan.org/resplan/plan_00001#IN-06> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-06" .
-
-<http://resplan.org/resplan/plan_00001#IN-09> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-09" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-03> .
-
-<http://resplan.org/resplan/plan_00001#IN-18> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-18" .
-
-<http://resplan.org/resplan/plan_00001#IN-04> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-04" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-02>,
-        <http://resplan.org/resplan/plan_00001#DO-04> .
-
-<http://resplan.org/resplan/plan_00001#IN-12> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-12" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-06> .
-
-<http://resplan.org/resplan/plan_00001#IN-17> a resplan:InteriorWall,
-        ifc:Wall ;
-    rdfs:label "IN-17" ;
-    resplan:hostsOpening <http://resplan.org/resplan/plan_00001#DO-04> .
+    resplan:roomArea 5.03 ;
+    resplan:sourceId "BTH-02" .
 
 <http://resplan.org/resplan/plan_00001#LIV-01> a resplan:Room,
         bot:Space ;
     rdfs:label "living" ;
+    resplan:adjacentTo <http://resplan.org/resplan/plan_00001#BAL-01>,
+        <http://resplan.org/resplan/plan_00001#BED-01>,
+        <http://resplan.org/resplan/plan_00001#BED-02>,
+        <http://resplan.org/resplan/plan_00001#BED-03>,
+        <http://resplan.org/resplan/plan_00001#BTH-01>,
+        <http://resplan.org/resplan/plan_00001#BTH-02>,
+        <http://resplan.org/resplan/plan_00001#BTH-03>,
+        <http://resplan.org/resplan/plan_00001#BTH-04>,
+        <http://resplan.org/resplan/plan_00001#KIT-01> ;
+    resplan:area 41.49 ;
     resplan:bboxMaxX 12.31 ;
     resplan:bboxMaxY 10.55 ;
     resplan:bboxMinX 3.53 ;
@@ -536,9 +2130,13 @@
         <http://resplan.org/resplan/plan_00001#BED-01>,
         <http://resplan.org/resplan/plan_00001#BED-02>,
         <http://resplan.org/resplan/plan_00001#BED-03>,
-        <http://resplan.org/resplan/plan_00001#BTH-01>,
+        <http://resplan.org/resplan/plan_00001#BTH-02>,
         <http://resplan.org/resplan/plan_00001#KIT-01>,
         <http://resplan.org/resplan/plan_00001#OUT-0000> ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[8.404955665477928,10.552682168492755],[12.3099129436867,10.552682168492755],[12.3099129436867,5.6064029494283085],[12.309912943686701,5.6064029494283085],[12.309912943686701,4.509295904598225],[12.3099129436867,4.509295904598225],[12.3099129436867,4.472105835281951],[7.270658551331572,4.472105835281951],[7.270658551331572,3.4307838944262783],[3.533056585046032,3.4307838944262783],[3.533056585046032,4.862601563102828],[4.5557834912435675,4.862601563102828],[4.5557834912435675,7.967972351011708],[8.404955665477928,7.967972351011708],[8.404955665477928,10.552682168492755]]]}" ;
     resplan:hasRoomType resplan:LivingRoom ;
-    resplan:roomArea 41.49 .
+    resplan:roomArea 41.49 ;
+    resplan:sourceId "LIV-01" .
+
+_:N590524ce6e054ffdb7cc629debd575c9 resplan:primaryWall <http://resplan.org/resplan/plan_00001#EX-18> .
 
