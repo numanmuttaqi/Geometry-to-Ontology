@@ -31,17 +31,17 @@
         "parking": 0
       },
       "structural_counts": {
-        "interior_wall": 8,
+        "interior_wall": 9,
         "exterior_wall": 26,
         "door": 6,
         "window": 4,
         "front_door": 1
       },
       "relationship_summary": {
-        "total_relationships": 102,
+        "total_relationships": 104,
         "adjacency_count": 13,
         "door_connections": 6,
-        "bounded_by_count": 60,
+        "bounded_by_count": 62,
         "hosts_opening_count": 20
       },
       "scale_factor": 0.0422,
@@ -566,6 +566,98 @@
     "structural": {
       "interior_wall": [
         {
+          "id": "IN-01",
+          "type": "interior_wall",
+          "geom": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  8.098858575240687,
+                  4.023247632743487
+                ],
+                [
+                  7.889405336225841,
+                  4.023247632743487
+                ],
+                [
+                  7.889405336225841,
+                  4.232700871758333
+                ],
+                [
+                  7.889405336225841,
+                  4.51197185711146
+                ],
+                [
+                  8.098858575240687,
+                  4.51197185711146
+                ],
+                [
+                  8.098858575240687,
+                  4.023247632743487
+                ]
+              ]
+            ]
+          },
+          "props": {
+            "area": 0.1,
+            "centroid": [
+              7.99,
+              4.27
+            ],
+            "bbox": [
+              7.89,
+              4.02,
+              8.1,
+              4.51
+            ]
+          }
+        },
+        {
+          "id": "IN-02",
+          "type": "interior_wall",
+          "geom": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  7.889405336225841,
+                  4.023247632743487
+                ],
+                [
+                  5.288694285124845,
+                  4.023247632743487
+                ],
+                [
+                  5.288694285124845,
+                  4.232700871758333
+                ],
+                [
+                  7.889405336225841,
+                  4.232700871758333
+                ],
+                [
+                  7.889405336225841,
+                  4.023247632743487
+                ]
+              ]
+            ]
+          },
+          "props": {
+            "area": 0.54,
+            "centroid": [
+              6.59,
+              4.13
+            ],
+            "bbox": [
+              5.29,
+              4.02,
+              7.89,
+              4.23
+            ]
+          }
+        },
+        {
           "id": "IN-03",
           "type": "interior_wall",
           "geom": {
@@ -605,50 +697,6 @@
               7.02,
               1.02,
               7.23,
-              3.05
-            ]
-          }
-        },
-        {
-          "id": "IN-04",
-          "type": "interior_wall",
-          "geom": {
-            "type": "Polygon",
-            "coordinates": [
-              [
-                [
-                  6.231233860691649,
-                  2.836345944992697
-                ],
-                [
-                  5.49814752413969,
-                  2.836345944992697
-                ],
-                [
-                  5.49814752413969,
-                  3.045799184007543
-                ],
-                [
-                  6.231233860691649,
-                  3.045799184007543
-                ],
-                [
-                  6.231233860691649,
-                  2.836345944992697
-                ]
-              ]
-            ]
-          },
-          "props": {
-            "area": 0.15,
-            "centroid": [
-              5.86,
-              2.94
-            ],
-            "bbox": [
-              5.5,
-              2.84,
-              6.23,
               3.05
             ]
           }
@@ -2690,8 +2738,8 @@
     ],
     "door_edges": [
       [
-        "BTH-02",
         "BED-01",
+        "BTH-02",
         "DO-01"
       ],
       [
@@ -2741,17 +2789,24 @@
     "bounded_by": {
       "edges": [
         {
+          "id": "E-bnd-00001",
+          "room": "BED-01",
+          "wall": "IN-01",
+          "length": 0.63,
+          "wall_type": "interior"
+        },
+        {
+          "id": "E-bnd-00002",
+          "room": "BED-01",
+          "wall": "IN-02",
+          "length": 2.46,
+          "wall_type": "interior"
+        },
+        {
           "id": "E-bnd-00003",
           "room": "BED-01",
           "wall": "IN-03",
           "length": 2.16,
-          "wall_type": "interior"
-        },
-        {
-          "id": "E-bnd-00004",
-          "room": "BED-01",
-          "wall": "IN-04",
-          "length": 0.73,
           "wall_type": "interior"
         },
         {
@@ -2909,13 +2964,6 @@
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00029",
-          "room": "BTH-02",
-          "wall": "IN-04",
-          "length": 0.73,
-          "wall_type": "interior"
-        },
-        {
           "id": "E-bnd-00031",
           "room": "BTH-02",
           "wall": "IN-07",
@@ -2984,6 +3032,20 @@
           "wall": "EX-25",
           "length": 0.17,
           "wall_type": "exterior"
+        },
+        {
+          "id": "E-bnd-00041",
+          "room": "LIV-01",
+          "wall": "IN-01",
+          "length": 0.35,
+          "wall_type": "interior"
+        },
+        {
+          "id": "E-bnd-00042",
+          "room": "LIV-01",
+          "wall": "IN-02",
+          "length": 2.74,
+          "wall_type": "interior"
         },
         {
           "id": "E-bnd-00044",
@@ -3172,10 +3234,11 @@
             "EX-07",
             "EX-08",
             "EX-09",
-            "IN-03",
-            "IN-04"
+            "IN-01",
+            "IN-02",
+            "IN-03"
           ],
-          "length_total": 12.77
+          "length_total": 15.13
         },
         {
           "room": "BED-02",
@@ -3211,10 +3274,9 @@
             "EX-14",
             "EX-15",
             "IN-03",
-            "IN-04",
             "IN-07"
           ],
-          "length_total": 6.86
+          "length_total": 6.13
         },
         {
           "room": "KIT-01",
@@ -3241,13 +3303,15 @@
             "EX-24",
             "EX-25",
             "EX-26",
+            "IN-01",
+            "IN-02",
             "IN-06",
             "IN-08",
             "IN-09",
             "IN-10",
             "IN-11"
           ],
-          "length_total": 24.46
+          "length_total": 27.55
         },
         {
           "room": "BAL-01",
@@ -3424,9 +3488,9 @@
         "opening_type": "door"
       },
       {
-        "id": "E-host-00002",
-        "wall": "IN-04",
-        "opening": "DO-01",
+        "id": "E-host-00003",
+        "wall": "IN-02",
+        "opening": "DO-02",
         "opening_type": "door"
       },
       {
@@ -3544,13 +3608,13 @@
         "door": "DO-01",
         "door_type": "door",
         "rooms": [
-          "BTH-02",
-          "BED-01"
+          "BED-01",
+          "BTH-02"
         ],
         "through_wall": "IN-03",
         "room_types": [
-          "bathroom",
-          "bedroom"
+          "bedroom",
+          "bathroom"
         ]
       },
       {
@@ -3682,8 +3746,7 @@
             "IN-03"
           ],
           "host_walls": [
-            "IN-03",
-            "IN-04"
+            "IN-03"
           ],
           "rooms": [
             "BED-01",
@@ -3695,12 +3758,16 @@
         },
         {
           "id": "DO-02",
-          "wall": [],
-          "host_walls": [],
+          "wall": [
+            "IN-02"
+          ],
+          "host_walls": [
+            "IN-02"
+          ],
           "rooms": [],
           "width": 0.21,
           "height": 0.8,
-          "wall_exists": false
+          "wall_exists": true
         },
         {
           "id": "DO-03",
@@ -5127,8 +5194,8 @@
         }
       },
       {
-        "source": "BTH-02",
-        "target": "BED-01",
+        "source": "BED-01",
+        "target": "BTH-02",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-01"
@@ -5184,19 +5251,28 @@
       },
       {
         "source": "BED-01",
-        "target": "IN-03",
+        "target": "IN-01",
         "type": "bounded_by",
         "properties": {
-          "length": 2.16,
+          "length": 0.63,
           "wall_type": "interior"
         }
       },
       {
         "source": "BED-01",
-        "target": "IN-04",
+        "target": "IN-02",
         "type": "bounded_by",
         "properties": {
-          "length": 0.73,
+          "length": 2.46,
+          "wall_type": "interior"
+        }
+      },
+      {
+        "source": "BED-01",
+        "target": "IN-03",
+        "type": "bounded_by",
+        "properties": {
+          "length": 2.16,
           "wall_type": "interior"
         }
       },
@@ -5400,15 +5476,6 @@
       },
       {
         "source": "BTH-02",
-        "target": "IN-04",
-        "type": "bounded_by",
-        "properties": {
-          "length": 0.73,
-          "wall_type": "interior"
-        }
-      },
-      {
-        "source": "BTH-02",
         "target": "IN-07",
         "type": "bounded_by",
         "properties": {
@@ -5495,6 +5562,24 @@
         "properties": {
           "length": 0.17,
           "wall_type": "exterior"
+        }
+      },
+      {
+        "source": "LIV-01",
+        "target": "IN-01",
+        "type": "bounded_by",
+        "properties": {
+          "length": 0.35,
+          "wall_type": "interior"
+        }
+      },
+      {
+        "source": "LIV-01",
+        "target": "IN-02",
+        "type": "bounded_by",
+        "properties": {
+          "length": 2.74,
+          "wall_type": "interior"
         }
       },
       {

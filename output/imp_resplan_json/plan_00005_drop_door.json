@@ -33,16 +33,16 @@
       "structural_counts": {
         "interior_wall": 11,
         "exterior_wall": 26,
-        "door": 5,
+        "door": 3,
         "window": 4,
         "front_door": 1
       },
       "relationship_summary": {
-        "total_relationships": 107,
+        "total_relationships": 101,
         "adjacency_count": 13,
         "door_connections": 7,
         "bounded_by_count": 68,
-        "hosts_opening_count": 20
+        "hosts_opening_count": 16
       },
       "scale_factor": 0.0422,
       "computed_net_area": 76.32,
@@ -2310,50 +2310,6 @@
       ],
       "door": [
         {
-          "id": "DO-01",
-          "type": "door",
-          "geom": {
-            "type": "Polygon",
-            "coordinates": [
-              [
-                [
-                  6.231233860691649,
-                  2.836345944992697
-                ],
-                [
-                  6.231233860691649,
-                  3.045799184007543
-                ],
-                [
-                  7.016683506997319,
-                  3.045799184007543
-                ],
-                [
-                  7.016683506997319,
-                  2.836345944992697
-                ],
-                [
-                  6.231233860691649,
-                  2.836345944992697
-                ]
-              ]
-            ]
-          },
-          "props": {
-            "area": 0.16,
-            "centroid": [
-              6.62,
-              2.94
-            ],
-            "bbox": [
-              6.23,
-              2.84,
-              7.02,
-              3.05
-            ]
-          }
-        },
-        {
           "id": "DO-03",
           "type": "door",
           "geom": {
@@ -2490,50 +2446,6 @@
               0.64,
               9.78,
               0.85
-            ]
-          }
-        },
-        {
-          "id": "DO-06",
-          "type": "door",
-          "geom": {
-            "type": "Polygon",
-            "coordinates": [
-              [
-                [
-                  1.57089929261134,
-                  5.7381460271775335
-                ],
-                [
-                  1.3614460535964947,
-                  5.7381460271775335
-                ],
-                [
-                  1.3614460535964947,
-                  6.53232289177549
-                ],
-                [
-                  1.57089929261134,
-                  6.53232289177549
-                ],
-                [
-                  1.57089929261134,
-                  5.7381460271775335
-                ]
-              ]
-            ]
-          },
-          "props": {
-            "area": 0.17,
-            "centroid": [
-              1.47,
-              6.14
-            ],
-            "bbox": [
-              1.36,
-              5.74,
-              1.57,
-              6.53
             ]
           }
         }
@@ -2793,8 +2705,8 @@
     ],
     "door_edges": [
       [
-        "BTH-02",
         "BED-01",
+        "BTH-02",
         "DO-01"
       ],
       [
@@ -3607,18 +3519,6 @@
     ],
     "hosts_opening": [
       {
-        "id": "E-host-00001",
-        "wall": "IN-03",
-        "opening": "DO-01",
-        "opening_type": "door"
-      },
-      {
-        "id": "E-host-00002",
-        "wall": "IN-04",
-        "opening": "DO-01",
-        "opening_type": "door"
-      },
-      {
         "id": "E-host-00005",
         "wall": "IN-06",
         "opening": "DO-03",
@@ -3652,18 +3552,6 @@
         "id": "E-host-00010",
         "wall": "EX-08",
         "opening": "DO-05",
-        "opening_type": "door"
-      },
-      {
-        "id": "E-host-00011",
-        "wall": "EX-21",
-        "opening": "DO-06",
-        "opening_type": "door"
-      },
-      {
-        "id": "E-host-00012",
-        "wall": "EX-26",
-        "opening": "DO-06",
         "opening_type": "door"
       },
       {
@@ -3733,13 +3621,13 @@
         "door": "DO-01",
         "door_type": "door",
         "rooms": [
-          "BTH-02",
-          "BED-01"
+          "BED-01",
+          "BTH-02"
         ],
         "through_wall": "IN-03",
         "room_types": [
-          "bathroom",
-          "bedroom"
+          "bedroom",
+          "bathroom"
         ]
       },
       {
@@ -3880,23 +3768,6 @@
     "door_wall_consistency": {
       "doors": [
         {
-          "id": "DO-01",
-          "wall": [
-            "IN-03"
-          ],
-          "host_walls": [
-            "IN-03",
-            "IN-04"
-          ],
-          "rooms": [
-            "BED-01",
-            "BTH-02"
-          ],
-          "width": 0.21,
-          "height": 0.79,
-          "wall_exists": true
-        },
-        {
           "id": "DO-03",
           "wall": [
             "IN-06"
@@ -3945,23 +3816,6 @@
           ],
           "width": 0.21,
           "height": 0.8,
-          "wall_exists": true
-        },
-        {
-          "id": "DO-06",
-          "wall": [
-            "EX-21"
-          ],
-          "host_walls": [
-            "EX-21",
-            "EX-26"
-          ],
-          "rooms": [
-            "BAL-02",
-            "LIV-01"
-          ],
-          "width": 0.21,
-          "height": 0.79,
           "wall_exists": true
         }
       ],
@@ -5321,14 +5175,6 @@
         }
       },
       {
-        "source": "BTH-02",
-        "target": "BED-01",
-        "type": "connected_via_door",
-        "properties": {
-          "door": "DO-01"
-        }
-      },
-      {
         "source": "BTH-01",
         "target": "LIV-01",
         "type": "connected_via_door",
@@ -5350,14 +5196,6 @@
         "type": "connected_via_door",
         "properties": {
           "door": "DO-05"
-        }
-      },
-      {
-        "source": "LIV-01",
-        "target": "BAL-02",
-        "type": "connected_via_door",
-        "properties": {
-          "door": "DO-06"
         }
       },
       {
@@ -5981,22 +5819,6 @@
         }
       },
       {
-        "source": "IN-03",
-        "target": "DO-01",
-        "type": "hosts_opening",
-        "properties": {
-          "opening_type": "door"
-        }
-      },
-      {
-        "source": "IN-04",
-        "target": "DO-01",
-        "type": "hosts_opening",
-        "properties": {
-          "opening_type": "door"
-        }
-      },
-      {
         "source": "IN-06",
         "target": "DO-03",
         "type": "hosts_opening",
@@ -6039,22 +5861,6 @@
       {
         "source": "EX-08",
         "target": "DO-05",
-        "type": "hosts_opening",
-        "properties": {
-          "opening_type": "door"
-        }
-      },
-      {
-        "source": "EX-21",
-        "target": "DO-06",
-        "type": "hosts_opening",
-        "properties": {
-          "opening_type": "door"
-        }
-      },
-      {
-        "source": "EX-26",
-        "target": "DO-06",
         "type": "hosts_opening",
         "properties": {
           "opening_type": "door"
