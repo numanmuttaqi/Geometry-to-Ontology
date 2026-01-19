@@ -14,6 +14,7 @@ from rdflib import Graph, Namespace, RDF
 from rdflib.namespace import RDFS
 from shapely.geometry import LineString, shape, mapping, Point, MultiLineString, GeometryCollection, box
 from shapely.ops import nearest_points, linemerge, unary_union
+from shapely.affinity import translate
 
 from .constants import ROOM_KEYS, STRUCT_KEYS
 
@@ -482,52 +483,154 @@ def infer_interior_wall_geom(graph, wall, adj_geom_index, geom_index, default_th
     return infer_interior_wall_GENERAL(graph, wall, adj_geom_index, geom_index, default_thickness)
 
 
-def infer_door_geom_from_walls_or_adjacency(graph, door, adj_geom_index, geom_index):
+def infer_door_geom_from_walls_or_adjacency(
+    graph,
+    door,
+    adj_geom_index,
+    geom_index,
+    default_width=0.9,
+):
     def _load_shape(val):
         if val is None:
             return None
         if isinstance(val, dict):
             try:
                 return shape(val)
-            except:
+            except Exception:
                 return None
         try:
             return shape(json.loads(str(val)))
-        except:
+        except Exception:
             return None
-    
-    derived = graph.value(door, RESPLAN.derivedFrom)
-    if not derived:
-        return None
-    
-    adj_geom = _load_shape(adj_geom_index.get(derived))
-    if adj_geom and not adj_geom.is_empty:
-        if adj_geom.geom_type == "LineString":
-            return mapping(adj_geom)
-        elif adj_geom.geom_type == "Polygon":
-            coords = list(adj_geom.exterior.coords)
-            max_length = 0
-            best_line = None
-            for i in range(len(coords) - 1):
-                line = LineString([coords[i], coords[i+1]])
-                if line.length > max_length:
-                    max_length = line.length
-                    best_line = line
-            if best_line:
-                return mapping(best_line)
-    
-    # Fallback: use the wall that hosts this opening
-    for host in graph.subjects(RESPLAN.hostsOpening, door):
-        wall_geom = _load_shape(geom_index.get(host))
-        if wall_geom and not wall_geom.is_empty:
-            centroid = wall_geom.centroid
-            door_line = LineString([
-                (centroid.x - 0.45, centroid.y),
-                (centroid.x + 0.45, centroid.y)
-            ])
-            return mapping(door_line)
 
-    return None
+    def _wall_thickness(poly):
+        minx, miny, maxx, maxy = poly.bounds
+        w = maxx - minx
+        h = maxy - miny
+        return max(1e-6, min(w, h))
+
+    def _dominant_is_horizontal(poly):
+        minx, miny, maxx, maxy = poly.bounds
+        w = maxx - minx
+        h = maxy - miny
+        return w >= h
+
+    def _clamp_segment_to_bounds_horizontal(x0, x1, minx, maxx):
+        a = max(minx, min(x0, x1))
+        b = min(maxx, max(x0, x1))
+        return (a, b) if b >= a else (x0, x1)
+
+    def _clamp_segment_to_bounds_vertical(y0, y1, miny, maxy):
+        a = max(miny, min(y0, y1))
+        b = min(maxy, max(y0, y1))
+        return (a, b) if b >= a else (y0, y1)
+
+    def _shared_boundary_midpoint(spaces):
+        # Try to compute midpoint of shared boundary between two spaces if available
+        if len(spaces) < 2:
+            return None
+        s1, s2 = spaces[0], spaces[1]
+        g1 = _load_shape(geom_index.get(s1))
+        g2 = _load_shape(geom_index.get(s2))
+        if not g1 or not g2 or g1.is_empty or g2.is_empty:
+            return None
+        shared = g1.boundary.intersection(g2.boundary)
+        if shared.is_empty:
+            return None
+        if shared.geom_type in {"LineString", "MultiLineString"} and shared.length > 0:
+            return shared.interpolate(0.5, normalized=True) if shared.geom_type == "LineString" else linemerge(shared).interpolate(0.5, normalized=True)
+        if shared.geom_type == "Point":
+            return shared
+        return shared.centroid
+
+    spaces = list(graph.objects(door, RESPLAN.connectsSpace))
+
+    # --------------------------------------------------
+    # 1) Collect host walls (1–2)
+    # --------------------------------------------------
+    host_walls = list(graph.subjects(RESPLAN.hostsOpening, door))
+    host_polys = []
+    for w in host_walls:
+        poly = _load_shape(geom_index.get(w))
+        if poly and (not poly.is_empty) and poly.geom_type in {"Polygon", "MultiPolygon"}:
+            host_polys.append((w, poly))
+
+    if not host_polys:
+        return None
+
+    # Prefer at most 2 walls (per your spec)
+    host_polys = host_polys[:2]
+
+    # --------------------------------------------------
+    # 2) Two walls: detect orientation/overlap; build buffered line at mid-gap
+    # --------------------------------------------------
+    if len(host_polys) == 2:
+        (_, A), (_, B) = host_polys
+        t = min(_wall_thickness(A), _wall_thickness(B))
+        # Prefer shared boundary between connected spaces if available
+        door_line = None
+        if len(spaces) >= 2:
+            g1 = _load_shape(geom_index.get(spaces[0]))
+            g2 = _load_shape(geom_index.get(spaces[1]))
+            if g1 and g2 and (not g1.is_empty) and (not g2.is_empty):
+                shared = g1.boundary.intersection(g2.boundary)
+                if shared.geom_type == "LineString" and shared.length > 0:
+                    door_line = shared
+                elif shared.geom_type == "MultiLineString" and shared.length > 0:
+                    door_line = max(list(shared.geoms), key=lambda g: g.length)
+        if door_line is None:
+            pA, pB = nearest_points(A.boundary, B.boundary)
+            door_line = LineString([(pA.x, pA.y), (pB.x, pB.y)])
+
+        door_poly = door_line.buffer(t / 2.0, cap_style=2, join_style=2)
+        return mapping(door_poly) if (not door_poly.is_empty) else None
+
+    # --------------------------------------------------
+    # 3) One wall: adjacency point (derivedFrom centroid) or wall centroid
+    #    -> project to wall boundary -> orient along dominant axis -> width 0.9m
+    # --------------------------------------------------
+    (_, W) = host_polys[0]
+    t = _wall_thickness(W)
+    half_t = t / 2.0
+
+    derived = graph.value(door, RESPLAN.derivedFrom)
+    ref_pt = None
+
+    if derived:
+        adj_geom = _load_shape(adj_geom_index.get(derived))
+        if adj_geom and not adj_geom.is_empty:
+            ref_pt = adj_geom.centroid
+
+    if ref_pt is None:
+        ref_pt = W.centroid
+
+    # project to boundary (point on boundary nearest to ref_pt)
+    # nearest_points returns points in the same order as inputs.  [oai_citation:3‡shapely.readthedocs.io](https://shapely.readthedocs.io/en/2.0.6/manual.html?utm_source=chatgpt.com)
+    _, on_boundary = nearest_points(ref_pt, W.boundary)
+
+    minx, miny, maxx, maxy = W.bounds
+    is_horizontal = _dominant_is_horizontal(W)
+
+    if is_horizontal:
+        x0 = on_boundary.x - default_width / 2.0
+        x1 = on_boundary.x + default_width / 2.0
+        x0, x1 = _clamp_segment_to_bounds_horizontal(x0, x1, minx, maxx)
+        line = LineString([(x0, on_boundary.y), (x1, on_boundary.y)])
+    else:
+        y0 = on_boundary.y - default_width / 2.0
+        y1 = on_boundary.y + default_width / 2.0
+        y0, y1 = _clamp_segment_to_bounds_vertical(y0, y1, miny, maxy)
+        line = LineString([(on_boundary.x, y0), (on_boundary.x, y1)])
+
+    # Align single-wall door to shared boundary midpoint if connectsSpace is available
+    mid = _shared_boundary_midpoint(spaces)
+    if mid is not None and not line.is_empty:
+        dx = mid.x - line.centroid.x
+        dy = mid.y - line.centroid.y
+        line = translate(line, xoff=dx, yoff=dy)
+
+    door_poly = line.buffer(half_t, cap_style=2, join_style=2)
+    return mapping(door_poly) if (not door_poly.is_empty) else None
 
 
 def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
