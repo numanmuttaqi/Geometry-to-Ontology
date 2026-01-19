@@ -543,7 +543,62 @@ def infer_door_geom_from_walls_or_adjacency(
             return shared
         return shared.centroid
 
+    def _shared_boundary_line(spaces):
+        if len(spaces) < 2:
+            print(f"    _shared_boundary_line: insufficient spaces")
+            return None
+        s1, s2 = spaces[0], spaces[1]
+        print(f"    _shared_boundary_line: checking {str(s1).split('#')[-1]} ↔ {str(s2).split('#')[-1]}")
+        
+        g1 = _load_shape(geom_index.get(s1))
+        g2 = _load_shape(geom_index.get(s2))
+        if not g1 or not g2 or g1.is_empty or g2.is_empty:
+            print(f"    _shared_boundary_line: empty geometries")
+            return None
+        
+        shared = g1.boundary.intersection(g2.boundary)
+        print(f"    _shared_boundary_line: intersection type={shared.geom_type}, length={shared.length if hasattr(shared, 'length') else 0}")
+        
+        if shared.is_empty or shared.length == 0:
+            return None
+        if shared.geom_type == "LineString":
+            print(f"    _shared_boundary_line: ✅ using LineString")
+            return shared
+        if shared.geom_type == "MultiLineString":
+            result = max(list(shared.geoms), key=lambda g: g.length)
+            print(f"    _shared_boundary_line: ✅ using longest from MultiLineString")
+            return result
+        return None
+
+    def _wall_room_overlap_line(polyA, polyB, room1, room2):
+        """Try to get a line on the wall boundaries that overlaps the two room boundaries."""
+        g1 = _load_shape(geom_index.get(room1))
+        g2 = _load_shape(geom_index.get(room2))
+        if not g1 or not g2 or g1.is_empty or g2.is_empty:
+            return None
+        union_rooms = g1.union(g2)
+        candidates = []
+        for poly in (polyA, polyB):
+            inter = poly.boundary.intersection(union_rooms.boundary)
+            if inter.is_empty or inter.length == 0:
+                continue
+            if inter.geom_type == "LineString":
+                candidates.append(inter)
+            elif inter.geom_type == "MultiLineString":
+                candidates.extend(list(inter.geoms))
+        if candidates:
+            return max(candidates, key=lambda g: g.length)
+        return None
+
     spaces = list(graph.objects(door, RESPLAN.connectsSpace))
+    if len(spaces) < 2:
+        # fallback: use derivedFrom adjacency spaces if available
+        adj = graph.value(door, RESPLAN.derivedFrom)
+        if adj:
+            sA = graph.value(adj, RESPLAN.spaceA)
+            sB = graph.value(adj, RESPLAN.spaceB)
+            if sA and sB:
+                spaces = [sA, sB]
 
     # --------------------------------------------------
     # 1) Collect host walls (1–2)
@@ -561,23 +616,34 @@ def infer_door_geom_from_walls_or_adjacency(
     # Prefer at most 2 walls (per your spec)
     host_polys = host_polys[:2]
 
-    # --------------------------------------------------
+   # --------------------------------------------------
     # 2) Two walls: detect orientation/overlap; build buffered line at mid-gap
     # --------------------------------------------------
     if len(host_polys) == 2:
         (_, A), (_, B) = host_polys
         t = min(_wall_thickness(A), _wall_thickness(B))
-        # Prefer shared boundary between connected spaces if available
         door_line = None
+        
+        # PRIORITY 1: Shared boundary between connected spaces (MOST ACCURATE)
         if len(spaces) >= 2:
-            g1 = _load_shape(geom_index.get(spaces[0]))
-            g2 = _load_shape(geom_index.get(spaces[1]))
-            if g1 and g2 and (not g1.is_empty) and (not g2.is_empty):
-                shared = g1.boundary.intersection(g2.boundary)
-                if shared.geom_type == "LineString" and shared.length > 0:
-                    door_line = shared
-                elif shared.geom_type == "MultiLineString" and shared.length > 0:
-                    door_line = max(list(shared.geoms), key=lambda g: g.length)
+            door_line = _shared_boundary_line(spaces)
+        
+        # PRIORITY 2: Adjacency geometry (from derivedFrom)
+        if door_line is None:
+            derived_adj = graph.value(door, RESPLAN.derivedFrom)
+            if derived_adj:
+                adj_geom = _load_shape(adj_geom_index.get(derived_adj))
+                if adj_geom and not adj_geom.is_empty and adj_geom.length > 0:
+                    if adj_geom.geom_type == "LineString":
+                        door_line = adj_geom
+                    elif adj_geom.geom_type == "MultiLineString":
+                        door_line = max(list(adj_geom.geoms), key=lambda g: g.length)
+        
+        # PRIORITY 3: Wall-room overlap (intersection of wall boundaries with room union)
+        if door_line is None and len(spaces) >= 2:
+            door_line = _wall_room_overlap_line(A, B, spaces[0], spaces[1])
+        
+        # FALLBACK: Nearest points between walls (LEAST ACCURATE)
         if door_line is None:
             pA, pB = nearest_points(A.boundary, B.boundary)
             door_line = LineString([(pA.x, pA.y), (pB.x, pB.y)])
