@@ -17,38 +17,71 @@ CONSTRUCT {
 }
 WHERE {
   ?room a bot:Space .
-  FILTER (
-    EXISTS { ?room resplan:expectedWindow true }
-    || EXISTS { ?room resplan:hasRoomType resplan:Bathroom }
-  )
+  FILTER EXISTS { ?room resplan:expectedWindow true }
 
-  # Jangan duplikasi window nyata
-  FILTER NOT EXISTS {
-    ?room resplan:hasWindow ?wReal .
-    ?wReal a resplan:Window .
-    FILTER NOT EXISTS { ?wReal resplan:isInferred true }
-  }
-
-  # Prefer topology dari JSON import:
-  # - room punya placeholder `windowOpening` (bnode/IRI)
-  # - host wall yang benar tercatat via `hostsOpening` untuk placeholder tsb
   {
     ?room resplan:windowOpening ?expected .
-    BIND(?expected AS ?derivedRef)
-
-    ?expected resplan:primaryWall ?primary .
-    ?primary a resplan:ExteriorWall .
+    FILTER NOT EXISTS { ?room resplan:hasWindow ?expected }
 
     OPTIONAL {
-      ?secondary resplan:hostsOpening ?expected .
-      ?secondary a resplan:ExteriorWall .
-      FILTER(?secondary != ?primary)
+      ?expected resplan:primaryWall ?primarySlot .
+      ?primarySlot a resplan:ExteriorWall .
     }
+    OPTIONAL {
+      ?secondarySlot resplan:hostsOpening ?expected .
+      ?secondarySlot a resplan:ExteriorWall .
+      FILTER(?secondarySlot != ?primarySlot)
+    }
+    OPTIONAL {
+      FILTER(!BOUND(?primarySlot))
+      {
+        SELECT ?room (MIN(STR(?wall)) AS ?primaryStr)
+        WHERE {
+          ?room resplan:boundedBy ?wall .
+          ?wall a resplan:ExteriorWall .
+        }
+        GROUP BY ?room
+      }
+    }
+    BIND(COALESCE(?primarySlot, IRI(?primaryStr)) AS ?primary)
+
+    OPTIONAL {
+      FILTER(!BOUND(?secondarySlot))
+      {
+        SELECT ?room ?primary (MIN(STR(?wall2)) AS ?secondaryStr)
+        WHERE {
+          ?room resplan:boundedBy ?primary .
+          ?primary a resplan:ExteriorWall .
+          ?room resplan:boundedBy ?wall2 .
+          ?wall2 a resplan:ExteriorWall .
+          FILTER(?wall2 != ?primary)
+        }
+        GROUP BY ?room ?primary
+      }
+      BIND(IRI(?secondaryStr) AS ?secondary)
+    }
+
+    # Use existing IRI slot; mint stable IRI when slot is a bnode
+    BIND(
+      IF(
+        isIRI(?expected),
+        ?expected,
+        IRI(CONCAT("http://resplan.org/resplan/infer#",
+                   "WI-INF-",
+                   SHA256(CONCAT(STR(?room), "|", STR(?primary), "|", STR(?expected))))))
+      AS ?win)
+    BIND(?expected AS ?derivedRef)
+    BIND(STRAFTER(STR(?win), "#") AS ?srcId)
   }
   UNION
   {
     # fallback kalau tidak ada placeholder opening: pilih dari boundedBy (deterministic)
     FILTER NOT EXISTS { ?room resplan:windowOpening ?anyOpening . }
+    FILTER NOT EXISTS {
+      ?room resplan:hasWindow ?wReal .
+      ?wReal a resplan:Window .
+      FILTER NOT EXISTS { ?wReal resplan:isInferred true }
+    }
     BIND(?room AS ?derivedRef)
 
     {
@@ -75,11 +108,10 @@ WHERE {
       }
       BIND(IRI(?secondaryStr) AS ?secondary)
     }
+
+    BIND(CONCAT("WI-INF-", SHA256(CONCAT(STR(?room), "|", STR(?primary)))) AS ?id)
+    BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", ?id)) AS ?win)
+    BIND(?id AS ?srcId)
   }
 
-  # --- GENERATE WINDOW ---
-  # Stabil: pakai (room + primary wall), bukan blank node id
-  BIND(CONCAT("WI-INF-", SHA256(CONCAT(STR(?room), "|", STR(?primary)))) AS ?id)
-  BIND(IRI(CONCAT("http://resplan.org/resplan/infer#", ?id)) AS ?win)
-  BIND(?id AS ?srcId)
 }

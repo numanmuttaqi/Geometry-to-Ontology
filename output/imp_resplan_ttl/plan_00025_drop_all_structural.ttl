@@ -921,8 +921,7 @@
     resplan:centroidX 6.0 ;
     resplan:centroidY 9.63 ;
     resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[5.826147374545078,9.52418103742998],[5.826147374545078,9.733503697593276],[6.175018474817239,9.733503697593276],[6.175018474817239,9.52418103742998],[6.035470034708375,9.52418103742998],[5.826147374545078,9.52418103742998]]]}" ;
-    resplan:hostsOpening _:N4bfd3bcc6ab44f97b381df972f7cb612,
-        _:N755fcb8e79a64bbab825ffdd8f19872c ;
+    resplan:hostsOpening _:N608d41f4d7f0454fa7f14d3c6c1d9edb ;
     resplan:sourceId "EX-27" ;
     resplan:wallDepth 4.585 .
 
@@ -1151,6 +1150,23 @@
     resplan:roomArea 4.38 ;
     resplan:sourceId "BAL-02" .
 
+<http://resplan.org/resplan/plan_00025#EX-23> a resplan:ExteriorWall,
+        ifc:Wall ;
+    rdfs:label "EX-23" ;
+    resplan:area 0.17 ;
+    resplan:bboxMaxX 7.66 ;
+    resplan:bboxMaxY 9.73 ;
+    resplan:bboxMinX 6.84 ;
+    resplan:bboxMinY 9.52 ;
+    resplan:centroidX 7.25 ;
+    resplan:centroidY 9.63 ;
+    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[6.837873565334345,9.733503697593276],[7.657720650973921,9.733503697593276],[7.657720650973921,9.52418103742998],[6.837873565334345,9.52418103742998],[6.837873565334345,9.733503697593276]]]}" ;
+    resplan:hostsOpening _:N608d41f4d7f0454fa7f14d3c6c1d9edb,
+        <http://resplan.org/resplan/plan_00025#DO-02>,
+        <http://resplan.org/resplan/plan_00025#WI-02> ;
+    resplan:sourceId "EX-23" ;
+    resplan:wallDepth 4.585 .
+
 <http://resplan.org/resplan/plan_00025#KIT-01> a resplan:Room,
         bot:Space ;
     rdfs:label "kitchen" ;
@@ -1197,26 +1213,8 @@
     resplan:hasWindow <http://resplan.org/resplan/plan_00025#WI-02> ;
     resplan:roomArea 3.51 ;
     resplan:sourceId "BAL-01" ;
-    resplan:windowOpening _:N755fcb8e79a64bbab825ffdd8f19872c,
+    resplan:windowOpening _:N608d41f4d7f0454fa7f14d3c6c1d9edb,
         <http://resplan.org/resplan/plan_00025#WI-02> .
-
-<http://resplan.org/resplan/plan_00025#EX-23> a resplan:ExteriorWall,
-        ifc:Wall ;
-    rdfs:label "EX-23" ;
-    resplan:area 0.17 ;
-    resplan:bboxMaxX 7.66 ;
-    resplan:bboxMaxY 9.73 ;
-    resplan:bboxMinX 6.84 ;
-    resplan:bboxMinY 9.52 ;
-    resplan:centroidX 7.25 ;
-    resplan:centroidY 9.63 ;
-    resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[6.837873565334345,9.733503697593276],[7.657720650973921,9.733503697593276],[7.657720650973921,9.52418103742998],[6.837873565334345,9.52418103742998],[6.837873565334345,9.733503697593276]]]}" ;
-    resplan:hostsOpening _:N4bfd3bcc6ab44f97b381df972f7cb612,
-        _:N755fcb8e79a64bbab825ffdd8f19872c,
-        <http://resplan.org/resplan/plan_00025#DO-02>,
-        <http://resplan.org/resplan/plan_00025#WI-02> ;
-    resplan:sourceId "EX-23" ;
-    resplan:wallDepth 4.585 .
 
 <http://resplan.org/resplan/plan_00025#BED-02> a resplan:Room,
         bot:Space ;
@@ -1299,12 +1297,10 @@
     resplan:centroidX 6.74 ;
     resplan:centroidY 8.27 ;
     resplan:connectedViaDoor <http://resplan.org/resplan/plan_00025#BED-01> ;
-    resplan:expectedWindow true ;
     resplan:geomJSON "{\"type\":\"Polygon\",\"coordinates\":[[[6.000582924681159,9.559068147457195],[7.483285100837841,9.559068147457195],[7.483285100837841,6.977422005443208],[6.000582924681159,6.977422005443208],[6.000582924681159,9.559068147457195]]]}" ;
     resplan:hasRoomType resplan:Bathroom ;
     resplan:roomArea 3.83 ;
-    resplan:sourceId "BTH-02" ;
-    resplan:windowOpening _:N4bfd3bcc6ab44f97b381df972f7cb612 .
+    resplan:sourceId "BTH-02" .
 
 <http://resplan.org/resplan/plan_00025#BED-01> a resplan:Room,
         bot:Space ;
@@ -1384,7 +1380,5 @@
     resplan:sourceId "LIV-01" ;
     resplan:windowOpening <http://resplan.org/resplan/plan_00025#WI-01> .
 
-_:N4bfd3bcc6ab44f97b381df972f7cb612 resplan:primaryWall <http://resplan.org/resplan/plan_00025#EX-23> .
-
-_:N755fcb8e79a64bbab825ffdd8f19872c resplan:primaryWall <http://resplan.org/resplan/plan_00025#EX-23> .
+_:N608d41f4d7f0454fa7f14d3c6c1d9edb resplan:primaryWall <http://resplan.org/resplan/plan_00025#EX-23> .
 

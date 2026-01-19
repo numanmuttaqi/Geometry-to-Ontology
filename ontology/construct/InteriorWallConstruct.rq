@@ -46,6 +46,7 @@ WHERE {
   FILTER (CONTAINS(STR(?w), "#IN-"))
   FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
-  BIND( IRI(CONCAT("http://resplan.org/resplan/infer#IW-INF-", STRUUID())) AS ?newWall )
+  # Use deterministic ID per missing wall to avoid duplicating the same wall across multiple adjacency edges
+  BIND( IRI(CONCAT("http://resplan.org/resplan/infer#IW-INF-", SHA256(STR(?w)))) AS ?newWall )
   BIND( STRAFTER(STR(?w), "#") AS ?srcId )
 }

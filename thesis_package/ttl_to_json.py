@@ -12,9 +12,8 @@ from typing import Any, Dict, Optional
 
 from rdflib import Graph, Namespace, RDF
 from rdflib.namespace import RDFS
-from shapely.geometry import LineString, shape, mapping, Point, MultiLineString, GeometryCollection
+from shapely.geometry import LineString, shape, mapping, Point, MultiLineString, GeometryCollection, box
 from shapely.ops import nearest_points, linemerge, unary_union
-from shapely import box
 
 from .constants import ROOM_KEYS, STRUCT_KEYS
 
@@ -470,7 +469,7 @@ def infer_interior_wall_GENERAL(
     
     # Log
     total_length = sum(seg.length for seg in wall_segments) if isinstance(wall_segments, list) else wall_segments.length
-    print(f"   ✅ {wall_id} ({spaceA_id}↔{spaceB_id}): {orientation}, L={total_length:.3f}m, {len(openings)} openings")
+    print(f" {wall_id} ({spaceA_id}↔{spaceB_id}): {orientation}, L={total_length:.3f}m, {len(openings)} openings")
     
     return mapping(wall_poly)
 
@@ -517,7 +516,8 @@ def infer_door_geom_from_walls_or_adjacency(graph, door, adj_geom_index, geom_in
             if best_line:
                 return mapping(best_line)
     
-    for host in graph.objects(door, RESPLAN.hosts):
+    # Fallback: use the wall that hosts this opening
+    for host in graph.subjects(RESPLAN.hostsOpening, door):
         wall_geom = _load_shape(geom_index.get(host))
         if wall_geom and not wall_geom.is_empty:
             centroid = wall_geom.centroid
@@ -526,7 +526,7 @@ def infer_door_geom_from_walls_or_adjacency(graph, door, adj_geom_index, geom_in
                 (centroid.x + 0.45, centroid.y)
             ])
             return mapping(door_line)
-    
+
     return None
 
 
@@ -544,49 +544,140 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
         except:
             return None
     
-    primary = graph.value(window, RESPLAN.hasPrimaryHost)
-    P = _load_shape(geom_index.get(primary)) if primary else None
+    window_id = str(window).split("#")[-1]
+    print(f"\n=== DEBUG WINDOW {window_id} ===")
     
-    if not P or P.is_empty:
+    # --------------------------------------------------
+    # 1. Get primary wall (MUST exist)
+    # --------------------------------------------------
+    primary = graph.value(window, RESPLAN.primaryWall) or graph.value(window, RESPLAN.hasPrimaryHost)
+    if not primary:
+        print(f"  ❌ No primary wall found")
         return None
     
-    secondary = graph.value(window, RESPLAN.hasSecondaryHost)
-    S = _load_shape(geom_index.get(secondary)) if secondary else None
+    print(f"  Primary wall: {str(primary).split('#')[-1]}")
     
+    P = _load_shape(geom_index.get(primary))
+    if not P or P.is_empty:
+        print(f"  ❌ Primary wall geometry empty")
+        return None
+    
+    print(f"  Primary bounds: {P.bounds}")
+    
+    # --------------------------------------------------
+    # 2. Get exactly ONE other wall that hostsOpening
+    # --------------------------------------------------
+    host_walls = list(graph.subjects(RESPLAN.hostsOpening, window))
+    print(f"  All host walls: {[str(w).split('#')[-1] for w in host_walls]}")
+    
+    other_hosts = [w for w in host_walls if w != primary]
+    
+    if not other_hosts:
+        print(f"  ❌ No other host walls found")
+        return None
+    
+    # Take first other host as secondary
+    secondary = other_hosts[0]
+    print(f"  Secondary wall: {str(secondary).split('#')[-1]}")
+    
+    S = _load_shape(geom_index.get(secondary))
     if not S or S.is_empty:
-        S = Point(P.centroid.x, P.centroid.y + 100)
+        print(f"  ❌ Secondary wall geometry empty")
+        return None
     
+    print(f"  Secondary bounds: {S.bounds}")
+    
+    # --------------------------------------------------
+    # 3. Determine dominant axis and thickness from primary wall
+    # --------------------------------------------------
     minx, miny, maxx, maxy = P.bounds
-    width, height = maxx - minx, maxy - miny
+    width = maxx - minx
+    height = maxy - miny
+    
     is_horizontal = width >= height
     thickness = min(width, height)
     
+    print(f"  Orientation: {'HORIZONTAL' if is_horizontal else 'VERTICAL'}, thickness={thickness:.3f}")
+    
+    # Build centerline axis through wall
     if is_horizontal:
         midy = (miny + maxy) / 2
         axis = LineString([(minx, midy), (maxx, midy)])
+        axis_start = Point(minx, midy)
+        axis_end = Point(maxx, midy)
     else:
         midx = (minx + maxx) / 2
         axis = LineString([(midx, miny), (midx, maxy)])
+        axis_start = Point(midx, miny)
+        axis_end = Point(midx, maxy)
     
-    a0 = Point(axis.coords[0])
-    a1 = Point(axis.coords[-1])
-    anchor = a0 if a0.distance(S) < a1.distance(S) else a1
+    print(f"  Axis: {list(axis.coords)}")
     
-    p_anchor, p_sec = nearest_points(anchor, S)
-    length = max(0.6, min(anchor.distance(p_sec), 2.4))
+    # --------------------------------------------------
+    # 4. Choose axis end closest to secondary wall as anchor
+    # --------------------------------------------------
+    dist_to_start = axis_start.distance(S)
+    dist_to_end = axis_end.distance(S)
     
-    if is_horizontal:
-        direction = 1 if p_sec.x > anchor.x else -1
-        p1 = (anchor.x, anchor.y)
-        p2 = (anchor.x + direction * length, anchor.y)
+    print(f"  Distance to axis start: {dist_to_start:.3f}, to end: {dist_to_end:.3f}")
+    
+    if dist_to_start < dist_to_end:
+        anchor = axis_start
+        print(f"  Anchor: START {(anchor.x, anchor.y)}")
     else:
-        direction = 1 if p_sec.y > anchor.y else -1
-        p1 = (anchor.x, anchor.y)
-        p2 = (anchor.x, anchor.y + direction * length)
+        anchor = axis_end
+        print(f"  Anchor: END {(anchor.x, anchor.y)}")
     
-    line = LineString([p1, p2])
-    return mapping(line.buffer(thickness / 2, cap_style=2, join_style=2))
+    # --------------------------------------------------
+    # 5. Measure distance to secondary wall → window length
+    # --------------------------------------------------
+    _, nearest_on_secondary = nearest_points(anchor, S)
+    
+    window_length_raw = anchor.distance(nearest_on_secondary)
+    window_length = max(0.6, min(window_length_raw, 2.4))
+    
+    print(f"  Window length: raw={window_length_raw:.3f}, clamped={window_length:.3f}")
+    print(f"  Nearest on secondary: {(nearest_on_secondary.x, nearest_on_secondary.y)}")
+    
+    # --------------------------------------------------
+    # 6. Place a line from anchor toward secondary wall along the axis direction
+    #    (NO clamping to primary bounds)
+    # --------------------------------------------------
+    dx = nearest_on_secondary.x - anchor.x
+    dy = nearest_on_secondary.y - anchor.y
 
+    if is_horizontal:
+        direction = 1.0 if dx > 0 else -1.0
+        x_end = anchor.x + direction * window_length
+        line = LineString([(anchor.x, anchor.y), (x_end, anchor.y)])
+        print(f"  Window line (H): ({anchor.x:.3f}, {anchor.y:.3f}) → ({x_end:.3f}, {anchor.y:.3f})")
+    else:
+        direction = 1.0 if dy > 0 else -1.0
+        y_end = anchor.y + direction * window_length
+        line = LineString([(anchor.x, anchor.y), (anchor.x, y_end)])
+        print(f"  Window line (V): ({anchor.x:.3f}, {anchor.y:.3f}) → ({anchor.x:.3f}, {y_end:.3f})")
+    
+    # --------------------------------------------------
+    # 7. Buffer by half thickness to get window polygon
+    # --------------------------------------------------
+    try:
+        window_poly = line.buffer(thickness / 2, cap_style=2, join_style=2)
+        
+        if window_poly.is_empty or window_poly.area < 0.001:
+            print(f"  ❌ Window polygon empty or too small")
+            return None
+        
+        result = mapping(window_poly)
+        print(f"  ✅ Window created: area={window_poly.area:.3f}, geom_type={window_poly.geom_type}")
+        print(f"  ✅ Result keys: {result.keys()}")
+        print(f"  ✅ Result type: {result.get('type')}")
+        
+        return result
+    except Exception as e:
+        print(f"  ❌ Buffer/mapping error: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
 
 # ======================================================
 # Main conversion

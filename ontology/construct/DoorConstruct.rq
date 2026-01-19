@@ -34,9 +34,20 @@ WHERE {
     }
   }
 
-  ?a    resplan:boundedBy ?wall .
-  ?b    resplan:boundedBy ?wall .
-  ?wall a resplan:InteriorWall .
+  ?a resplan:boundedBy ?wall .
+  ?b resplan:boundedBy ?wall .
+  {
+    ?wall a resplan:InteriorWall .
+  }
+  UNION
+  {
+    ?wall a resplan:ExteriorWall .
+    FILTER (
+      EXISTS { ?a resplan:hasRoomType resplan:Balcony } ||
+      EXISTS { ?b resplan:hasRoomType resplan:Balcony }
+    )
+  }
+
 
   OPTIONAL {
     {

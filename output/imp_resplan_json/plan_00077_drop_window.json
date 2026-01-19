@@ -3158,8 +3158,8 @@
         "DO-01"
       ],
       [
-        "LIV-01",
         "BED-01",
+        "LIV-01",
         "DO-02"
       ],
       [
@@ -3168,8 +3168,8 @@
         "DO-03"
       ],
       [
-        "BED-02",
         "LIV-01",
+        "BED-02",
         "DO-04"
       ],
       [
@@ -4247,13 +4247,13 @@
         "door": "DO-02",
         "door_type": "door",
         "rooms": [
-          "LIV-01",
-          "BED-01"
+          "BED-01",
+          "LIV-01"
         ],
         "through_wall": "IN-07",
         "room_types": [
-          "living",
-          "bedroom"
+          "bedroom",
+          "living"
         ]
       },
       {
@@ -4275,13 +4275,13 @@
         "door": "DO-04",
         "door_type": "door",
         "rooms": [
-          "BED-02",
-          "LIV-01"
+          "LIV-01",
+          "BED-02"
         ],
         "through_wall": "IN-03",
         "room_types": [
-          "bedroom",
-          "living"
+          "living",
+          "bedroom"
         ]
       },
       {
@@ -4365,30 +4365,6 @@
       {
         "id": "E-wcon-WI-01-BED-01",
         "room": "BED-01",
-        "window": "WI-01",
-        "host_walls": [
-          "EX-02",
-          "EX-17"
-        ],
-        "primary_wall": "EX-02",
-        "is_exterior": true,
-        "present": false
-      },
-      {
-        "id": "E-wcon-WI-01-LIV-01",
-        "room": "LIV-01",
-        "window": "WI-01",
-        "host_walls": [
-          "EX-02",
-          "EX-17"
-        ],
-        "primary_wall": "EX-02",
-        "is_exterior": true,
-        "present": false
-      },
-      {
-        "id": "E-wcon-WI-01-STRG-01",
-        "room": "STRG-01",
         "window": "WI-01",
         "host_walls": [
           "EX-02",
@@ -5943,8 +5919,8 @@
         }
       },
       {
-        "source": "LIV-01",
-        "target": "BED-01",
+        "source": "BED-01",
+        "target": "LIV-01",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-02"
@@ -5959,8 +5935,8 @@
         }
       },
       {
-        "source": "BED-02",
-        "target": "LIV-01",
+        "source": "LIV-01",
+        "target": "BED-02",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-04"

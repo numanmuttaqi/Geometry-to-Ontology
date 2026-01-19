@@ -413,6 +413,12 @@ def derive_window_connects(plan: Dict[str, Any]) -> List[Dict[str, Any]]:
                 if best_room:
                     candidate_rooms = [best_room]
 
+        # If the window instance was removed and we still have multiple candidate rooms
+        # (common when geometry is missing), pick one deterministically to avoid duplicating
+        # expected slots across rooms.
+        if windows_by_id.get(window_id, {}).get("removed") and len(candidate_rooms) > 1:
+            candidate_rooms = [sorted(candidate_rooms)[0]]
+
         if connected_walls and any(w in exterior_ids for w in connected_walls):
             is_exterior = True
         else:

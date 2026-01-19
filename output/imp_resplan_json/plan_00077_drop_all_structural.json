@@ -3014,8 +3014,8 @@
         "DO-03"
       ],
       [
-        "BED-02",
         "LIV-01",
+        "BED-02",
         "DO-04"
       ],
       [
@@ -4032,13 +4032,13 @@
         "door": "DO-04",
         "door_type": "door",
         "rooms": [
-          "BED-02",
-          "LIV-01"
+          "LIV-01",
+          "BED-02"
         ],
         "through_wall": "IN-03",
         "room_types": [
-          "bedroom",
-          "living"
+          "living",
+          "bedroom"
         ]
       },
       {
@@ -4134,18 +4134,6 @@
       {
         "id": "E-wcon-WI-04-KIT-01",
         "room": "KIT-01",
-        "window": "WI-04",
-        "host_walls": [
-          "EX-26",
-          "EX-33"
-        ],
-        "primary_wall": "EX-26",
-        "is_exterior": true,
-        "present": false
-      },
-      {
-        "id": "E-wcon-WI-04-LIV-01",
-        "room": "LIV-01",
         "window": "WI-04",
         "host_walls": [
           "EX-26",
@@ -5642,16 +5630,16 @@
         }
       },
       {
-        "source": "LIV-01",
-        "target": "BED-01",
+        "source": "BED-01",
+        "target": "LIV-01",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-02"
         }
       },
       {
-        "source": "BED-02",
-        "target": "LIV-01",
+        "source": "LIV-01",
+        "target": "BED-02",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-04"
