@@ -18,10 +18,10 @@
       "plot_path": "/Users/muhammadnumanmuttaqi/Documents/MScITBE/Thesis/Thesis/Geometry-to-Ontology/output/resplan_plot/plan_00075.png"
     },
     "summary": {
-      "rooms_total": 12,
+      "rooms_total": 11,
       "room_counts": {
         "bedroom": 3,
-        "bathroom": 4,
+        "bathroom": 3,
         "kitchen": 1,
         "living": 1,
         "balcony": 3,
@@ -38,10 +38,10 @@
         "front_door": 1
       },
       "relationship_summary": {
-        "total_relationships": 173,
-        "adjacency_count": 23,
+        "total_relationships": 160,
+        "adjacency_count": 19,
         "door_connections": 11,
-        "bounded_by_count": 110,
+        "bounded_by_count": 101,
         "hosts_opening_count": 29
       },
       "scale_factor": 0.0628,
@@ -283,82 +283,6 @@
             "coordinates": [
               [
                 [
-                  10.776583250165206,
-                  4.106249824631916
-                ],
-                [
-                  10.776583250165206,
-                  4.292052984117523
-                ],
-                [
-                  10.813743882062328,
-                  4.292052984117523
-                ],
-                [
-                  10.813743882062328,
-                  4.069089820546251
-                ],
-                [
-                  11.761339995438924,
-                  4.069089820546251
-                ],
-                [
-                  11.761339995438924,
-                  4.292052984117523
-                ],
-                [
-                  11.798500627336045,
-                  4.292052984117523
-                ],
-                [
-                  11.798500627336045,
-                  4.106249824631916
-                ],
-                [
-                  15.384501605408262,
-                  4.106249824631916
-                ],
-                [
-                  15.384501605408262,
-                  2.434021389261452
-                ],
-                [
-                  9.903308400582855,
-                  2.434021389261452
-                ],
-                [
-                  9.903308400582855,
-                  4.106249824631916
-                ],
-                [
-                  10.776583250165206,
-                  4.106249824631916
-                ]
-              ]
-            ]
-          },
-          "props": {
-            "area": 9.14,
-            "centroid": [
-              12.65,
-              3.27
-            ],
-            "bbox": [
-              9.9,
-              2.43,
-              15.38,
-              4.29
-            ]
-          }
-        },
-        {
-          "id": "BTH-03",
-          "type": "bathroom",
-          "geom": {
-            "type": "Polygon",
-            "coordinates": [
-              [
-                [
                   1.5334236159541676e-16,
                   11.12960925318786
                 ],
@@ -428,7 +352,7 @@
           }
         },
         {
-          "id": "BTH-04",
+          "id": "BTH-03",
           "type": "bathroom",
           "geom": {
             "type": "Polygon",
@@ -4349,9 +4273,9 @@
       "BED-02",
       "BED-03",
       "BAL-02",
-      "BTH-04",
+      "BTH-03",
       "BTH-01",
-      "BTH-03"
+      "BTH-02"
     ],
     "door_edges": [
       [
@@ -4365,8 +4289,8 @@
         "DO-02"
       ],
       [
-        "LIV-01",
         "BED-03",
+        "LIV-01",
         "DO-03"
       ],
       [
@@ -4396,12 +4320,12 @@
       ],
       [
         "BED-03",
-        "BTH-03",
+        "BTH-02",
         "DO-09"
       ],
       [
         "BED-01",
-        "BTH-04",
+        "BTH-03",
         "DO-10"
       ]
     ],
@@ -4436,11 +4360,11 @@
         "BED-01",
         "BAL-02"
       ],
-      "BTH-04": [
+      "BTH-03": [
         "front_door_FR-01",
         "LIV-01",
         "BED-01",
-        "BTH-04"
+        "BTH-03"
       ],
       "BTH-01": [
         "front_door_FR-01",
@@ -4448,11 +4372,11 @@
         "BED-02",
         "BTH-01"
       ],
-      "BTH-03": [
+      "BTH-02": [
         "front_door_FR-01",
         "LIV-01",
         "BED-03",
-        "BTH-03"
+        "BTH-02"
       ]
     }
   },
@@ -4693,537 +4617,474 @@
         {
           "id": "E-bnd-00034",
           "room": "BTH-02",
-          "wall": "IN-02",
-          "length": 2.66,
-          "wall_type": "interior"
-        },
-        {
-          "id": "E-bnd-00035",
-          "room": "BTH-02",
-          "wall": "IN-14",
-          "length": 1.36,
-          "wall_type": "interior"
-        },
-        {
-          "id": "E-bnd-00036",
-          "room": "BTH-02",
-          "wall": "IN-15",
-          "length": 1.41,
-          "wall_type": "interior"
-        },
-        {
-          "id": "E-bnd-00037",
-          "room": "BTH-02",
-          "wall": "EX-07",
-          "length": 0.19,
-          "wall_type": "exterior"
-        },
-        {
-          "id": "E-bnd-00038",
-          "room": "BTH-02",
-          "wall": "EX-16",
-          "length": 0.26,
-          "wall_type": "exterior"
-        },
-        {
-          "id": "E-bnd-00039",
-          "room": "BTH-02",
-          "wall": "EX-17",
-          "length": 2.56,
-          "wall_type": "exterior"
-        },
-        {
-          "id": "E-bnd-00040",
-          "room": "BTH-02",
-          "wall": "EX-18",
-          "length": 0.22,
-          "wall_type": "exterior"
-        },
-        {
-          "id": "E-bnd-00041",
-          "room": "BTH-02",
-          "wall": "EX-19",
-          "length": 2.62,
-          "wall_type": "exterior"
-        },
-        {
-          "id": "E-bnd-00042",
-          "room": "BTH-02",
-          "wall": "EX-20",
-          "length": 0.98,
-          "wall_type": "exterior"
-        },
-        {
-          "id": "E-bnd-00043",
-          "room": "BTH-03",
           "wall": "IN-18",
           "length": 4.42,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00044",
-          "room": "BTH-03",
+          "id": "E-bnd-00035",
+          "room": "BTH-02",
           "wall": "EX-29",
           "length": 0.89,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00045",
-          "room": "BTH-03",
+          "id": "E-bnd-00036",
+          "room": "BTH-02",
           "wall": "EX-30",
           "length": 2.42,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00046",
-          "room": "BTH-03",
+          "id": "E-bnd-00037",
+          "room": "BTH-02",
           "wall": "EX-31",
           "length": 0.35,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00047",
-          "room": "BTH-03",
+          "id": "E-bnd-00038",
+          "room": "BTH-02",
           "wall": "EX-32",
           "length": 2.43,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00048",
-          "room": "BTH-03",
+          "id": "E-bnd-00039",
+          "room": "BTH-02",
           "wall": "EX-33",
           "length": 2.21,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00049",
-          "room": "BTH-03",
+          "id": "E-bnd-00040",
+          "room": "BTH-02",
           "wall": "EX-36",
           "length": 0.26,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00050",
-          "room": "BTH-04",
+          "id": "E-bnd-00041",
+          "room": "BTH-03",
           "wall": "IN-04",
           "length": 1.82,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00051",
-          "room": "BTH-04",
+          "id": "E-bnd-00042",
+          "room": "BTH-03",
           "wall": "IN-05",
           "length": 0.91,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00052",
-          "room": "BTH-04",
+          "id": "E-bnd-00043",
+          "room": "BTH-03",
           "wall": "IN-06",
           "length": 1.34,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00053",
-          "room": "BTH-04",
+          "id": "E-bnd-00044",
+          "room": "BTH-03",
           "wall": "IN-07",
           "length": 0.22,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00054",
-          "room": "BTH-04",
+          "id": "E-bnd-00045",
+          "room": "BTH-03",
           "wall": "IN-08",
           "length": 0.61,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00055",
-          "room": "BTH-04",
+          "id": "E-bnd-00046",
+          "room": "BTH-03",
           "wall": "IN-09",
           "length": 2.08,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00056",
-          "room": "BTH-04",
+          "id": "E-bnd-00047",
+          "room": "BTH-03",
           "wall": "EX-04",
           "length": 1.69,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00057",
-          "room": "BTH-04",
+          "id": "E-bnd-00048",
+          "room": "BTH-03",
           "wall": "EX-05",
           "length": 1.77,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00058",
-          "room": "BTH-04",
+          "id": "E-bnd-00049",
+          "room": "BTH-03",
           "wall": "EX-06",
           "length": 0.26,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00059",
-          "room": "BTH-04",
+          "id": "E-bnd-00050",
+          "room": "BTH-03",
           "wall": "EX-21",
           "length": 0.41,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00060",
-          "room": "BTH-04",
+          "id": "E-bnd-00051",
+          "room": "BTH-03",
           "wall": "EX-23",
           "length": 1.62,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00061",
-          "room": "BTH-04",
+          "id": "E-bnd-00052",
+          "room": "BTH-03",
           "wall": "EX-24",
           "length": 0.24,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00062",
+          "id": "E-bnd-00053",
           "room": "KIT-01",
           "wall": "IN-10",
           "length": 1.0,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00063",
+          "id": "E-bnd-00054",
           "room": "KIT-01",
           "wall": "IN-13",
           "length": 0.93,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00064",
+          "id": "E-bnd-00055",
           "room": "KIT-01",
           "wall": "IN-14",
           "length": 0.22,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00065",
+          "id": "E-bnd-00056",
           "room": "KIT-01",
           "wall": "IN-15",
           "length": 1.41,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00066",
+          "id": "E-bnd-00057",
           "room": "KIT-01",
           "wall": "IN-17",
           "length": 1.56,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00067",
+          "id": "E-bnd-00058",
           "room": "KIT-01",
           "wall": "EX-11",
           "length": 1.99,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00068",
+          "id": "E-bnd-00059",
           "room": "KIT-01",
           "wall": "EX-12",
           "length": 0.8,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00069",
+          "id": "E-bnd-00060",
           "room": "KIT-01",
           "wall": "EX-13",
           "length": 0.04,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00070",
+          "id": "E-bnd-00061",
           "room": "KIT-01",
           "wall": "EX-14",
           "length": 0.19,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00071",
+          "id": "E-bnd-00062",
           "room": "KIT-01",
           "wall": "EX-15",
           "length": 3.23,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00072",
+          "id": "E-bnd-00063",
           "room": "KIT-01",
           "wall": "EX-16",
           "length": 0.19,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00073",
+          "id": "E-bnd-00064",
           "room": "LIV-01",
           "wall": "IN-01",
           "length": 0.24,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00074",
+          "id": "E-bnd-00065",
           "room": "LIV-01",
           "wall": "IN-06",
           "length": 1.64,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00075",
+          "id": "E-bnd-00066",
           "room": "LIV-01",
           "wall": "IN-07",
           "length": 0.37,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00076",
+          "id": "E-bnd-00067",
           "room": "LIV-01",
           "wall": "IN-09",
           "length": 2.08,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00077",
+          "id": "E-bnd-00068",
           "room": "LIV-01",
           "wall": "IN-10",
           "length": 1.23,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00078",
+          "id": "E-bnd-00069",
           "room": "LIV-01",
           "wall": "IN-11",
           "length": 2.42,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00079",
+          "id": "E-bnd-00070",
           "room": "LIV-01",
           "wall": "IN-12",
           "length": 0.54,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00080",
+          "id": "E-bnd-00071",
           "room": "LIV-01",
           "wall": "IN-13",
           "length": 1.86,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00081",
+          "id": "E-bnd-00072",
           "room": "LIV-01",
           "wall": "IN-14",
           "length": 0.45,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00082",
+          "id": "E-bnd-00073",
           "room": "LIV-01",
           "wall": "IN-15",
           "length": 2.82,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00083",
+          "id": "E-bnd-00074",
           "room": "LIV-01",
           "wall": "IN-17",
           "length": 1.56,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00084",
+          "id": "E-bnd-00075",
           "room": "LIV-01",
           "wall": "IN-18",
           "length": 0.63,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00085",
+          "id": "E-bnd-00076",
           "room": "LIV-01",
           "wall": "IN-19",
           "length": 4.2,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00086",
+          "id": "E-bnd-00077",
           "room": "LIV-01",
           "wall": "IN-20",
           "length": 1.23,
           "wall_type": "interior"
         },
         {
-          "id": "E-bnd-00087",
+          "id": "E-bnd-00078",
           "room": "LIV-01",
           "wall": "EX-08",
           "length": 4.79,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00088",
+          "id": "E-bnd-00079",
           "room": "LIV-01",
           "wall": "EX-09",
           "length": 0.22,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00089",
+          "id": "E-bnd-00080",
           "room": "LIV-01",
           "wall": "EX-10",
           "length": 0.98,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00090",
+          "id": "E-bnd-00081",
           "room": "LIV-01",
           "wall": "EX-11",
           "length": 1.17,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00091",
+          "id": "E-bnd-00082",
           "room": "LIV-01",
           "wall": "EX-12",
           "length": 1.75,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00092",
+          "id": "E-bnd-00083",
           "room": "LIV-01",
           "wall": "EX-13",
           "length": 0.11,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00093",
+          "id": "E-bnd-00084",
           "room": "LIV-01",
           "wall": "EX-14",
           "length": 0.19,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00094",
+          "id": "E-bnd-00085",
           "room": "LIV-01",
           "wall": "EX-15",
           "length": 6.47,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00095",
+          "id": "E-bnd-00086",
           "room": "LIV-01",
           "wall": "EX-16",
           "length": 0.45,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00096",
+          "id": "E-bnd-00087",
           "room": "LIV-01",
           "wall": "EX-21",
           "length": 0.26,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00097",
+          "id": "E-bnd-00088",
           "room": "LIV-01",
           "wall": "EX-25",
           "length": 1.65,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00098",
+          "id": "E-bnd-00089",
           "room": "LIV-01",
           "wall": "EX-26",
           "length": 1.3,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00099",
+          "id": "E-bnd-00090",
           "room": "LIV-01",
           "wall": "EX-27",
           "length": 0.26,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00100",
+          "id": "E-bnd-00091",
           "room": "LIV-01",
           "wall": "EX-34",
           "length": 0.35,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00101",
+          "id": "E-bnd-00092",
           "room": "LIV-01",
           "wall": "EX-35",
           "length": 1.73,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00102",
+          "id": "E-bnd-00093",
           "room": "LIV-01",
           "wall": "EX-36",
           "length": 1.65,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00103",
+          "id": "E-bnd-00094",
           "room": "BAL-01",
           "wall": "EX-02",
           "length": 0.22,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00104",
+          "id": "E-bnd-00095",
           "room": "BAL-02",
           "wall": "EX-03",
           "length": 1.84,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00105",
+          "id": "E-bnd-00096",
           "room": "BAL-02",
           "wall": "EX-04",
           "length": 3.08,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00106",
+          "id": "E-bnd-00097",
           "room": "BAL-03",
           "wall": "EX-23",
           "length": 1.62,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00107",
+          "id": "E-bnd-00098",
           "room": "BAL-03",
           "wall": "EX-25",
           "length": 1.65,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00108",
+          "id": "E-bnd-00099",
           "room": "BAL-03",
           "wall": "EX-26",
           "length": 1.3,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00109",
+          "id": "E-bnd-00100",
           "room": "BAL-03",
           "wall": "EX-27",
           "length": 1.62,
           "wall_type": "exterior"
         },
         {
-          "id": "E-bnd-00110",
+          "id": "E-bnd-00101",
           "room": "BAL-02",
           "wall": "EX-06",
           "length": 0.956886,
@@ -5317,21 +5178,6 @@
         {
           "room": "BTH-02",
           "walls": [
-            "EX-07",
-            "EX-16",
-            "EX-17",
-            "EX-18",
-            "EX-19",
-            "EX-20",
-            "IN-02",
-            "IN-14",
-            "IN-15"
-          ],
-          "length_total": 12.26
-        },
-        {
-          "room": "BTH-03",
-          "walls": [
             "EX-29",
             "EX-30",
             "EX-31",
@@ -5343,7 +5189,7 @@
           "length_total": 12.98
         },
         {
-          "room": "BTH-04",
+          "room": "BTH-03",
           "walls": [
             "EX-04",
             "EX-05",
@@ -5419,7 +5265,7 @@
       {
         "id": "E-adj-00001",
         "a": "BED-03",
-        "b": "BTH-03",
+        "b": "BTH-02",
         "overlap_length": 0.07,
         "shared_walls": [
           "EX-33",
@@ -5428,23 +5274,6 @@
       },
       {
         "id": "E-adj-00002",
-        "a": "BTH-01",
-        "b": "BTH-02",
-        "overlap_length": 15.12,
-        "shared_walls": [
-          "EX-07",
-          "EX-16",
-          "EX-17",
-          "EX-18",
-          "EX-19",
-          "EX-20",
-          "IN-02",
-          "IN-14",
-          "IN-15"
-        ]
-      },
-      {
-        "id": "E-adj-00003",
         "a": "KIT-01",
         "b": "LIV-01",
         "overlap_length": 10.5,
@@ -5463,7 +5292,7 @@
         ]
       },
       {
-        "id": "E-adj-00004",
+        "id": "E-adj-00003",
         "a": "BED-01",
         "b": "BED-02",
         "overlap_length": 0.0,
@@ -5473,9 +5302,9 @@
         ]
       },
       {
-        "id": "E-adj-00005",
+        "id": "E-adj-00004",
         "a": "BED-01",
-        "b": "BTH-04",
+        "b": "BTH-03",
         "overlap_length": 0.0,
         "shared_walls": [
           "EX-06",
@@ -5486,7 +5315,7 @@
         ]
       },
       {
-        "id": "E-adj-00006",
+        "id": "E-adj-00005",
         "a": "BED-01",
         "b": "LIV-01",
         "overlap_length": 0.0,
@@ -5496,7 +5325,7 @@
         ]
       },
       {
-        "id": "E-adj-00007",
+        "id": "E-adj-00006",
         "a": "BED-02",
         "b": "BTH-01",
         "overlap_length": 0.0,
@@ -5507,18 +5336,7 @@
         ]
       },
       {
-        "id": "E-adj-00008",
-        "a": "BED-02",
-        "b": "BTH-02",
-        "overlap_length": 0.0,
-        "shared_walls": [
-          "EX-07",
-          "IN-02",
-          "IN-14"
-        ]
-      },
-      {
-        "id": "E-adj-00009",
+        "id": "E-adj-00007",
         "a": "BED-02",
         "b": "KIT-01",
         "overlap_length": 0.0,
@@ -5529,7 +5347,7 @@
         ]
       },
       {
-        "id": "E-adj-00010",
+        "id": "E-adj-00008",
         "a": "BED-02",
         "b": "LIV-01",
         "overlap_length": 0.0,
@@ -5543,7 +5361,7 @@
         ]
       },
       {
-        "id": "E-adj-00011",
+        "id": "E-adj-00009",
         "a": "BED-03",
         "b": "LIV-01",
         "overlap_length": 0.0,
@@ -5555,52 +5373,30 @@
         ]
       },
       {
+        "id": "E-adj-00010",
+        "a": "BTH-01",
+        "b": "KIT-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-16",
+          "IN-14",
+          "IN-15"
+        ]
+      },
+      {
+        "id": "E-adj-00011",
+        "a": "BTH-01",
+        "b": "LIV-01",
+        "overlap_length": 0.0,
+        "shared_walls": [
+          "EX-16",
+          "IN-14",
+          "IN-15"
+        ]
+      },
+      {
         "id": "E-adj-00012",
-        "a": "BTH-01",
-        "b": "KIT-01",
-        "overlap_length": 0.0,
-        "shared_walls": [
-          "EX-16",
-          "IN-14",
-          "IN-15"
-        ]
-      },
-      {
-        "id": "E-adj-00013",
-        "a": "BTH-01",
-        "b": "LIV-01",
-        "overlap_length": 0.0,
-        "shared_walls": [
-          "EX-16",
-          "IN-14",
-          "IN-15"
-        ]
-      },
-      {
-        "id": "E-adj-00014",
         "a": "BTH-02",
-        "b": "KIT-01",
-        "overlap_length": 0.0,
-        "shared_walls": [
-          "EX-16",
-          "IN-14",
-          "IN-15"
-        ]
-      },
-      {
-        "id": "E-adj-00015",
-        "a": "BTH-02",
-        "b": "LIV-01",
-        "overlap_length": 0.0,
-        "shared_walls": [
-          "EX-16",
-          "IN-14",
-          "IN-15"
-        ]
-      },
-      {
-        "id": "E-adj-00016",
-        "a": "BTH-03",
         "b": "LIV-01",
         "overlap_length": 0.0,
         "shared_walls": [
@@ -5609,8 +5405,8 @@
         ]
       },
       {
-        "id": "E-adj-00017",
-        "a": "BTH-04",
+        "id": "E-adj-00013",
+        "a": "BTH-03",
         "b": "LIV-01",
         "overlap_length": 0.0,
         "shared_walls": [
@@ -5621,7 +5417,7 @@
         ]
       },
       {
-        "id": "E-adj-00018",
+        "id": "E-adj-00014",
         "a": "BAL-01",
         "b": "BED-01",
         "overlap_length": 0.0,
@@ -5630,7 +5426,7 @@
         ]
       },
       {
-        "id": "E-adj-00019",
+        "id": "E-adj-00015",
         "a": "BAL-02",
         "b": "BED-01",
         "overlap_length": 0.0,
@@ -5640,9 +5436,9 @@
         ]
       },
       {
-        "id": "E-adj-00020",
+        "id": "E-adj-00016",
         "a": "BAL-02",
-        "b": "BTH-04",
+        "b": "BTH-03",
         "overlap_length": 0.0,
         "shared_walls": [
           "EX-04",
@@ -5650,7 +5446,7 @@
         ]
       },
       {
-        "id": "E-adj-00021",
+        "id": "E-adj-00017",
         "a": "BAL-03",
         "b": "BED-03",
         "overlap_length": 0.0,
@@ -5659,16 +5455,16 @@
         ]
       },
       {
-        "id": "E-adj-00022",
+        "id": "E-adj-00018",
         "a": "BAL-03",
-        "b": "BTH-04",
+        "b": "BTH-03",
         "overlap_length": 0.0,
         "shared_walls": [
           "EX-23"
         ]
       },
       {
-        "id": "E-adj-00023",
+        "id": "E-adj-00019",
         "a": "BAL-03",
         "b": "LIV-01",
         "overlap_length": 0.0,
@@ -5889,13 +5685,13 @@
         "door": "DO-03",
         "door_type": "door",
         "rooms": [
-          "LIV-01",
-          "BED-03"
+          "BED-03",
+          "LIV-01"
         ],
         "through_wall": "IN-19",
         "room_types": [
-          "living",
-          "bedroom"
+          "bedroom",
+          "living"
         ]
       },
       {
@@ -5974,7 +5770,7 @@
         "door_type": "door",
         "rooms": [
           "BED-03",
-          "BTH-03"
+          "BTH-02"
         ],
         "through_wall": "IN-18",
         "room_types": [
@@ -5988,7 +5784,7 @@
         "door_type": "door",
         "rooms": [
           "BED-01",
-          "BTH-04"
+          "BTH-03"
         ],
         "through_wall": "IN-04",
         "room_types": [
@@ -6024,8 +5820,8 @@
         "present": true
       },
       {
-        "id": "E-wcon-WI-02-BTH-04",
-        "room": "BTH-04",
+        "id": "E-wcon-WI-02-BTH-03",
+        "room": "BTH-03",
         "window": "WI-02",
         "host_walls": [
           "EX-05",
@@ -6048,8 +5844,8 @@
         "present": true
       },
       {
-        "id": "E-wcon-WI-04-BTH-03",
-        "room": "BTH-03",
+        "id": "E-wcon-WI-04-BTH-02",
+        "room": "BTH-02",
         "window": "WI-04",
         "host_walls": [
           "EX-29",
@@ -6209,7 +6005,7 @@
           ],
           "rooms": [
             "BED-03",
-            "BTH-03"
+            "BTH-02"
           ],
           "width": 0.26,
           "height": 0.91,
@@ -6226,7 +6022,7 @@
           ],
           "rooms": [
             "BED-01",
-            "BTH-04"
+            "BTH-03"
           ],
           "width": 0.26,
           "height": 0.93,
@@ -6674,22 +6470,6 @@
         "id": "BTH-02",
         "type": "bathroom",
         "category": "room",
-        "area": 9.14,
-        "centroid": [
-          12.65,
-          3.27
-        ],
-        "bbox": [
-          9.9,
-          2.43,
-          15.38,
-          4.29
-        ]
-      },
-      {
-        "id": "BTH-03",
-        "type": "bathroom",
-        "category": "room",
         "area": 8.15,
         "centroid": [
           0.86,
@@ -6703,7 +6483,7 @@
         ]
       },
       {
-        "id": "BTH-04",
+        "id": "BTH-03",
         "type": "bathroom",
         "category": "room",
         "area": 8.65,
@@ -7954,18 +7734,10 @@
     "edges": [
       {
         "source": "BED-03",
-        "target": "BTH-03",
-        "type": "adjacent",
-        "properties": {
-          "overlap_length": 0.07
-        }
-      },
-      {
-        "source": "BTH-01",
         "target": "BTH-02",
         "type": "adjacent",
         "properties": {
-          "overlap_length": 15.12
+          "overlap_length": 0.07
         }
       },
       {
@@ -7986,7 +7758,7 @@
       },
       {
         "source": "BED-01",
-        "target": "BTH-04",
+        "target": "BTH-03",
         "type": "adjacent",
         "properties": {
           "overlap_length": 0.0
@@ -8003,14 +7775,6 @@
       {
         "source": "BED-02",
         "target": "BTH-01",
-        "type": "adjacent",
-        "properties": {
-          "overlap_length": 0.0
-        }
-      },
-      {
-        "source": "BED-02",
-        "target": "BTH-02",
         "type": "adjacent",
         "properties": {
           "overlap_length": 0.0
@@ -8058,14 +7822,6 @@
       },
       {
         "source": "BTH-02",
-        "target": "KIT-01",
-        "type": "adjacent",
-        "properties": {
-          "overlap_length": 0.0
-        }
-      },
-      {
-        "source": "BTH-02",
         "target": "LIV-01",
         "type": "adjacent",
         "properties": {
@@ -8074,14 +7830,6 @@
       },
       {
         "source": "BTH-03",
-        "target": "LIV-01",
-        "type": "adjacent",
-        "properties": {
-          "overlap_length": 0.0
-        }
-      },
-      {
-        "source": "BTH-04",
         "target": "LIV-01",
         "type": "adjacent",
         "properties": {
@@ -8106,7 +7854,7 @@
       },
       {
         "source": "BAL-02",
-        "target": "BTH-04",
+        "target": "BTH-03",
         "type": "adjacent",
         "properties": {
           "overlap_length": 0.0
@@ -8122,7 +7870,7 @@
       },
       {
         "source": "BAL-03",
-        "target": "BTH-04",
+        "target": "BTH-03",
         "type": "adjacent",
         "properties": {
           "overlap_length": 0.0
@@ -8153,8 +7901,8 @@
         }
       },
       {
-        "source": "LIV-01",
-        "target": "BED-03",
+        "source": "BED-03",
+        "target": "LIV-01",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-03"
@@ -8202,7 +7950,7 @@
       },
       {
         "source": "BED-03",
-        "target": "BTH-03",
+        "target": "BTH-02",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-09"
@@ -8210,7 +7958,7 @@
       },
       {
         "source": "BED-01",
-        "target": "BTH-04",
+        "target": "BTH-03",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-10"
@@ -8523,87 +8271,6 @@
       },
       {
         "source": "BTH-02",
-        "target": "IN-02",
-        "type": "bounded_by",
-        "properties": {
-          "length": 2.66,
-          "wall_type": "interior"
-        }
-      },
-      {
-        "source": "BTH-02",
-        "target": "IN-14",
-        "type": "bounded_by",
-        "properties": {
-          "length": 1.36,
-          "wall_type": "interior"
-        }
-      },
-      {
-        "source": "BTH-02",
-        "target": "IN-15",
-        "type": "bounded_by",
-        "properties": {
-          "length": 1.41,
-          "wall_type": "interior"
-        }
-      },
-      {
-        "source": "BTH-02",
-        "target": "EX-07",
-        "type": "bounded_by",
-        "properties": {
-          "length": 0.19,
-          "wall_type": "exterior"
-        }
-      },
-      {
-        "source": "BTH-02",
-        "target": "EX-16",
-        "type": "bounded_by",
-        "properties": {
-          "length": 0.26,
-          "wall_type": "exterior"
-        }
-      },
-      {
-        "source": "BTH-02",
-        "target": "EX-17",
-        "type": "bounded_by",
-        "properties": {
-          "length": 2.56,
-          "wall_type": "exterior"
-        }
-      },
-      {
-        "source": "BTH-02",
-        "target": "EX-18",
-        "type": "bounded_by",
-        "properties": {
-          "length": 0.22,
-          "wall_type": "exterior"
-        }
-      },
-      {
-        "source": "BTH-02",
-        "target": "EX-19",
-        "type": "bounded_by",
-        "properties": {
-          "length": 2.62,
-          "wall_type": "exterior"
-        }
-      },
-      {
-        "source": "BTH-02",
-        "target": "EX-20",
-        "type": "bounded_by",
-        "properties": {
-          "length": 0.98,
-          "wall_type": "exterior"
-        }
-      },
-      {
-        "source": "BTH-03",
         "target": "IN-18",
         "type": "bounded_by",
         "properties": {
@@ -8612,7 +8279,7 @@
         }
       },
       {
-        "source": "BTH-03",
+        "source": "BTH-02",
         "target": "EX-29",
         "type": "bounded_by",
         "properties": {
@@ -8621,7 +8288,7 @@
         }
       },
       {
-        "source": "BTH-03",
+        "source": "BTH-02",
         "target": "EX-30",
         "type": "bounded_by",
         "properties": {
@@ -8630,7 +8297,7 @@
         }
       },
       {
-        "source": "BTH-03",
+        "source": "BTH-02",
         "target": "EX-31",
         "type": "bounded_by",
         "properties": {
@@ -8639,7 +8306,7 @@
         }
       },
       {
-        "source": "BTH-03",
+        "source": "BTH-02",
         "target": "EX-32",
         "type": "bounded_by",
         "properties": {
@@ -8648,7 +8315,7 @@
         }
       },
       {
-        "source": "BTH-03",
+        "source": "BTH-02",
         "target": "EX-33",
         "type": "bounded_by",
         "properties": {
@@ -8657,7 +8324,7 @@
         }
       },
       {
-        "source": "BTH-03",
+        "source": "BTH-02",
         "target": "EX-36",
         "type": "bounded_by",
         "properties": {
@@ -8666,7 +8333,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "IN-04",
         "type": "bounded_by",
         "properties": {
@@ -8675,7 +8342,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "IN-05",
         "type": "bounded_by",
         "properties": {
@@ -8684,7 +8351,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "IN-06",
         "type": "bounded_by",
         "properties": {
@@ -8693,7 +8360,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "IN-07",
         "type": "bounded_by",
         "properties": {
@@ -8702,7 +8369,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "IN-08",
         "type": "bounded_by",
         "properties": {
@@ -8711,7 +8378,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "IN-09",
         "type": "bounded_by",
         "properties": {
@@ -8720,7 +8387,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "EX-04",
         "type": "bounded_by",
         "properties": {
@@ -8729,7 +8396,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "EX-05",
         "type": "bounded_by",
         "properties": {
@@ -8738,7 +8405,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "EX-06",
         "type": "bounded_by",
         "properties": {
@@ -8747,7 +8414,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "EX-21",
         "type": "bounded_by",
         "properties": {
@@ -8756,7 +8423,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "EX-23",
         "type": "bounded_by",
         "properties": {
@@ -8765,7 +8432,7 @@
         }
       },
       {
-        "source": "BTH-04",
+        "source": "BTH-03",
         "target": "EX-24",
         "type": "bounded_by",
         "properties": {
@@ -9448,8 +9115,8 @@
       }
     ],
     "statistics": {
-      "total_nodes": 84,
-      "total_edges": 173,
+      "total_nodes": 83,
+      "total_edges": 160,
       "relationship_types": [
         "bounded_by",
         "adjacent_to",

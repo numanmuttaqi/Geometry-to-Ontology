@@ -1302,7 +1302,7 @@ resplan:FrontDoor a owl:Class ;
     resplan:spaceA <http://resplan.org/resplan/plan_00001#KIT-01> ;
     resplan:spaceB <http://resplan.org/resplan/plan_00001#LIV-01> .
 
-<http://resplan.org/resplan/infer#IW-INF-1bb2768b-f8d0-4b27-9764-cfa2dde5c8c1> a resplan:InteriorWall,
+<http://resplan.org/resplan/infer#IW-INF-3a623f39-810a-42d1-9023-09c5ab2b6ded> a resplan:InteriorWall,
         ifc:Wall ;
     resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-BTH-01-LIV-01-IN-17> ;
     resplan:isInferred true ;
@@ -1311,16 +1311,16 @@ resplan:FrontDoor a owl:Class ;
         <http://resplan.org/resplan/plan_00001#LIV-01> ;
     resplan:sourceId "IN-17" .
 
-<http://resplan.org/resplan/infer#IW-INF-46f80eff-e30c-4b44-9515-1a18db7419ba> a resplan:InteriorWall,
+<http://resplan.org/resplan/infer#IW-INF-42afbd0d-74b6-4335-adbe-c0e48e53078a> a resplan:InteriorWall,
         ifc:Wall ;
-    resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-BTH-01-KIT-01-IN-17> ;
+    resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-BTH-02-LIV-01-IN-17> ;
     resplan:isInferred true ;
     resplan:replacesWall <http://resplan.org/resplan/plan_00001#IN-17> ;
-    resplan:separatesSpace <http://resplan.org/resplan/plan_00001#BTH-01>,
-        <http://resplan.org/resplan/plan_00001#KIT-01> ;
+    resplan:separatesSpace <http://resplan.org/resplan/plan_00001#BTH-02>,
+        <http://resplan.org/resplan/plan_00001#LIV-01> ;
     resplan:sourceId "IN-17" .
 
-<http://resplan.org/resplan/infer#IW-INF-5f420dde-e8f1-4470-a08c-81a3136805f9> a resplan:InteriorWall,
+<http://resplan.org/resplan/infer#IW-INF-9e3421cb-fb87-4a2d-8ba5-05c6939df4c4> a resplan:InteriorWall,
         ifc:Wall ;
     resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-BTH-02-KIT-01-IN-17> ;
     resplan:isInferred true ;
@@ -1329,16 +1329,7 @@ resplan:FrontDoor a owl:Class ;
         <http://resplan.org/resplan/plan_00001#KIT-01> ;
     resplan:sourceId "IN-17" .
 
-<http://resplan.org/resplan/infer#IW-INF-9b79982b-c434-461d-b946-cfe37433a0b5> a resplan:InteriorWall,
-        ifc:Wall ;
-    resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-IN-17> ;
-    resplan:isInferred true ;
-    resplan:replacesWall <http://resplan.org/resplan/plan_00001#IN-17> ;
-    resplan:separatesSpace <http://resplan.org/resplan/plan_00001#BTH-01>,
-        <http://resplan.org/resplan/plan_00001#BTH-02> ;
-    resplan:sourceId "IN-17" .
-
-<http://resplan.org/resplan/infer#IW-INF-a87f7203-361c-4821-8f5b-4db7e57df849> a resplan:InteriorWall,
+<http://resplan.org/resplan/infer#IW-INF-b52c3037-b458-4178-b855-e7add955e8ba> a resplan:InteriorWall,
         ifc:Wall ;
     resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-KIT-01-LIV-01-IN-17> ;
     resplan:isInferred true ;
@@ -1347,13 +1338,22 @@ resplan:FrontDoor a owl:Class ;
         <http://resplan.org/resplan/plan_00001#LIV-01> ;
     resplan:sourceId "IN-17" .
 
-<http://resplan.org/resplan/infer#IW-INF-c13870b7-b43f-4bc3-ab2b-1333773b7fed> a resplan:InteriorWall,
+<http://resplan.org/resplan/infer#IW-INF-c46e8a25-c8c8-4b9c-b40c-e12222f4cbd2> a resplan:InteriorWall,
         ifc:Wall ;
-    resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-BTH-02-LIV-01-IN-17> ;
+    resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-BTH-01-BTH-02-IN-17> ;
     resplan:isInferred true ;
     resplan:replacesWall <http://resplan.org/resplan/plan_00001#IN-17> ;
-    resplan:separatesSpace <http://resplan.org/resplan/plan_00001#BTH-02>,
-        <http://resplan.org/resplan/plan_00001#LIV-01> ;
+    resplan:separatesSpace <http://resplan.org/resplan/plan_00001#BTH-01>,
+        <http://resplan.org/resplan/plan_00001#BTH-02> ;
+    resplan:sourceId "IN-17" .
+
+<http://resplan.org/resplan/infer#IW-INF-dd49303e-4b96-4936-ab5f-fe677c1d161f> a resplan:InteriorWall,
+        ifc:Wall ;
+    resplan:derivedFrom <http://resplan.org/resplan/plan_00001#adj-BTH-01-KIT-01-IN-17> ;
+    resplan:isInferred true ;
+    resplan:replacesWall <http://resplan.org/resplan/plan_00001#IN-17> ;
+    resplan:separatesSpace <http://resplan.org/resplan/plan_00001#BTH-01>,
+        <http://resplan.org/resplan/plan_00001#KIT-01> ;
     resplan:sourceId "IN-17" .
 
 <http://resplan.org/resplan/plan_00001#DO-01> a resplan:Door ;
@@ -2338,9 +2338,9 @@ resplan:Door a owl:Class ;
     resplan:bboxMaxY 3.28 ;
     resplan:bboxMinX 3.53 ;
     resplan:bboxMinY 0.49 ;
-    resplan:boundedBy <http://resplan.org/resplan/infer#IW-INF-5f420dde-e8f1-4470-a08c-81a3136805f9>,
-        <http://resplan.org/resplan/infer#IW-INF-9b79982b-c434-461d-b946-cfe37433a0b5>,
-        <http://resplan.org/resplan/infer#IW-INF-c13870b7-b43f-4bc3-ab2b-1333773b7fed>,
+    resplan:boundedBy <http://resplan.org/resplan/infer#IW-INF-42afbd0d-74b6-4335-adbe-c0e48e53078a>,
+        <http://resplan.org/resplan/infer#IW-INF-9e3421cb-fb87-4a2d-8ba5-05c6939df4c4>,
+        <http://resplan.org/resplan/infer#IW-INF-c46e8a25-c8c8-4b9c-b40c-e12222f4cbd2>,
         <http://resplan.org/resplan/plan_00001#EX-15>,
         <http://resplan.org/resplan/plan_00001#EX-16>,
         <http://resplan.org/resplan/plan_00001#EX-17>,
@@ -2368,9 +2368,9 @@ resplan:Door a owl:Class ;
     resplan:bboxMaxY 4.83 ;
     resplan:bboxMinX 0.04 ;
     resplan:bboxMinY 1.76 ;
-    resplan:boundedBy <http://resplan.org/resplan/infer#IW-INF-46f80eff-e30c-4b44-9515-1a18db7419ba>,
-        <http://resplan.org/resplan/infer#IW-INF-5f420dde-e8f1-4470-a08c-81a3136805f9>,
-        <http://resplan.org/resplan/infer#IW-INF-a87f7203-361c-4821-8f5b-4db7e57df849>,
+    resplan:boundedBy <http://resplan.org/resplan/infer#IW-INF-9e3421cb-fb87-4a2d-8ba5-05c6939df4c4>,
+        <http://resplan.org/resplan/infer#IW-INF-b52c3037-b458-4178-b855-e7add955e8ba>,
+        <http://resplan.org/resplan/infer#IW-INF-dd49303e-4b96-4936-ab5f-fe677c1d161f>,
         <http://resplan.org/resplan/plan_00001#EX-17>,
         <http://resplan.org/resplan/plan_00001#EX-18>,
         <http://resplan.org/resplan/plan_00001#EX-29>,
@@ -2404,9 +2404,9 @@ resplan:Door a owl:Class ;
     resplan:bboxMaxY 3.28 ;
     resplan:bboxMinX 3.53 ;
     resplan:bboxMinY 0.49 ;
-    resplan:boundedBy <http://resplan.org/resplan/infer#IW-INF-1bb2768b-f8d0-4b27-9764-cfa2dde5c8c1>,
-        <http://resplan.org/resplan/infer#IW-INF-46f80eff-e30c-4b44-9515-1a18db7419ba>,
-        <http://resplan.org/resplan/infer#IW-INF-9b79982b-c434-461d-b946-cfe37433a0b5>,
+    resplan:boundedBy <http://resplan.org/resplan/infer#IW-INF-3a623f39-810a-42d1-9023-09c5ab2b6ded>,
+        <http://resplan.org/resplan/infer#IW-INF-c46e8a25-c8c8-4b9c-b40c-e12222f4cbd2>,
+        <http://resplan.org/resplan/infer#IW-INF-dd49303e-4b96-4936-ab5f-fe677c1d161f>,
         <http://resplan.org/resplan/plan_00001#EX-15>,
         <http://resplan.org/resplan/plan_00001#EX-16>,
         <http://resplan.org/resplan/plan_00001#EX-17>,
@@ -2439,9 +2439,9 @@ resplan:Door a owl:Class ;
     resplan:bboxMaxY 10.55 ;
     resplan:bboxMinX 3.53 ;
     resplan:bboxMinY 3.43 ;
-    resplan:boundedBy <http://resplan.org/resplan/infer#IW-INF-1bb2768b-f8d0-4b27-9764-cfa2dde5c8c1>,
-        <http://resplan.org/resplan/infer#IW-INF-a87f7203-361c-4821-8f5b-4db7e57df849>,
-        <http://resplan.org/resplan/infer#IW-INF-c13870b7-b43f-4bc3-ab2b-1333773b7fed>,
+    resplan:boundedBy <http://resplan.org/resplan/infer#IW-INF-3a623f39-810a-42d1-9023-09c5ab2b6ded>,
+        <http://resplan.org/resplan/infer#IW-INF-42afbd0d-74b6-4335-adbe-c0e48e53078a>,
+        <http://resplan.org/resplan/infer#IW-INF-b52c3037-b458-4178-b855-e7add955e8ba>,
         <http://resplan.org/resplan/plan_00001#EX-01>,
         <http://resplan.org/resplan/plan_00001#EX-02>,
         <http://resplan.org/resplan/plan_00001#EX-08>,

@@ -15,43 +15,37 @@ resplan:W1_WindowisMissing
   sh:targetClass bot:Space ;
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "Window is missing in this room" ;
+    sh:message "One or more expected windows are missing in this room" ;
     sh:select """
       PREFIX resplan: <http://resplan.org/resplan#>
-      SELECT ?this WHERE {
+      SELECT DISTINCT ?this WHERE {
         ?this resplan:hasRoomType ?type .
         FILTER (?type NOT IN (resplan:Balcony, resplan:Veranda, resplan:Parking))
         ?this resplan:expectedWindow true .
-        FILTER NOT EXISTS {
-          ?this resplan:hasWindow ?w .
-          ?w a resplan:Window .
-      }
-    }
-    """ ;
-  ] .
 
-### W2: Bathrooms must have a window (since mechanical ventilation is not modelled)
-resplan:W2_BathroomNeedsWindow
-  a sh:NodeShape ;
-  rdfs:label "W2: Bathrooms must have at least one window" ;
-  sh:targetClass bot:Space ;
-  sh:sparql [
-    a sh:SPARQLConstraint ;
-    sh:message "Bathroom has no window recorded on its exterior walls." ;
-    sh:select """
-      PREFIX resplan: <http://resplan.org/resplan#>
-      SELECT ?this WHERE {
-        ?this resplan:hasRoomType resplan:Bathroom .
-        FILTER NOT EXISTS {
-          ?this resplan:hasWindow ?window .
-          ?window a resplan:Window .
+        # Case 1: explicit expected window openings exist; flag if any are not present.
+        {
+          FILTER EXISTS { ?this resplan:windowOpening ?slot . }
+          FILTER EXISTS {
+            ?this resplan:windowOpening ?slot .
+            FILTER NOT EXISTS { ?this resplan:hasWindow ?slot }
+          }
+        }
+        UNION
+        # Case 2: fallback when only expectedWindow flag exists; require at least one window instance.
+        {
+          FILTER NOT EXISTS { ?this resplan:windowOpening ?anySlot . }
+          FILTER NOT EXISTS {
+            ?this resplan:hasWindow ?w .
+            ?w a resplan:Window .
+          }
         }
       }
     """ ;
   ] .
 
-### W3: Windows must be hosted only on exterior walls
-resplan:W4_WindowOnExteriorWallOnly
+### W2: Windows must be hosted only on exterior walls
+resplan:W2_WindowOnExteriorWallOnly
   a sh:NodeShape ;
   rdfs:label "W: Windows must be mounted on exterior walls" ;
   sh:targetClass resplan:Window ;
@@ -69,4 +63,23 @@ resplan:W4_WindowOnExteriorWallOnly
     """ ;
   ] .
 
+# ### W: Bathrooms must have a window (since mechanical ventilation is not modelled)
+# resplan:W2_BathroomNeedsWindow
+#   a sh:NodeShape ;
+#   rdfs:label "W2: Bathrooms must have at least one window" ;
+#   sh:targetClass bot:Space ;
+#   sh:sparql [
+#     a sh:SPARQLConstraint ;
+#     sh:message "Bathroom has no window recorded on its exterior walls." ;
+#     sh:select """
+#       PREFIX resplan: <http://resplan.org/resplan#>
+#       SELECT ?this WHERE {
+#         ?this resplan:hasRoomType resplan:Bathroom .
+#         FILTER NOT EXISTS {
+#           ?this resplan:hasWindow ?window .
+#           ?window a resplan:Window .
+#         }
+#       }
+#     """ ;
+#   ] .
 

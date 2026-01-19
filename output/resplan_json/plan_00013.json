@@ -3070,8 +3070,8 @@
         "DO-01"
       ],
       [
-        "BED-01",
         "BTH-02",
+        "BED-01",
         "DO-02"
       ],
       [
@@ -3080,8 +3080,8 @@
         "DO-03"
       ],
       [
-        "BED-01",
         "LIV-01",
+        "BED-01",
         "DO-04"
       ],
       [
@@ -3090,8 +3090,8 @@
         "DO-05"
       ],
       [
-        "BED-02",
         "LIV-01",
+        "BED-02",
         "DO-06"
       ]
     ],
@@ -4064,13 +4064,13 @@
         "door": "DO-02",
         "door_type": "door",
         "rooms": [
-          "BED-01",
-          "BTH-02"
+          "BTH-02",
+          "BED-01"
         ],
         "through_wall": "IN-01",
         "room_types": [
-          "bedroom",
-          "bathroom"
+          "bathroom",
+          "bedroom"
         ]
       },
       {
@@ -4092,13 +4092,13 @@
         "door": "DO-04",
         "door_type": "door",
         "rooms": [
-          "BED-01",
-          "LIV-01"
+          "LIV-01",
+          "BED-01"
         ],
         "through_wall": "IN-03",
         "room_types": [
-          "bedroom",
-          "living"
+          "living",
+          "bedroom"
         ]
       },
       {
@@ -4120,13 +4120,13 @@
         "door": "DO-06",
         "door_type": "door",
         "rooms": [
-          "BED-02",
-          "LIV-01"
+          "LIV-01",
+          "BED-02"
         ],
         "through_wall": "IN-05",
         "room_types": [
-          "bedroom",
-          "living"
+          "living",
+          "bedroom"
         ]
       },
       {
@@ -5751,8 +5751,8 @@
         }
       },
       {
-        "source": "BED-01",
-        "target": "BTH-02",
+        "source": "BTH-02",
+        "target": "BED-01",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-02"
@@ -5767,8 +5767,8 @@
         }
       },
       {
-        "source": "BED-01",
-        "target": "LIV-01",
+        "source": "LIV-01",
+        "target": "BED-01",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-04"
@@ -5783,8 +5783,8 @@
         }
       },
       {
-        "source": "BED-02",
-        "target": "LIV-01",
+        "source": "LIV-01",
+        "target": "BED-02",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-06"

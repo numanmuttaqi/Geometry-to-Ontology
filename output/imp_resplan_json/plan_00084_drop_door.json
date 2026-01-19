@@ -2270,8 +2270,8 @@
     ],
     "door_edges": [
       [
-        "BED-01",
         "BTH-02",
+        "BED-01",
         "DO-01"
       ],
       [
@@ -2280,13 +2280,13 @@
         "DO-02"
       ],
       [
-        "BED-01",
         "LIV-01",
+        "BED-01",
         "DO-03"
       ],
       [
-        "BTH-01",
         "LIV-01",
+        "BTH-01",
         "DO-04"
       ]
     ],
@@ -2977,13 +2977,13 @@
         "door": "DO-01",
         "door_type": "door",
         "rooms": [
-          "BED-01",
-          "BTH-02"
+          "BTH-02",
+          "BED-01"
         ],
         "through_wall": "IN-02",
         "room_types": [
-          "bedroom",
-          "bathroom"
+          "bathroom",
+          "bedroom"
         ]
       },
       {
@@ -3005,13 +3005,13 @@
         "door": "DO-03",
         "door_type": "door",
         "rooms": [
-          "BED-01",
-          "LIV-01"
+          "LIV-01",
+          "BED-01"
         ],
         "through_wall": "IN-03",
         "room_types": [
-          "bedroom",
-          "living"
+          "living",
+          "bedroom"
         ]
       },
       {
@@ -3019,13 +3019,13 @@
         "door": "DO-04",
         "door_type": "door",
         "rooms": [
-          "BTH-01",
-          "LIV-01"
+          "LIV-01",
+          "BTH-01"
         ],
         "through_wall": "EX-12",
         "room_types": [
-          "bathroom",
-          "living"
+          "living",
+          "bathroom"
         ]
       },
       {
@@ -4267,8 +4267,8 @@
         }
       },
       {
-        "source": "BED-01",
-        "target": "BTH-02",
+        "source": "BTH-02",
+        "target": "BED-01",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-01"
@@ -4283,8 +4283,8 @@
         }
       },
       {
-        "source": "BTH-01",
-        "target": "LIV-01",
+        "source": "LIV-01",
+        "target": "BTH-01",
         "type": "connected_via_door",
         "properties": {
           "door": "DO-04"

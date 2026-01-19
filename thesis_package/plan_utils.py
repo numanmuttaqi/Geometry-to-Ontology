@@ -269,7 +269,6 @@ def instances_from_geom(
     if rectilinearize:
         polygons = _rectilinearize(polygons)
     if not polygons:
-        print(f"WARNING: Unexpected geometry type for {category}: {getattr(geom, 'geom_type', type(geom))}")
         return []
 
     valid_polygons: List[Polygon] = []
@@ -278,10 +277,8 @@ def instances_from_geom(
             continue
         area = poly.area
         if area < min_area:
-            print(f"SKIPPED: {category} fragment with area {area:.2f}m²")
             continue
         if not poly.is_valid:
-            print(f"SKIPPED: Invalid {category} geometry")
             continue
         try:
             minx, miny, maxx, maxy = poly.bounds
@@ -289,7 +286,6 @@ def instances_from_geom(
             height = maxy - miny
             aspect_ratio = max(width, height) / (min(width, height) + 1e-6)
             if aspect_ratio > 50:
-                print(f"SKIPPED: {category} sliver (aspect ratio {aspect_ratio:.1f})")
                 continue
         except Exception:
             pass
@@ -394,6 +390,20 @@ def extract_room_instances(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any
                 geometries = significant if len(significant) == 1 else [max(merged.geoms, key=lambda g: g.area)]
             elif merged.geom_type == "Polygon":
                 geometries = [merged]
+
+        # drop duplicate placements that share the same bounding box
+        seen_bbox = set()
+        unique_geometries = []
+        for geom_obj in geometries:
+            bbox = tuple(bbox_of_geom(geom_obj))
+            if None in bbox or len(bbox) != 4:
+                unique_geometries.append(geom_obj)
+                continue
+            if bbox in seen_bbox:
+                continue
+            seen_bbox.add(bbox)
+            unique_geometries.append(geom_obj)
+        geometries = unique_geometries
 
         prefix = ROOM_PREFIX.get(subtype)
         if not prefix:

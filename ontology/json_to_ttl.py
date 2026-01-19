@@ -103,7 +103,7 @@ def _add_geom_literals(graph: Graph, uri: URIRef, entry: Dict) -> None:
             geom_json = json.dumps(geom, separators=(",", ":"), ensure_ascii=False)
             graph.add((uri, RESPLAN.geomJSON, Literal(geom_json)))
         except Exception:
-            LOGGER.warning("Failed to serialize geom for %s", uri)
+            LOGGER.debug("Failed to serialize geom for %s", uri)
 
     props = entry.get("props", {}) or {}
     area = _literal(props.get("area"))
@@ -319,9 +319,9 @@ def _add_relationships(
             wall_uri = wall_uri or ns[wall_id]
             graph.add((room_uri, RESPLAN.boundedBy, wall_uri))
         elif room_uri:
-            LOGGER.warning("Skipping bounded_by edge with unknown wall id: %s", edge)
+            LOGGER.debug("Skipping bounded_by edge with unknown wall id: %s", edge)
         else:
-            LOGGER.warning("Skipping bounded_by edge with unknown ids: %s", edge)
+            LOGGER.debug("Skipping bounded_by edge with unknown ids: %s", edge)
 
     hosts = relations.get("hosts_opening", [])
     for edge in hosts:
@@ -330,7 +330,7 @@ def _add_relationships(
         if wall_uri and opening_uri:
             graph.add((wall_uri, RESPLAN.hostsOpening, opening_uri))
         else:
-            LOGGER.warning("Skipping hosts_opening edge with unknown ids: %s", edge)
+            LOGGER.debug("Skipping hosts_opening edge with unknown ids: %s", edge)
 
     adjacency = relations.get("adjacent_to", [])
     seen_adj_edges = set()
@@ -392,7 +392,7 @@ def _add_relationships(
                                             {"geom": mapping(longest)},
                                         )
                                 except Exception:
-                                    LOGGER.warning("Failed to derive adjacency geom for %s", adj_uri)
+                                    LOGGER.debug("Failed to derive adjacency geom for %s", adj_uri)
             else:
                 # No shared wall data; keep single adjacency edge for topology only
                 adj_id = f"adj-{Path(_shorten_uri(oa)).name}-{Path(_shorten_uri(ob)).name}"
@@ -404,7 +404,7 @@ def _add_relationships(
                     graph.add((adj_uri, RESPLAN.spaceB, ob))
                     graph.add((adj_uri, RESPLAN.sharedWallCount, Literal(0, datatype=XSD.integer)))
         else:
-            LOGGER.warning("Skipping adjacency edge with unknown ids: %s", entry)
+            LOGGER.debug("Skipping adjacency edge with unknown ids: %s", entry)
 
     connections = relations.get("connected_via_door", [])
     for entry in connections:
@@ -418,12 +418,12 @@ def _add_relationships(
                 graph.add((a, RESPLAN.connectedViaDoor, b))
                 graph.add((b, RESPLAN.connectedViaDoor, a))
             else:
-                LOGGER.warning("Skipping connected_via_door pair (%s, %s).", room_a, room_b)
+                LOGGER.debug("Skipping connected_via_door pair (%s, %s).", room_a, room_b)
 
         wall_id = entry.get("through_wall")
         wall_uri = structural.get(wall_id) if wall_id else None
         if wall_id and not wall_uri:
-            LOGGER.warning("Wall %s not found for connected_via_door entry %s.", wall_id, entry.get("id"))
+            LOGGER.debug("Wall %s not found for connected_via_door entry %s.", wall_id, entry.get("id"))
         if wall_uri and OUTSIDE_ID in room_ids:
             outside_uri = _resolve_room(OUTSIDE_ID, graph, ns, rooms)
             graph.add((outside_uri, RESPLAN.boundedBy, wall_uri))
@@ -431,7 +431,7 @@ def _add_relationships(
         door_id = entry.get("door")
         door_uri = structural.get(door_id) if door_id else None
         if door_id and not door_uri:
-            LOGGER.warning("Door %s not found for connected_via_door entry %s.", door_id, entry.get("id"))
+            LOGGER.debug("Door %s not found for connected_via_door entry %s.", door_id, entry.get("id"))
         if door_uri:
             seen_rooms = set()
             for room_id in room_ids:
