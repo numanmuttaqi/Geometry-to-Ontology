@@ -616,39 +616,148 @@ def infer_door_geom_from_walls_or_adjacency(
     # Prefer at most 2 walls (per your spec)
     host_polys = host_polys[:2]
 
-   # --------------------------------------------------
-    # 2) Two walls: detect orientation/overlap; build buffered line at mid-gap
+    # --------------------------------------------------
+    # 2) Two walls: simple placement between host walls
     # --------------------------------------------------
     if len(host_polys) == 2:
         (_, A), (_, B) = host_polys
         t = min(_wall_thickness(A), _wall_thickness(B))
+        
+        door_id = str(door).split('#')[-1][:20]
+        print(f"\n=== DEBUG DOOR {door_id} ===")
+
+        # Get nearest segment between the two walls to determine gap span
+        pA, pB = nearest_points(A.boundary, B.boundary)
+        print(f"  Nearest points: pA={pA.coords[0]}, pB={pB.coords[0]}")
+        
+        # Determine orientation
+        dx = abs(pB.x - pA.x)
+        dy = abs(pB.y - pA.y)
+        print(f"  dx={dx:.3f}, dy={dy:.3f}")
+        
+        minxA, minyA, maxxA, maxyA = A.bounds
+        minxB, minyB, maxxB, maxyB = B.bounds
+        print(f"  Wall A bounds: x=[{minxA:.3f}, {maxxA:.3f}], y=[{minyA:.3f}, {maxyA:.3f}]")
+        print(f"  Wall B bounds: x=[{minxB:.3f}, {maxxB:.3f}], y=[{minyB:.3f}, {maxyB:.3f}]")
+        
         door_line = None
         
-        # PRIORITY 1: Shared boundary between connected spaces (MOST ACCURATE)
-        if len(spaces) >= 2:
-            door_line = _shared_boundary_line(spaces)
+        if dx < 1e-6:  # Vertical door
+            print(f"  Orientation: VERTICAL")
+            
+            x_base = pA.x  # nearest point X
+            
+            if len(spaces) >= 2:
+                g1 = _load_shape(geom_index.get(spaces[0]))
+                g2 = _load_shape(geom_index.get(spaces[1]))
+                
+                if g1 and g2 and not g1.is_empty and not g2.is_empty:
+                    # Get room bounds
+                    minx1, _, maxx1, _ = g1.bounds
+                    minx2, _, maxx2, _ = g2.bounds
+                    
+                    print(f"  Room 1 bounds: x=[{minx1:.3f}, {maxx1:.3f}]")
+                    print(f"  Room 2 bounds: x=[{minx2:.3f}, {maxx2:.3f}]")
+                    
+                    # Find closest edge
+                    edges = [
+                        (abs(maxx1 - x_base), maxx1, "room1_right"),
+                        (abs(minx1 - x_base), minx1, "room1_left"),
+                        (abs(maxx2 - x_base), maxx2, "room2_right"),
+                        (abs(minx2 - x_base), minx2, "room2_left"),
+                    ]
+                    edges.sort(key=lambda e: e[0])
+                    
+                    _, x_edge, edge_name = edges[0]
+                    
+                    # TWEAK: Weighted average between x_base and x_edge
+                    weight = 0 # ADJUST THIS
+                    x_door = weight * x_base + (1 - weight) * x_edge
+                    
+                    print(f"  Base x: {x_base:.3f}, Edge ({edge_name}): {x_edge:.3f}")
+                    print(f"  Using weighted (w={weight}): {x_door:.3f}")
+                else:
+                    x_door = x_base
+                    print(f"  Using base x: {x_door:.3f}")
+            else:
+                x_door = x_base
+                print(f"  Using base x: {x_door:.3f}")
+            
+            # Y-span from gap between walls (FULL LENGTH)
+            y_min = max(minyA, minyB)
+            y_max = min(maxyA, maxyB)
+            
+            if y_max < y_min:
+                print(f"  No Y overlap, using gap")
+                y_min = min(maxyA, maxyB)
+                y_max = max(minyA, minyB)
+            
+            print(f"  Door line: ({x_door:.3f}, {y_min:.3f}) → ({x_door:.3f}, {y_max:.3f})")
+            door_line = LineString([(x_door, y_min), (x_door, y_max)])
+            
+        elif dy < 1e-6:  # Horizontal door
+            print(f"  Orientation: HORIZONTAL")
+            
+            y_base = pA.y
+            
+            if len(spaces) >= 2:
+                g1 = _load_shape(geom_index.get(spaces[0]))
+                g2 = _load_shape(geom_index.get(spaces[1]))
+                
+                if g1 and g2 and not g1.is_empty and not g2.is_empty:
+                    # Get room bounds
+                    _, miny1, _, maxy1 = g1.bounds
+                    _, miny2, _, maxy2 = g2.bounds
+                    
+                    print(f"  Room 1 bounds: y=[{miny1:.3f}, {maxy1:.3f}]")
+                    print(f"  Room 2 bounds: y=[{miny2:.3f}, {maxy2:.3f}]")
+                    
+                    # Find closest edge
+                    edges = [
+                        (abs(maxy1 - y_base), maxy1, "room1_top"),
+                        (abs(miny1 - y_base), miny1, "room1_bottom"),
+                        (abs(maxy2 - y_base), maxy2, "room2_top"),
+                        (abs(miny2 - y_base), miny2, "room2_bottom"),
+                    ]
+                    edges.sort(key=lambda e: e[0])
+                    
+                    _, y_edge, edge_name = edges[0]
+                    
+                    # TWEAK: Weighted average
+                    weight = 0  # ADJUST THIS
+                    y_door = weight * y_base + (1 - weight) * y_edge
+                    
+                    print(f"  Base y: {y_base:.3f}, Edge ({edge_name}): {y_edge:.3f}")
+                    print(f"  Using weighted (w={weight}): {y_door:.3f}")
+                else:
+                    y_door = y_base
+                    print(f"  Using base y: {y_door:.3f}")
+            else:
+                y_door = y_base
+                print(f"  Using base y: {y_door:.3f}")
+            
+            # X-span from gap between walls (FULL LENGTH)
+            x_min = max(minxA, minxB)
+            x_max = min(maxxA, maxxB)
+            
+            if x_max < x_min:
+                print(f"  No X overlap, using gap")
+                x_min = min(maxxA, maxxB)
+                x_max = max(minxA, minxB)
+            
+            print(f"  Door line: ({x_min:.3f}, {y_door:.3f}) → ({x_max:.3f}, {y_door:.3f})")
+            door_line = LineString([(x_min, y_door), (x_max, y_door)])
+            
+        else:
+            print(f"  Orientation: DIAGONAL/COMPLEX")
+            door_line = LineString([pA, pB])
         
-        # PRIORITY 2: Adjacency geometry (from derivedFrom)
-        if door_line is None:
-            derived_adj = graph.value(door, RESPLAN.derivedFrom)
-            if derived_adj:
-                adj_geom = _load_shape(adj_geom_index.get(derived_adj))
-                if adj_geom and not adj_geom.is_empty and adj_geom.length > 0:
-                    if adj_geom.geom_type == "LineString":
-                        door_line = adj_geom
-                    elif adj_geom.geom_type == "MultiLineString":
-                        door_line = max(list(adj_geom.geoms), key=lambda g: g.length)
+        if door_line is None or door_line.is_empty:
+            return None
         
-        # PRIORITY 3: Wall-room overlap (intersection of wall boundaries with room union)
-        if door_line is None and len(spaces) >= 2:
-            door_line = _wall_room_overlap_line(A, B, spaces[0], spaces[1])
-        
-        # FALLBACK: Nearest points between walls (LEAST ACCURATE)
-        if door_line is None:
-            pA, pB = nearest_points(A.boundary, B.boundary)
-            door_line = LineString([(pA.x, pA.y), (pB.x, pB.y)])
-
+        print(f"  Thickness: {t:.3f}")
         door_poly = door_line.buffer(t / 2.0, cap_style=2, join_style=2)
+        print(f"  Door poly bounds: {door_poly.bounds}")
         return mapping(door_poly) if (not door_poly.is_empty) else None
 
     # --------------------------------------------------
