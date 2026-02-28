@@ -4,7 +4,6 @@ PREFIX bot:     <https://w3id.org/bot#>
 PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
-  # new door
   ?door a resplan:Door, ifc:Door ;
         resplan:isInferred true ;
         resplan:sourceId ?newId ;
@@ -61,7 +60,6 @@ WHERE {
     }
   }
 
-  # 3) create instance door
   BIND( IRI(CONCAT("http://resplan.org/resplan/infer#",
                    SHA256(CONCAT(STR(?a), STR(?b))))) AS ?door)
   BIND( CONCAT("DO-INF-", SHA256(CONCAT(STR(?a), STR(?b)))) AS ?newId)

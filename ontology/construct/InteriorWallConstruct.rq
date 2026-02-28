@@ -1,27 +1,6 @@
 PREFIX resplan: <http://resplan.org/resplan#>
 PREFIX ifc:     <https://w3id.org/ifc/IFC4_ADD2#>
 
-# CONSTRUCT {
-#   ?newWall a resplan:InteriorWall , ifc:Wall ;
-#            resplan:isInferred true ;
-#            resplan:sourceId ?srcId ;
-#            resplan:replacesWall ?w .
-
-#   ?s1 resplan:boundedBy ?newWall .
-#   ?s2 resplan:boundedBy ?newWall .
-# }
-# WHERE {
-#   ?adj a resplan:AdjacencyEdge ;
-#        resplan:spaceA ?s1 ;
-#        resplan:spaceB ?s2 ;
-#        resplan:sharedWall ?w .
-
-#   FILTER(CONTAINS(STR(?w), "#IN-"))
-#   FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
-
-#   BIND( IRI(CONCAT("http://resplan.org/resplan/infer#IW-INF-", STRUUID())) AS ?newWall )
-#   BIND( STRAFTER(STR(?w), "#") AS ?srcId )
-# }
 
 CONSTRUCT {
 
@@ -46,7 +25,6 @@ WHERE {
   FILTER (CONTAINS(STR(?w), "#IN-"))
   FILTER NOT EXISTS { ?w a resplan:InteriorWall . }
 
-  # Use deterministic ID per missing wall to avoid duplicating the same wall across multiple adjacency edges
   BIND( IRI(CONCAT("http://resplan.org/resplan/infer#IW-INF-", SHA256(STR(?w)))) AS ?newWall )
   BIND( STRAFTER(STR(?w), "#") AS ?srcId )
 }

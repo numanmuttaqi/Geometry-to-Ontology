@@ -309,7 +309,7 @@ def compute_relations(plan: Dict[str, Any]) -> Dict[str, List[Dict[str, Any]]]:
         "bounded_by": bounded_by,
         "adjacent_to": adjacent_to,
         "hosts_opening": hosts_opening,
-        "connected_via_door": [],  # populated later in graph.rebuild_connected_via_door_inplace
+        "connected_via_door": [], 
     }
 
 

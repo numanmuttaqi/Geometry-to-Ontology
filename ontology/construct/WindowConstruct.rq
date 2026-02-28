@@ -75,7 +75,6 @@ WHERE {
   }
   UNION
   {
-    # fallback kalau tidak ada placeholder opening: pilih dari boundedBy (deterministic)
     FILTER NOT EXISTS { ?room resplan:windowOpening ?anyOpening . }
     FILTER NOT EXISTS {
       ?room resplan:hasWindow ?wReal .

@@ -133,7 +133,7 @@ def _is_empty_geom(geom_lit):
 
 
 # ======================================================
-# WALL INFERENCE - FIXED VERSION
+# WALL INFERENCE FUNCTION
 # ======================================================
 def infer_interior_wall_GENERAL(
     graph,
@@ -142,15 +142,6 @@ def infer_interior_wall_GENERAL(
     geom_index,
     default_thickness=0.1897,
 ):
-    """
-    FIXED: Proper door avoidance without polygon carving artifacts.
-    
-    Changes:
-    - Split at LINE level only (keeps full wall length visible)
-    - NO carving at polygon level (prevents weird shapes)
-    - Smaller buffer for doors (0.15m vs 0.30m)
-    - Keep ALL segments (even small ones for visibility)
-    """
     
     def _load_shape(val):
         if val is None:
@@ -291,7 +282,7 @@ def infer_interior_wall_GENERAL(
     orientation = None
     
     # =========================================================================
-    # WALL LINE DETERMINATION
+    # WALL RECONSTRUCTION
     # =========================================================================
     candidate_lines = _candidate_gap_segments(
         geomA, geomB,
@@ -354,7 +345,7 @@ def infer_interior_wall_GENERAL(
         return None
     
     # =========================================================================
-    # DOOR DETECTION AND SPLITTING - FIXED!
+    # DOOR DETECTION AND SPLITTING
     # =========================================================================
     
     def _get_openings_between_rooms(space_a, space_b):
@@ -408,7 +399,6 @@ def infer_interior_wall_GENERAL(
                 blocking_buffer = 0.15 if is_door else 0.12
                 opening_blocking = opening_geom.buffer(blocking_buffer)
                 
-                # NO extended blocking! Keep it simple
                 openings.append(opening_blocking)
         
         return openings
@@ -427,11 +417,9 @@ def infer_interior_wall_GENERAL(
             if result.is_empty:
                 return []
             elif result.geom_type == 'LineString':
-                # Keep ALL segments, no minimum!
                 segments.append(result)
             elif result.geom_type == 'MultiLineString':
                 for line in result.geoms:
-                    # Keep ALL segments!
                     segments.append(line)
             elif result.geom_type == 'GeometryCollection':
                 for geom in result.geoms:
@@ -442,7 +430,6 @@ def infer_interior_wall_GENERAL(
         except:
             return [wall_line]
     
-    # Detect and split
     openings = _get_openings_between_rooms(spaceA, spaceB)
     
     if openings:
@@ -453,7 +440,6 @@ def infer_interior_wall_GENERAL(
     if not wall_segments:
         return None
     
-    # Merge and buffer - NO CARVING!
     merged = linemerge(wall_segments)
     
     wall_poly = merged.buffer(
@@ -461,9 +447,6 @@ def infer_interior_wall_GENERAL(
         cap_style=3,  # square caps
         join_style=2,  # mitre joins
     )
-    
-    # NO CARVING AT POLYGON LEVEL!
-    # This was causing the weird shapes!
     
     if wall_poly.is_empty or wall_poly.area < 0.001:
         return None
@@ -476,7 +459,7 @@ def infer_interior_wall_GENERAL(
 
 
 # ======================================================
-# Other inference functions (unchanged)
+# Other inference functions
 # ======================================================
 
 def infer_interior_wall_geom(graph, wall, adj_geom_index, geom_index, default_thickness=0.19, **kwargs):
@@ -671,7 +654,7 @@ def infer_door_geom_from_walls_or_adjacency(
                     _, x_edge, edge_name = edges[0]
                     
                     # TWEAK: Weighted average between x_base and x_edge
-                    weight = 0 # ADJUST THIS
+                    weight = 0 # ADJUSTABLE
                     x_door = weight * x_base + (1 - weight) * x_edge
                     
                     print(f"  Base x: {x_base:.3f}, Edge ({edge_name}): {x_edge:.3f}")
@@ -780,7 +763,7 @@ def infer_door_geom_from_walls_or_adjacency(
         ref_pt = W.centroid
 
     # project to boundary (point on boundary nearest to ref_pt)
-    # nearest_points returns points in the same order as inputs.  [oai_citation:3‡shapely.readthedocs.io](https://shapely.readthedocs.io/en/2.0.6/manual.html?utm_source=chatgpt.com)
+    # nearest_points returns points in the same order as inputs. 
     _, on_boundary = nearest_points(ref_pt, W.boundary)
 
     minx, miny, maxx, maxy = W.bounds
@@ -830,14 +813,14 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
     # --------------------------------------------------
     primary = graph.value(window, RESPLAN.primaryWall) or graph.value(window, RESPLAN.hasPrimaryHost)
     if not primary:
-        print(f"  ❌ No primary wall found")
+        print(f"No primary wall found")
         return None
     
     print(f"  Primary wall: {str(primary).split('#')[-1]}")
     
     P = _load_shape(geom_index.get(primary))
     if not P or P.is_empty:
-        print(f"  ❌ Primary wall geometry empty")
+        print(f"Primary wall geometry empty")
         return None
     
     print(f"  Primary bounds: {P.bounds}")
@@ -846,12 +829,12 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
     # 2. Get exactly ONE other wall that hostsOpening
     # --------------------------------------------------
     host_walls = list(graph.subjects(RESPLAN.hostsOpening, window))
-    print(f"  All host walls: {[str(w).split('#')[-1] for w in host_walls]}")
+    print(f"All host walls: {[str(w).split('#')[-1] for w in host_walls]}")
     
     other_hosts = [w for w in host_walls if w != primary]
     
     if not other_hosts:
-        print(f"  ❌ No other host walls found")
+        print(f"No other host walls found")
         return None
     
     # Take first other host as secondary
@@ -860,7 +843,7 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
     
     S = _load_shape(geom_index.get(secondary))
     if not S or S.is_empty:
-        print(f"  ❌ Secondary wall geometry empty")
+        print(f"Secondary wall geometry empty")
         return None
     
     print(f"  Secondary bounds: {S.bounds}")
@@ -942,17 +925,17 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
         window_poly = line.buffer(thickness / 2, cap_style=2, join_style=2)
         
         if window_poly.is_empty or window_poly.area < 0.001:
-            print(f"  ❌ Window polygon empty or too small")
+            print(f"Window polygon empty or too small")
             return None
         
         result = mapping(window_poly)
-        print(f"  ✅ Window created: area={window_poly.area:.3f}, geom_type={window_poly.geom_type}")
-        print(f"  ✅ Result keys: {result.keys()}")
-        print(f"  ✅ Result type: {result.get('type')}")
+        print(f"Window created: area={window_poly.area:.3f}, geom_type={window_poly.geom_type}")
+        print(f"Result keys: {result.keys()}")
+        print(f"Result type: {result.get('type')}")
         
         return result
     except Exception as e:
-        print(f"  ❌ Buffer/mapping error: {e}")
+        print(f"Buffer/mapping error: {e}")
         import traceback
         traceback.print_exc()
         return None

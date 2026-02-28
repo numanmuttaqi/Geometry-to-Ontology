@@ -65,12 +65,6 @@ def remove_structural_elements(
     *,
     rng: Optional[random.Random] = None,
 ) -> Dict:
-    """
-    Return a new plan where structural elements in `removal_spec` have been dropped.
-
-    removal_spec example:
-        {"interior_wall": (1, 3), "door": (2, 4)}
-    """
     rng = rng or random.Random()
     mutated = copy.deepcopy(plan)
 
@@ -100,7 +94,7 @@ def _choose_ids_to_drop(
     max_count: int,
     rng: random.Random,
     *,
-    min_remaining: int = 3, # ensure at least this many remain
+    min_remaining: int = 3, # ensure at least this many remain, hardcoded to avoid over-dropping in small plans
 ) -> List[str]:
     if not items:
         return []
@@ -165,10 +159,10 @@ def _purge_graph(plan: Mapping, removed: Mapping[str, Iterable[str]]) -> None:
             e for e in bounded if e.get("wall") not in removed_walls
         ]
 
-    # hosts_opening
-    hosts = relations.get("hosts_opening") or []
+    # Notes: hosts_opening
     # Keep window host relations even if the window instance was marked removed, so downstream
     # analyses still know the expected opening. Doors are still purged when removed.
+    hosts = relations.get("hosts_opening") or []
     relations["hosts_opening"] = [
         e
         for e in hosts
@@ -176,7 +170,7 @@ def _purge_graph(plan: Mapping, removed: Mapping[str, Iterable[str]]) -> None:
         and e.get("opening") not in removed_doors
     ]
 
-    # connected_via_door
+    # Notes:connected_via_door
     # Keep connections even if the door instance was removed so downstream validation
     # can detect missing doors from the remaining relationship data.
     # Only drop entries when the through-door reference itself is invalid (e.g., wall removed).

@@ -1,5 +1,4 @@
 """Helpers for extracting structured instances and metadata from plan geometries."""
-
 from __future__ import annotations
 
 from copy import deepcopy

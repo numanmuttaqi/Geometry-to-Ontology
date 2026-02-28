@@ -8,16 +8,22 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
+###################################################################
+# MODELING ASSUMPTIONS
+###################################################################
+# ....
+##################################################################
+
 ### DW1: Every Door must belong to exactly one wall
 resplan:DW1_DoorHasExactlyOneWall a sh:NodeShape ;
-    rdfs:label "DW1: Door must be hosted by a wall" ;
+    rdfs:label "DW1: Door must be hosted by two wall" ;
     sh:targetClass resplan:Door ;
     sh:property [
         a sh:PropertyShape ;
         sh:path [ sh:inversePath resplan:hostsOpening] ;
         sh:minCount 2 ;
         sh:maxCount 2 ;
-        sh:message "This door's wall is missing" ;
+        sh:message "This door's walls are missing" ;
     ] .
 
 

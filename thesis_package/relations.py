@@ -11,11 +11,10 @@ import resplan_utils as R
 
 def get_relations_dict(plan: Dict[str, Any], *, create: bool = False, promote: bool = True) -> Dict[str, Any]:
     """
-    Return the relations dictionary stored on the plan, preferring the top-level key.
-
+    Return the relations dictionary stored on the plan.
     When `promote` is True (default), any legacy storage under ``plan["graph"]["relations"]``
-    gets moved to the top level to keep the JSON structure consistent. When `create`
-    is True, the function ensures that ``plan["relations"]`` exists and is a dict.
+    gets moved to the top level to keep the JSON structure consistent. 
+    When `create` is True, the function ensures that ``plan["relations"]`` exists and is a dict.
     """
     if not isinstance(plan, dict):
         return {}
@@ -49,7 +48,6 @@ def get_relations_dict(plan: Dict[str, Any], *, create: bool = False, promote: b
 
 
 def as_id(value: Any) -> Optional[str]:
-    """Return an identifier string from a dict/list entry."""
     if isinstance(value, str):
         return value
     if isinstance(value, dict):
@@ -58,7 +56,6 @@ def as_id(value: Any) -> Optional[str]:
 
 
 def geometry_from_record(record: Any):
-    """Best-effort conversion of a record to a shapely geometry."""
     geom = None
     if isinstance(record, dict):
         geom = record.get("geom") or record.get("geometry")

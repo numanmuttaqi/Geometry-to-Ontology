@@ -53,7 +53,9 @@ def plot_plan_json(
             bbox=dict(boxstyle="square,pad=0.15", facecolor="white", edgecolor="none", alpha=label_box_alpha),
         )
 
+    # ======================================================
     # Rooms
+    # ======================================================
     for subtype, records in rooms_by_type.items():
         face = ROOM_COLORS.get(subtype, "#CCCCCC")
         for record in records:
@@ -66,7 +68,9 @@ def plot_plan_json(
             if show_ids:
                 _annotate(ax, geom, record["id"], label_box_alpha)
 
+    # ======================================================
     # Walls
+    # ======================================================
     def _draw_walls(key):
         face = STRUCT_COLORS.get(key, "#777777")
         for record in structural.get(key, []):
@@ -105,7 +109,9 @@ def plot_plan_json(
     _draw_walls("exterior_wall")
     _draw_walls("interior_wall")
 
-    # Openings
+    # ======================================================
+    # Doors and Windows
+    # ======================================================
     def _draw_openings(key, color, fill_alpha, line_width, line_style):
         for record in structural.get(key, []):
             geom = shape(record["geom"])

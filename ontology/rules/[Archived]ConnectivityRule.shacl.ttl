@@ -9,6 +9,12 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
+###################################################################
+# MODELING ASSUMPTIONS
+###################################################################
+# ....
+##################################################################
+
 ### C01: Each habitable room must be reachable through a sequence door chain from the entry node.
 resplan:C01_RoomConnectivity a sh:NodeShape ;
     sh:targetSubjectOf resplan:hasRoomType ;

@@ -13,6 +13,7 @@ from .relations import (
     normalize_relation_ids,
 )
 
+# Determine outside ID for door connections to support validation.
 OUTSIDE_ID = "OUT-0000"
 
 
@@ -190,7 +191,6 @@ def relabel_rooms_with_subtype_prefixes_inplace(plan):
     return remap
 
 
-# --- Cell 10 ---
 def ensure_outside_virtual_inplace(plan):
     virt = plan.setdefault("instances", {}).setdefault("virtual", [])
     if not any(isinstance(v, dict) and v.get("id") == "OUT-0000" for v in virt):
@@ -198,7 +198,6 @@ def ensure_outside_virtual_inplace(plan):
 
 def rebuild_connected_via_door_inplace(plan):
     ensure_outside_virtual_inplace(plan)
-    # pastikan relasi lain sudah dinormalisasi agar downstream aman
     relations = get_relations_dict(plan, create=True)
     normalized = normalize_relation_ids(relations)
     relations.clear()
@@ -319,7 +318,7 @@ def derive_window_connects(plan: Dict[str, Any]) -> List[Dict[str, Any]]:
     ROOM_MARGIN = 0.05
     WALL_MARGIN = 0.02
 
-    # Limited fallback: only fix missing exterior associations for balconies/verandas.
+    # fallback: only fix missing exterior associations for balconies/verandas.
     SPECIAL_ROOM_TYPES = {"balcony", "veranda"}
     for room_id, subtype in room_types.items():
         if subtype not in SPECIAL_ROOM_TYPES:
@@ -414,7 +413,7 @@ def derive_window_connects(plan: Dict[str, Any]) -> List[Dict[str, Any]]:
                     candidate_rooms = [best_room]
 
         # If the window instance was removed and we still have multiple candidate rooms
-        # (common when geometry is missing), pick one deterministically to avoid duplicating
+        # pick one deterministically to avoid duplicating
         # expected slots across rooms.
         if windows_by_id.get(window_id, {}).get("removed") and len(candidate_rooms) > 1:
             candidate_rooms = [sorted(candidate_rooms)[0]]
@@ -571,7 +570,6 @@ def embed_structural_analyses_in_relations(plan: Dict[str, Any]) -> None:
         relations.pop("door_wall_consistency", None)
 
 
-# --- Cell 11 ---
 def convert_instances_for_relations(room_instances, struct_instances):
     mock_plan = {"instances": {"room": {}, "structural": {}}}
     for room_type, rooms in room_instances.items():
@@ -593,7 +591,6 @@ def export_graph(plan, room_instances, struct_instances=None):
         "per_room": bounded_by_per_room({"bounded_by": bounded_edges}),
     }
 
-    # bangun koneksi pintu dari hosts_opening + bounded_by
     passages = build_connected_via_door_from_hosts(mock_plan)
     relations["connected_via_door"] = passages
 

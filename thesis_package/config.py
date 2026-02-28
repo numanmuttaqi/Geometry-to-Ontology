@@ -143,7 +143,7 @@ if __name__ == "__main__":
             figure = axis.get_figure() if hasattr(axis, "get_figure") else plt.gcf()
             figure.savefig(labeled_plot_path, dpi=200, bbox_inches="tight")
             plt.close(figure)
-        except Exception as exc:  # pragma: no cover - diagnostic path
+        except Exception as exc: 
             failed_indices.append(idx)
             print(f"\nFailed at index {idx}: {exc}")
 

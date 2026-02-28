@@ -8,6 +8,12 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
+###################################################################
+# MODELING ASSUMPTIONS
+###################################################################
+# ....
+##################################################################
+
 ### W1: Window is missing in the room
 resplan:W1_WindowisMissing
   a sh:NodeShape ;
@@ -63,23 +69,4 @@ resplan:W2_WindowOnExteriorWallOnly
     """ ;
   ] .
 
-# ### W: Bathrooms must have a window (since mechanical ventilation is not modelled)
-# resplan:W2_BathroomNeedsWindow
-#   a sh:NodeShape ;
-#   rdfs:label "W2: Bathrooms must have at least one window" ;
-#   sh:targetClass bot:Space ;
-#   sh:sparql [
-#     a sh:SPARQLConstraint ;
-#     sh:message "Bathroom has no window recorded on its exterior walls." ;
-#     sh:select """
-#       PREFIX resplan: <http://resplan.org/resplan#>
-#       SELECT ?this WHERE {
-#         ?this resplan:hasRoomType resplan:Bathroom .
-#         FILTER NOT EXISTS {
-#           ?this resplan:hasWindow ?window .
-#           ?window a resplan:Window .
-#         }
-#       }
-#     """ ;
-#   ] .
 

@@ -93,7 +93,6 @@ def build_circulation(plan: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
     adjacency, door_edges = _build_adjacency(entry_node, passages)
     if entry_node not in adjacency:
-        # No room connects to the front door; nothing useful to report.
         return None
 
     room_ids = _collect_room_ids(plan)
