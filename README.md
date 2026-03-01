@@ -32,9 +32,9 @@ The results demonstrate that construction knowledge can be encoded as explicit r
 - `data/`
   - source data (e.g., `ResPlan.pkl`)
 - `output/`
-  - `resplan_json/`: exported complete JSON plans
+  - `resplan_json/`: exported complete JSON floor plans
   - `imp_resplan_json/`: imperfect JSON variants (elements removed)
-  - `imp_resplan_ttl/`: imperfect plans in Turtle
+  - `imp_resplan_ttl/`: imperfect floor plans in Turtle
   - `inferred_resplan_ttl/`: inferred Turtle outputs
   - `inferred_resplan_json/`: inferred plans converted back to JSON geometry
 - `ontology/`
@@ -77,61 +77,23 @@ The results demonstrate that construction knowledge can be encoded as explicit r
 ## Setup
 ### Option A: Conda
 ```bash
-conda env create -f environment.yml
-conda activate <your-env-name>
+conda env create -f environment-thesis.yml
+conda activate geometry-to-ontology-thesis
 ```
-
 ### Option B: Pip
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-thesis.txt
 ```
 
-## Usage
-### 1) Convert one JSON plan to Turtle
-```bash
-python ontology/json_to_ttl.py output/resplan_json/plan_00000.json \
-  -o output/imp_resplan_ttl/plan_00000.ttl
-```
-
-### 2) Generate imperfect JSON variants (Python API)
-```python
-from pathlib import Path
-import random
-from thesis_package.synthetic import load_plan, save_plan, generate_variants
-
-plan = load_plan(Path("output/resplan_json/plan_00000.json"))
-variants = generate_variants(plan, rng=random.Random(42))
-
-for name, v in variants.items():
-    save_plan(v, Path(f"output/imp_resplan_json/plan_00000_{name}.json"))
-```
-
-### 3) Convert inferred Turtle back to JSON geometry
-```python
-from thesis_package.ttl_to_json import save_ttl_as_json
-
-save_ttl_as_json(
-    "output/inferred_resplan_ttl/plan_00000_walls_back.ttl",
-    "output/inferred_resplan_json/plan_00000_walls_back.json",
-)
-```
-
-### 4) Run full experiments
+## Run full experiments
 Use the notebooks as orchestrators:
-- `Notebooks/1_visualization.ipynb` :
-- `Notebooks/2_Inference.ipynb` :
-- `Notebooks/3_togeometry.ipynb` :
-- `Notebooks/4_All Structural.ipynb` :
+- `Notebooks/1_visualization.ipynb` : Export floor plan to JSON, Generate imperfect floor plan, map json into turtle, validation pre-inference
+- `Notebooks/2_Inference.ipynb` : Inference, Revalidation
+- `Notebooks/3_togeometry.ipynb` : Semantic to geometry
+- `Notebooks/4_All Structural.ipynb` : End-to-end pipeline for the missing all structural scenario
 
 ## Notes on Current Project State
 - The notebook workflow is the primary reproducible path.
 - `thesis_package/main.py` is currently a placeholder and not the canonical experiment runner.
 - Some outputs are already pre-generated under `output/`.
 
-## Limitations
-- Dataset inconsistencies and schema heterogeneity can affect inference consistency.
-- Semantic-to-geometric reconstruction is constrained by available topology context from dataset.
-- Generalization beyond the current residential dataset/domain is not yet fully evaluated.
-
-## Citation
-If you use this repository, please cite the corresponding thesis and acknowledge the ResPlan dataset and ontology/rule resources used in the experiments.

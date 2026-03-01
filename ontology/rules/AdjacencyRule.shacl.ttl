@@ -8,15 +8,7 @@
 @prefix igml-nav:   <http://www.opengis.net/indoorgml/1.0/navigation#> .
 @prefix resplan:    <http://resplan.org/resplan#> .
 
-###################################################################
-# MODELING ASSUMPTIONS
-###################################################################
-# ....
-##################################################################
-
-#################################################################
 # any interior wall in adjacency is missing
-#################################################################
 resplan:AMissingInteriorWallShape
    a sh:NodeShape ;
    rdfs:label "Adjacency edge missing interior wall" ;

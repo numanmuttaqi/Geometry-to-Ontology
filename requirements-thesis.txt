@@ -1,0 +1,27 @@
+# Minimal dependencies for the Geometry-to-Ontology thesis pipeline
+# Use with: pip install -r requirements-thesis.txt
+
+# Core scientific stack
+numpy>=1.26,<2.1
+pandas>=2.1,<2.3
+matplotlib>=3.8,<3.11
+networkx>=3.2,<3.6
+
+# Geometry / spatial processing
+shapely>=2.0,<2.2
+geopandas>=0.14,<1.2
+opencv-python>=4.9,<4.13
+
+# Semantic web / reasoning
+rdflib>=7.0,<7.5
+pyshacl>=0.27,<0.31
+owlrl>=6.0,<8.0
+SPARQLWrapper>=2.0,<2.1
+
+# Utilities used in notebooks/workflows
+requests>=2.31,<3.0
+tqdm>=4.66,<5.0
+
+# Notebook runtime
+ipykernel>=6.29,<7.0
+jupyterlab>=4.0,<5.0
