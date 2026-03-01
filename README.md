@@ -1,13 +1,8 @@
 # Geometry-to-Ontology: Knowledge-Based Reconstruction of Imperfect Floor Plans
 
 ## Overview
+![Alt text](3_0_Methodology.jpg)
 This repository contains the implementation for a thesis framework that reconstructs missing structural elements in residential floor plans by combining geometric processing with semantic reasoning.
-
-The pipeline links:
-1. geometric floor-plan artifacts,
-2. ontology-based knowledge representation,
-3. SHACL validation rules, and
-4. SPARQL CONSTRUCT inference.
 
 Target missing elements are primarily:
 - interior walls,
