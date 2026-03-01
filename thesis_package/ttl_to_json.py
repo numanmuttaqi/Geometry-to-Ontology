@@ -1,7 +1,5 @@
 """
 Helpers to reconstruct the original plan JSON structure from a Turtle file.
-
-UPDATED VERSION: Fixed door avoidance with proper splitting
 """
 
 from __future__ import annotations
@@ -264,10 +262,6 @@ def infer_interior_wall_GENERAL(
     if not geomA or not geomB or geomA.is_empty or geomB.is_empty:
         return None
     
-    spaceA_id = str(spaceA).split("#")[-1]
-    spaceB_id = str(spaceB).split("#")[-1]
-    wall_id = str(wall).split("#")[-1]
-    
     # Get bounding boxes
     minxA, minyA, maxxA, maxyA = geomA.bounds
     minxB, minyB, maxxB, maxyB = geomB.bounds
@@ -352,9 +346,6 @@ def infer_interior_wall_GENERAL(
         """Find doors/windows via adjacency + sharedWall + hostsOpening."""
         openings = []
         
-        space_a_id = str(space_a).split("#")[-1]
-        space_b_id = str(space_b).split("#")[-1]
-        
         # Find adjacency edges
         adjacencies = []
         for adj in graph.subjects(RDF.type, RESPLAN.AdjacencyEdge):
@@ -370,14 +361,12 @@ def infer_interior_wall_GENERAL(
         
         # Get hosted openings
         for adj, shared_wall in adjacencies:
-            wall_id = str(shared_wall).split("#")[-1]
             hosted_openings = list(graph.objects(shared_wall, RESPLAN.hostsOpening))
             
             if not hosted_openings:
                 continue
             
             for opening_uri in hosted_openings:
-                opening_id = str(opening_uri).split("#")[-1]
                 opening_geom = _load_shape(geom_index.get(opening_uri))
                 
                 if not opening_geom or opening_geom.is_empty:
@@ -450,10 +439,6 @@ def infer_interior_wall_GENERAL(
     
     if wall_poly.is_empty or wall_poly.area < 0.001:
         return None
-    
-    # Log
-    total_length = sum(seg.length for seg in wall_segments) if isinstance(wall_segments, list) else wall_segments.length
-    print(f" {wall_id} ({spaceA_id}↔{spaceB_id}): {orientation}, L={total_length:.3f}m, {len(openings)} openings")
     
     return mapping(wall_poly)
 
