@@ -528,28 +528,22 @@ def infer_door_geom_from_walls_or_adjacency(
 
     def _shared_boundary_line(spaces):
         if len(spaces) < 2:
-            print(f"    _shared_boundary_line: insufficient spaces")
             return None
         s1, s2 = spaces[0], spaces[1]
-        print(f"    _shared_boundary_line: checking {str(s1).split('#')[-1]} ↔ {str(s2).split('#')[-1]}")
         
         g1 = _load_shape(geom_index.get(s1))
         g2 = _load_shape(geom_index.get(s2))
         if not g1 or not g2 or g1.is_empty or g2.is_empty:
-            print(f"    _shared_boundary_line: empty geometries")
             return None
         
         shared = g1.boundary.intersection(g2.boundary)
-        print(f"    _shared_boundary_line: intersection type={shared.geom_type}, length={shared.length if hasattr(shared, 'length') else 0}")
         
         if shared.is_empty or shared.length == 0:
             return None
         if shared.geom_type == "LineString":
-            print(f"    _shared_boundary_line: ✅ using LineString")
             return shared
         if shared.geom_type == "MultiLineString":
             result = max(list(shared.geoms), key=lambda g: g.length)
-            print(f"    _shared_boundary_line: ✅ using longest from MultiLineString")
             return result
         return None
 
@@ -605,29 +599,20 @@ def infer_door_geom_from_walls_or_adjacency(
     if len(host_polys) == 2:
         (_, A), (_, B) = host_polys
         t = min(_wall_thickness(A), _wall_thickness(B))
-        
-        door_id = str(door).split('#')[-1][:20]
-        print(f"\n=== DEBUG DOOR {door_id} ===")
 
         # Get nearest segment between the two walls to determine gap span
         pA, pB = nearest_points(A.boundary, B.boundary)
-        print(f"  Nearest points: pA={pA.coords[0]}, pB={pB.coords[0]}")
         
         # Determine orientation
         dx = abs(pB.x - pA.x)
         dy = abs(pB.y - pA.y)
-        print(f"  dx={dx:.3f}, dy={dy:.3f}")
         
         minxA, minyA, maxxA, maxyA = A.bounds
         minxB, minyB, maxxB, maxyB = B.bounds
-        print(f"  Wall A bounds: x=[{minxA:.3f}, {maxxA:.3f}], y=[{minyA:.3f}, {maxyA:.3f}]")
-        print(f"  Wall B bounds: x=[{minxB:.3f}, {maxxB:.3f}], y=[{minyB:.3f}, {maxyB:.3f}]")
         
         door_line = None
         
         if dx < 1e-6:  # Vertical door
-            print(f"  Orientation: VERTICAL")
-            
             x_base = pA.x  # nearest point X
             
             if len(spaces) >= 2:
@@ -638,9 +623,6 @@ def infer_door_geom_from_walls_or_adjacency(
                     # Get room bounds
                     minx1, _, maxx1, _ = g1.bounds
                     minx2, _, maxx2, _ = g2.bounds
-                    
-                    print(f"  Room 1 bounds: x=[{minx1:.3f}, {maxx1:.3f}]")
-                    print(f"  Room 2 bounds: x=[{minx2:.3f}, {maxx2:.3f}]")
                     
                     # Find closest edge
                     edges = [
@@ -656,31 +638,22 @@ def infer_door_geom_from_walls_or_adjacency(
                     # TWEAK: Weighted average between x_base and x_edge
                     weight = 0 # ADJUSTABLE
                     x_door = weight * x_base + (1 - weight) * x_edge
-                    
-                    print(f"  Base x: {x_base:.3f}, Edge ({edge_name}): {x_edge:.3f}")
-                    print(f"  Using weighted (w={weight}): {x_door:.3f}")
                 else:
                     x_door = x_base
-                    print(f"  Using base x: {x_door:.3f}")
             else:
                 x_door = x_base
-                print(f"  Using base x: {x_door:.3f}")
             
             # Y-span from gap between walls (FULL LENGTH)
             y_min = max(minyA, minyB)
             y_max = min(maxyA, maxyB)
             
             if y_max < y_min:
-                print(f"  No Y overlap, using gap")
                 y_min = min(maxyA, maxyB)
                 y_max = max(minyA, minyB)
             
-            print(f"  Door line: ({x_door:.3f}, {y_min:.3f}) → ({x_door:.3f}, {y_max:.3f})")
             door_line = LineString([(x_door, y_min), (x_door, y_max)])
             
         elif dy < 1e-6:  # Horizontal door
-            print(f"  Orientation: HORIZONTAL")
-            
             y_base = pA.y
             
             if len(spaces) >= 2:
@@ -691,9 +664,6 @@ def infer_door_geom_from_walls_or_adjacency(
                     # Get room bounds
                     _, miny1, _, maxy1 = g1.bounds
                     _, miny2, _, maxy2 = g2.bounds
-                    
-                    print(f"  Room 1 bounds: y=[{miny1:.3f}, {maxy1:.3f}]")
-                    print(f"  Room 2 bounds: y=[{miny2:.3f}, {maxy2:.3f}]")
                     
                     # Find closest edge
                     edges = [
@@ -709,38 +679,28 @@ def infer_door_geom_from_walls_or_adjacency(
                     # TWEAK: Weighted average
                     weight = 0  # ADJUST THIS
                     y_door = weight * y_base + (1 - weight) * y_edge
-                    
-                    print(f"  Base y: {y_base:.3f}, Edge ({edge_name}): {y_edge:.3f}")
-                    print(f"  Using weighted (w={weight}): {y_door:.3f}")
                 else:
                     y_door = y_base
-                    print(f"  Using base y: {y_door:.3f}")
             else:
                 y_door = y_base
-                print(f"  Using base y: {y_door:.3f}")
             
             # X-span from gap between walls (FULL LENGTH)
             x_min = max(minxA, minxB)
             x_max = min(maxxA, maxxB)
             
             if x_max < x_min:
-                print(f"  No X overlap, using gap")
                 x_min = min(maxxA, maxxB)
                 x_max = max(minxA, minxB)
             
-            print(f"  Door line: ({x_min:.3f}, {y_door:.3f}) → ({x_max:.3f}, {y_door:.3f})")
             door_line = LineString([(x_min, y_door), (x_max, y_door)])
             
         else:
-            print(f"  Orientation: DIAGONAL/COMPLEX")
             door_line = LineString([pA, pB])
         
         if door_line is None or door_line.is_empty:
             return None
         
-        print(f"  Thickness: {t:.3f}")
         door_poly = door_line.buffer(t / 2.0, cap_style=2, join_style=2)
-        print(f"  Door poly bounds: {door_poly.bounds}")
         return mapping(door_poly) if (not door_poly.is_empty) else None
 
     # --------------------------------------------------
@@ -805,48 +765,33 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
         except:
             return None
     
-    window_id = str(window).split("#")[-1]
-    print(f"\n=== DEBUG WINDOW {window_id} ===")
-    
     # --------------------------------------------------
     # 1. Get primary wall (MUST exist)
     # --------------------------------------------------
     primary = graph.value(window, RESPLAN.primaryWall) or graph.value(window, RESPLAN.hasPrimaryHost)
     if not primary:
-        print(f"No primary wall found")
         return None
-    
-    print(f"  Primary wall: {str(primary).split('#')[-1]}")
     
     P = _load_shape(geom_index.get(primary))
     if not P or P.is_empty:
-        print(f"Primary wall geometry empty")
         return None
-    
-    print(f"  Primary bounds: {P.bounds}")
     
     # --------------------------------------------------
     # 2. Get exactly ONE other wall that hostsOpening
     # --------------------------------------------------
     host_walls = list(graph.subjects(RESPLAN.hostsOpening, window))
-    print(f"All host walls: {[str(w).split('#')[-1] for w in host_walls]}")
     
     other_hosts = [w for w in host_walls if w != primary]
     
     if not other_hosts:
-        print(f"No other host walls found")
         return None
     
     # Take first other host as secondary
     secondary = other_hosts[0]
-    print(f"  Secondary wall: {str(secondary).split('#')[-1]}")
     
     S = _load_shape(geom_index.get(secondary))
     if not S or S.is_empty:
-        print(f"Secondary wall geometry empty")
         return None
-    
-    print(f"  Secondary bounds: {S.bounds}")
     
     # --------------------------------------------------
     # 3. Determine dominant axis and thickness from primary wall
@@ -857,8 +802,6 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
     
     is_horizontal = width >= height
     thickness = min(width, height)
-    
-    print(f"  Orientation: {'HORIZONTAL' if is_horizontal else 'VERTICAL'}, thickness={thickness:.3f}")
     
     # Build centerline axis through wall
     if is_horizontal:
@@ -872,22 +815,16 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
         axis_start = Point(midx, miny)
         axis_end = Point(midx, maxy)
     
-    print(f"  Axis: {list(axis.coords)}")
-    
     # --------------------------------------------------
     # 4. Choose axis end closest to secondary wall as anchor
     # --------------------------------------------------
     dist_to_start = axis_start.distance(S)
     dist_to_end = axis_end.distance(S)
     
-    print(f"  Distance to axis start: {dist_to_start:.3f}, to end: {dist_to_end:.3f}")
-    
     if dist_to_start < dist_to_end:
         anchor = axis_start
-        print(f"  Anchor: START {(anchor.x, anchor.y)}")
     else:
         anchor = axis_end
-        print(f"  Anchor: END {(anchor.x, anchor.y)}")
     
     # --------------------------------------------------
     # 5. Measure distance to secondary wall → window length
@@ -896,9 +833,6 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
     
     window_length_raw = anchor.distance(nearest_on_secondary)
     window_length = max(0.6, min(window_length_raw, 2.4))
-    
-    print(f"  Window length: raw={window_length_raw:.3f}, clamped={window_length:.3f}")
-    print(f"  Nearest on secondary: {(nearest_on_secondary.x, nearest_on_secondary.y)}")
     
     # --------------------------------------------------
     # 6. Place a line from anchor toward secondary wall along the axis direction
@@ -911,12 +845,10 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
         direction = 1.0 if dx > 0 else -1.0
         x_end = anchor.x + direction * window_length
         line = LineString([(anchor.x, anchor.y), (x_end, anchor.y)])
-        print(f"  Window line (H): ({anchor.x:.3f}, {anchor.y:.3f}) → ({x_end:.3f}, {anchor.y:.3f})")
     else:
         direction = 1.0 if dy > 0 else -1.0
         y_end = anchor.y + direction * window_length
         line = LineString([(anchor.x, anchor.y), (anchor.x, y_end)])
-        print(f"  Window line (V): ({anchor.x:.3f}, {anchor.y:.3f}) → ({anchor.x:.3f}, {y_end:.3f})")
     
     # --------------------------------------------------
     # 7. Buffer by half thickness to get window polygon
@@ -925,19 +857,11 @@ def infer_window_geom_from_primary_and_hosts(graph, window, geom_index):
         window_poly = line.buffer(thickness / 2, cap_style=2, join_style=2)
         
         if window_poly.is_empty or window_poly.area < 0.001:
-            print(f"Window polygon empty or too small")
             return None
         
         result = mapping(window_poly)
-        print(f"Window created: area={window_poly.area:.3f}, geom_type={window_poly.geom_type}")
-        print(f"Result keys: {result.keys()}")
-        print(f"Result type: {result.get('type')}")
-        
         return result
-    except Exception as e:
-        print(f"Buffer/mapping error: {e}")
-        import traceback
-        traceback.print_exc()
+    except Exception:
         return None
 
 # ======================================================
