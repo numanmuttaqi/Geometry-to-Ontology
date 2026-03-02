@@ -19,9 +19,9 @@ The results demonstrate that construction knowledge can be encoded as explicit r
 ## Research Scope
 - **Input domain**: Residential floor plans (ResPlan-derived data).
 - **Knowledge layer**: ResPlan ontology with BOT/IFC alignment.
-- **Validation**: SHACL constraints for adjacency/connectivity/opening consistency.
-- **Inference**: SPARQL CONSTRUCT rules to materialize missing elements.
-- **Back-projection**: Semantic outputs converted back into geometry-oriented JSON.
+- **Validation**: SHACL constraints for checking data violations.
+- **Inference**: SPARQL CONSTRUCT rules to generate missing elements.
+- **Back-projection**: Semantic outputs translated back into geometry JSON.
 
 ## Repository Structure
 - `data/`
