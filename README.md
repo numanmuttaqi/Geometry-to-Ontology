@@ -1,12 +1,25 @@
 # Geometry-to-Ontology: Knowledge-Based Reconstruction of Imperfect Floor Plans
 
-## Overview
-![Alt text](3_0_Methodology.jpg)
-This repository contains the implementation for a thesis framework that reconstructs missing structural elements in residential floor plans by combining geometric processing with semantic reasoning.
+This repository implements a thesis project on reconstructing missing structural elements in residential floor plans using ontologies, knowledge graphs, SHACL validation, and SPARQL-based inference.
 
-Target missing elements are primarily:
+The project demonstrates how geometric floor-plan data can be transformed into semantic knowledge, checked against explicit domain constraints, enriched through rule-based inference, and converted back into geometry-oriented data.
+
+![Methodology overview](3_0_Methodology.jpg)
+
+## Knowledge Engineering Focus
+This project was developed as an ontology and semantic-reasoning pipeline for incomplete architectural floor plans. It focuses on the following knowledge-engineering tasks:
+
+- modeling residential floor-plan entities as RDF resources,
+- aligning custom ResPlan concepts with BOT and IFC-inspired building concepts,
+- representing rooms, walls, doors, windows, adjacency, connectivity, and openings,
+- validating incomplete knowledge graphs with SHACL constraints,
+- reconstructing missing elements with SPARQL CONSTRUCT rules,
+- preserving geometry metadata during JSON -> RDF -> JSON transformation.
+
+Target reconstructed elements:
+
 - interior walls,
-- doors, and
+- doors,
 - windows.
 
 ## Abstract
@@ -22,6 +35,15 @@ The results demonstrate that construction knowledge can be encoded as explicit r
 - **Validation**: SHACL constraints for adjacency/connectivity/opening consistency.
 - **Inference**: SPARQL CONSTRUCT rules to materialize missing elements.
 - **Back-projection**: Semantic outputs converted back into geometry-oriented JSON.
+
+## Technical Stack
+- **Python**: data processing, geometry conversion, experiment orchestration.
+- **RDF/Turtle**: semantic representation of floor-plan instances.
+- **OWL/RDFS**: ontology classes and properties.
+- **SHACL**: validation rules for missing or inconsistent structural elements.
+- **SPARQL CONSTRUCT**: rule-based inference for reconstructed elements.
+- **BOT/IFC alignment**: building-domain semantic modeling references.
+- **GeoJSON/Shapely**: geometry representation and spatial processing.
 
 ## Repository Structure
 - `data/`
@@ -60,14 +82,15 @@ The results demonstrate that construction knowledge can be encoded as explicit r
   - `ontology/rules/WindowRule.shacl.ttl`
   - `ontology/rules/[Archived]ConnectivityRule.shacl.ttl`
 
-## End-to-End Workflow
+## Pipeline
 1. Export/prepare floor-plan JSON artifacts.
 2. Generate imperfect variants by dropping selected structural elements.
 3. Convert imperfect JSON to Turtle (`json_to_ttl.py`).
-4. Run SHACL validation 
-5. SPARQL CONSTRUCT inference and Revalidation.
-5. Convert inferred Turtle back to geometry-oriented JSON.
-6. Evaluate reconstruction and inspect before/after topology.
+4. Run SHACL validation to identify missing or inconsistent elements.
+5. Apply SPARQL CONSTRUCT inference rules.
+6. Revalidate the inferred graph.
+7. Convert inferred Turtle back to geometry-oriented JSON.
+8. Evaluate reconstruction and inspect before/after topology.
 
 ## Setup
 ### Option A: Conda
@@ -80,15 +103,24 @@ conda activate geometry-to-ontology-thesis
 pip install -r requirements-thesis.txt
 ```
 
-## Run full experiments
+## Run Full Experiments
 Use the notebooks as orchestrators:
 - `Notebooks/1_visualization.ipynb` : Export floor plan to JSON, Generate imperfect floor plan, map json into turtle, validation pre-inference
 - `Notebooks/2_Inference.ipynb` : Inference, Revalidation
 - `Notebooks/3_togeometry.ipynb` : Semantic to geometry
 - `Notebooks/4_All Structural.ipynb` : End-to-end pipeline for the missing all structural scenario
 
+## Portfolio Relevance
+This repository is intended to show practical ontology-engineering and knowledge-graph skills beyond vocabulary design:
+
+- ontology modeling for a domain-specific spatial problem,
+- semantic data transformation between JSON and RDF,
+- SHACL-based quality control,
+- SPARQL-based inference,
+- handling asserted vs inferred knowledge,
+- linking symbolic reasoning back to geometric artifacts.
+
 ## Notes on Current Project State
 - The notebook workflow is the primary reproducible path.
 - `thesis_package/main.py` is currently a placeholder and not the canonical experiment runner.
 - Some outputs are already pre-generated under `output/`.
-
